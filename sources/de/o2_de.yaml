@@ -1,0 +1,67 @@
+meta:
+  operator_id: o2_de
+  country_code: DE
+  source_url: https://www.o2online.de/service/netz-verfuegbarkeit/prepaid/
+  source_name: O2 Germany official
+  last_verified: "2026-Q2"
+  verified_by: manual
+  notes: "O2 prepaid. No permanent address required. Continues at low speed after data cap."
+
+plans:
+  - raw_title: "O2 Prepaid M"
+    raw_price_eur: 9.99
+    raw_data: "20 GB"
+    raw_duration_days: 30
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 20
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "online identity verification"
+    raw_address_required: false
+    raw_hotel_address_ok: true
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: false
+    raw_throttled_after: true
+    raw_highlight: "Cheapest DE"
+
+  - raw_title: "O2 Prepaid L"
+    raw_price_eur: 14.99
+    raw_data: "40 GB"
+    raw_duration_days: 30
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 40
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "online identity verification"
+    raw_address_required: false
+    raw_hotel_address_ok: true
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: false
+    raw_highlight: "Best O2 value DE"
+
+  - raw_title: "O2 Prepaid XL"
+    raw_price_eur: 19.99
+    raw_data: "80 GB"
+    raw_duration_days: 30
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 80
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "online identity verification"
+    raw_address_required: false
+    raw_hotel_address_ok: true
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: false
+    raw_highlight: "Best O2 data DE"

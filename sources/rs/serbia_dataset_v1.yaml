@@ -1,0 +1,296 @@
+# SimRoam Serbia Tariff Dataset v1
+# ==================================
+# Source: serbia_mobile_tariffs_simroam_dataset.md (uploaded 2026-Q2)
+# This file is the canonical Serbia source. Future updates override specific fields.
+# Exchange rate: 1 EUR = 117 RSD (mid-2025 approximate)
+# CRITICAL MODELING RULES: always separate domestic_unrestricted_gb from social_app_gb.
+
+meta:
+  country_code: RS
+  country_name: Serbia
+  last_updated: "2026-Q2"
+  source_version: "draft v1"
+  rsd_eur_rate: 117.0
+  notes: >
+    Do NOT compare plans by marketed GB only. Serbian operators mix unrestricted
+    domestic internet, app/social traffic, WB roaming quotas, and EU roaming quotas.
+    Always use domestic_unrestricted_gb for scoring real data value.
+
+wb_roaming_region: [RS, ME, BA, AL, MK, XK]
+
+---
+operators:
+
+  yettel_rs:
+    name: Yettel Serbia
+    research_status: verified_official
+    positioning: >
+      Best tourist-oriented Serbian operator. Strongest prepaid eSIM onboarding.
+      Best multi-country Balkans traveler positioning. Marketing-heavy GB structure —
+      always separate unrestricted domestic from app/social.
+    wb_roaming_model:
+      wb_roaming_supported: true
+      wb_roaming_type: included_quota_and_add_ons
+      wb_roaming_confidence: high
+    operator_scores:
+      tourist_score: 95
+      wb_roaming_strength: 92
+      heavy_usage_score: 82
+      clarity_score: 60
+      esim_score: 98
+      multi_country_score: 94
+    source_url: "https://www.yettel.rs/sr/privatni/ponuda/tarifni-paketi/pripejd/"
+
+  a1_rs:
+    name: A1 Serbia
+    research_status: verified_official
+    positioning: >
+      Strongest real usable domestic data. RLAH WB roaming — NOT a specific quota.
+      Best for Serbia-only heavy local use. Tourist UX weaker than Yettel.
+    wb_roaming_model:
+      wb_roaming_supported: true
+      wb_roaming_type: fair_use_rlah
+      wb_roaming_confidence: medium
+      wb_roaming_notes: >
+        RLAH across Serbia, Montenegro, Bosnia, Albania, North Macedonia, Kosovo.
+        Actual usable internet depends on tariff package and fair-use policy.
+        Do NOT model as unlimited WB roaming.
+    operator_scores:
+      domestic_strength: 92
+      wb_roaming_strength: 70
+      tourist_friendliness: 68
+      heavy_usage_score: 90
+      clarity_score: 55
+      esim_score: 75
+    source_url: "https://a1.rs/privatni/internet/prepaid_net"
+    correction:
+      old_wrong_assumption: "A1 has no Western Balkans roaming"
+      corrected_understanding: "A1 supports RLAH/fair-use across WB — not unlimited"
+
+  mts_rs:
+    name: mts Serbia / Telekom Srbija
+    research_status: needs_verification
+    positioning: >
+      Strongest WB roaming transparency. Zona 0 = explicit WB GB quota included
+      in every data add-on. Cheapest WB roaming. Tourist UX weakest.
+    wb_roaming_model:
+      wb_roaming_supported: true
+      wb_roaming_type: included_quota
+      wb_roaming_confidence: high
+      wb_roaming_notes: >
+        "Zona 0" = Western Balkans roaming zone. Every data add-on includes
+        explicit Zona 0 GB allocation. Best clarity for WB data budgeting.
+    operator_scores:
+      tourist_score: 70
+      wb_roaming_strength: 95
+      heavy_usage_score: 84
+      clarity_score: 92
+      esim_score: 55
+      multi_country_score: 90
+    source_url: "https://www.mts.rs/internet/tarife/net-data-sim-kartice/"
+
+  globaltel_rs:
+    name: Globaltel Serbia
+    research_status: needs_verification
+    operator_type: mvno
+    positioning: >
+      Digital-first MVNO/eSIM platform. App-native, travel-oriented, Balkan/eSIM-first
+      digital carrier. Modular roaming architecture. Infrastructure confidence lower
+      than MNO operators (63/100). Strategically important for SimRoam direction.
+    roaming_product_groups:
+      - Global Travel (Europe core)
+      - Global Explore (broader Europe)
+      - Global Nomad (global long-haul)
+      - Global Balkan UP (Western Balkans dedicated)
+    wb_roaming_model:
+      wb_roaming_supported: true
+      wb_roaming_type: dedicated_add_on
+      wb_roaming_confidence: high
+      countries: [AL, XK, BA, ME, MK]
+    operator_scores:
+      tourist_score: 96
+      esim_score: 98
+      wb_roaming_strength: 90
+      digital_nomad_score: 95
+      pricing_score: 92
+      modularity_score: 99
+      infrastructure_confidence: 63
+    source_url: "https://www.globaltel.rs/"
+
+---
+uncertainties:
+  - field: a1_welcome_sim.wb_roaming_gb
+    reason: "Exact WB fair-use allowance for Welcome SIM not published by A1"
+    action: "Do not model as specific GB — mark as needs_review"
+
+  - field: a1_*.esim_supported
+    reason: "eSIM onboarding for A1 prepaid Serbia not confirmed"
+    action: "Mark as unknown until officially confirmed"
+
+  - field: yettel_unlimited_esim.fair_use_details
+    reason: "Exact throttling threshold for unlimited domestic not published"
+    action: "Mark fair_use_policy=true, note uncertainty"
+
+  - field: globaltel_custom_bundles.wb_roaming_gb
+    reason: "WB quota derived from bundle screenshots — not official documentation"
+    action: "Mark wb_roaming_confidence=low, needs_verification=true"
+
+  - field: mts_rs.esim_supported
+    reason: "mts Serbia eSIM for prepaid data SIM not confirmed"
+    action: "Mark as unknown"
+
+  - field: globaltel_rs.infrastructure_confidence
+    reason: "MVNO — actual coverage depends on host network agreements"
+    action: "infrastructure_confidence=63, warn users"
+
+---
+scoring_rules:
+  # Critical: enforce data separation in scoring
+  domestic_unrestricted_gb_weight: 1.0    # full weight
+  social_app_gb_weight: 0.3               # 30% — app-specific, not general internet
+  unlimited_domestic_equivalent_gb: 50    # fair-use discount from true unlimited
+  unlimited_with_fair_use_penalty: 5      # points off total score
+  wb_roaming_confidence_multipliers:
+    high: 1.0
+    medium: 0.8
+    low: 0.6
+
+  wb_roaming_type_base_scores:
+    included_quota: "min(100, wb_gb * 15)"
+    dedicated_add_on: "min(100, wb_gb * 15)"
+    fair_use_rlah: 35   # unquantified — not suitable for route budget planning
+    unknown_or_add_on: 20
+
+  scenario_weights:
+    balanced:
+      domestic: 0.25
+      wb_roaming: 0.20
+      tourist_friction: 0.20
+      esim: 0.10
+      value: 0.15
+      clarity: 0.10
+    balkans_route:
+      domestic: 0.10
+      wb_roaming: 0.45
+      tourist_friction: 0.15
+      esim: 0.10
+      value: 0.10
+      clarity: 0.10
+    heavy_domestic:
+      domestic: 0.45
+      wb_roaming: 0.10
+      tourist_friction: 0.15
+      esim: 0.10
+      value: 0.15
+      clarity: 0.05
+    esim_only:
+      domestic: 0.20
+      wb_roaming: 0.15
+      tourist_friction: 0.25
+      esim: 0.30
+      value: 0.10
+      clarity: 0.00
+    cheapest:
+      domestic: 0.15
+      wb_roaming: 0.10
+      tourist_friction: 0.10
+      esim: 0.10
+      value: 0.50
+      clarity: 0.05
+
+---
+scoring_analysis_results:
+  generated: "2026-Q2"
+  rsd_eur_rate: 117.0
+
+  best_balkans_route:
+    - rank: 1
+      plan: "Yettel Unlimited eSIM 30 days"
+      price_eur: 29.91
+      wb_gb: 16.0
+      score: 97.1
+    - rank: 2
+      plan: "Yettel Unlimited eSIM 15 days"
+      price_eur: 19.66
+      wb_gb: 10.5
+      score: 96.8
+    - rank: 3
+      plan: "Yettel Unlimited eSIM 7 days"
+      price_eur: 9.83
+      wb_gb: 5.5
+      score: 88.8
+    - rank: 4
+      plan: "Globaltel Freepaid Ultra"
+      price_eur: 13.25
+      wb_gb: 4.4
+      score: 78.6
+    - rank: 5
+      plan: "mts 10GB + 1.5GB Zone 0"
+      price_eur: 7.05
+      wb_gb: 1.5
+      score: null  # separate add-on scoring model
+
+  best_cheap_wb:
+    - plan: "mts 1GB + 200MB Zone 0"
+      price_eur: 1.03
+      wb_gb: 0.2
+      note: "Best price, minimal WB budget — 1 day"
+    - plan: "mts 4GB + 700MB Zone 0"
+      price_eur: 3.42
+      wb_gb: 0.7
+      note: "7 days — very cheap WB data"
+    - plan: "Globaltel Global Balkan UP 2"
+      price_eur: 3.85
+      wb_gb: 2.0
+      note: "Add-on only — dedicated WB, 7 days"
+    - plan: "Globaltel Global Balkan UP 4"
+      price_eur: 7.26
+      wb_gb: 4.0
+      note: "Add-on — best dedicated WB per-GB value"
+
+  best_heavy_domestic:
+    - plan: "Globaltel Hello Serbia eSIM"
+      price_eur: 4.27
+      dom_gb: 100
+      duration: 4
+    - plan: "Globaltel Visitor eSIM"
+      price_eur: 4.27
+      dom_gb: 50
+      duration: 10
+    - plan: "A1 Welcome SIM"
+      price_eur: 8.27
+      dom_gb: 200
+      duration: 7
+      caveat: "WB roaming unverified"
+    - plan: "Yettel Unlimited eSIM 7 days"
+      price_eur: 9.83
+      dom_gb: "unlimited"
+      wb_gb: 5.5
+      duration: 7
+
+  best_tourist_esim:
+    - plan: "Globaltel Visitor eSIM"
+      score: 96
+      reason: "Cheapest, Serbia-only, eSIM, online"
+    - plan: "Globaltel Hello Serbia eSIM"
+      score: 94
+      reason: "Highest Serbia domestic GB at this price point"
+    - plan: "Yettel Unlimited eSIM 7 days"
+      score: 92
+      reason: "Best balance: unlimited + WB roaming + confirmed eSIM"
+
+  best_calls_sms:
+    - plan: "Globaltel Freepaid Smart"
+      reason: "Calls/SMS all networks + WB roaming + eSIM + 10 GB domestic"
+    - plan: "Globaltel Freepaid Ultra"
+      reason: "Same but 25 GB domestic"
+    - plan: "A1 Mega Plan"
+      reason: "500 min/SMS other networks + WB RLAH"
+
+  best_clarity:
+    - plan: "mts add-ons (all tiers)"
+      reason: "Explicit Zona 0 WB GB in every plan — clearest data budgeting"
+    - plan: "Yettel Unlimited eSIM tiers"
+      reason: "Exact WB GB published per tier — high confidence"
+    - plan: "Globaltel Balkan UP add-ons"
+      reason: "Dedicated WB roaming with exact GB"

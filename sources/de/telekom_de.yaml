@@ -1,0 +1,69 @@
+meta:
+  operator_id: telekom_de
+  country_code: DE
+  source_url: https://www.telekom.de/prepaid
+  source_name: Telekom Germany official
+  last_verified: "2026-Q2"
+  verified_by: manual
+  notes: "MagentaMobil Prepaid. German address required — not suitable for most tourists. Best network in Germany."
+
+plans:
+  - raw_title: "MagentaMobil Prepaid M"
+    raw_price_eur: 9.95
+    raw_data: "~33 GB"
+    raw_duration_days: 28
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 33
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: false
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "VideoIdent online"
+    raw_address_required: true
+    raw_address_type: "German address required"
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: true
+    raw_highlight: "Best network DE"
+    raw_tourist_warning: "German address required — not suitable for tourists"
+
+  - raw_title: "MagentaMobil Prepaid L"
+    raw_price_eur: 14.95
+    raw_data: "40 GB"
+    raw_duration_days: 28
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 40
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: false
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "VideoIdent online"
+    raw_address_required: true
+    raw_address_type: "German address required"
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: true
+    raw_highlight: "Strongest network DE"
+    raw_tourist_warning: "German address required — not suitable for tourists"
+
+  - raw_title: "MagentaMobil Prepaid XL"
+    raw_price_eur: 19.95
+    raw_data: "80 GB"
+    raw_duration_days: 28
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 80
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: false
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "VideoIdent online"
+    raw_address_required: true
+    raw_address_type: "German address required"
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: true
+    raw_highlight: "Best data Telekom DE"
+    raw_tourist_warning: "German address required — not suitable for tourists"

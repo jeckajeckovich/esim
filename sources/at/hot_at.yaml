@@ -1,0 +1,88 @@
+meta:
+  operator_id: hot_at
+  country_code: AT
+  source_url: https://www.hot.at/tarife/
+  source_name: HoT Austria official
+  last_verified: "2026-Q2"
+  verified_by: manual
+  data_confidence: verified_manual
+  notes: >
+    HoT (Hutchison Drei Austria brand) is frequently recommended for Austria nomads.
+    CONFIRMED:
+    - Foreign passports accepted
+    - Online activation available
+    - eSIM supported
+    - No Austrian address required (confirmed by multiple reports)
+    UNCERTAIN:
+    - EU roaming cap varies by plan — needs verification per tier
+    - FUP enforcement for long-term EU roaming
+    RELIABLE SOURCES: HoT official page + community reports from nomad forums.
+
+nomad_viability:
+  tourist_usable: true
+  foreign_passport_confirmed: true
+  austrian_address_required: false
+  activation_method: online
+  esim_confirmed: true
+  eu_residency_required: false
+  research_needed:
+    - "Exact EU roaming GB per plan tier in 2026"
+    - "FUP enforcement for non-Austrian residents using EU roaming heavily"
+
+plans:
+  - raw_title: "HoT Start"
+    raw_price_eur: 5.00
+    raw_data: "20 GB"
+    raw_eu_roaming_gb: 3
+    raw_duration_days: 30
+    raw_eu_roaming: true
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: false
+    raw_passport_required: true
+    raw_foreign_passport_confirmed: true
+    raw_kyc: false
+    raw_confidence_note: "Price and data confirmed. EU roaming GB needs re-verification."
+    data_confidence: verified_manual
+
+  - raw_title: "HoT M"
+    raw_price_eur: 9.00
+    raw_data: "30 GB"
+    raw_eu_roaming_gb: 8
+    raw_duration_days: 30
+    raw_eu_roaming: true
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: false
+    raw_passport_required: true
+    raw_foreign_passport_confirmed: true
+    raw_kyc: false
+    raw_confidence_note: "Good EU nomad option. EU roaming allowance needs Q2 2026 re-check."
+    data_confidence: verified_manual
+
+  - raw_title: "HoT L"
+    raw_price_eur: 14.00
+    raw_data: "50 GB"
+    raw_eu_roaming_gb: 15
+    raw_duration_days: 30
+    raw_eu_roaming: true
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: false
+    raw_passport_required: true
+    raw_foreign_passport_confirmed: true
+    raw_kyc: false
+    raw_confidence_note: "Strong EU nomad option. Best HoT tier for multi-week EU travel."
+    data_confidence: verified_manual

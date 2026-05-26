@@ -1,12 +1,14 @@
 {
-  "name": "esim-final",
+  "name": "simroam",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "audit": "node scripts/audit-simroam.mjs"
   },
   "dependencies": {
     "next": "16.2.6",

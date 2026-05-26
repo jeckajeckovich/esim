@@ -1,0 +1,128 @@
+meta:
+  type: travel_esim_benchmarks
+  category: eu_travel_esim
+  last_updated: "2026-Q2"
+  data_confidence: needs_review
+  notes: >
+    European travel eSIM benchmarks from major providers.
+    IMPORTANT: These prices were NOT fetched live — external API access blocked.
+    All figures below are APPROXIMATE and must be verified before surfacing.
+    Use confidence: "price_snapshot" for all entries until verified.
+    Sources are official provider pages — verify before each release.
+
+  providers:
+    - name: Airalo
+      url: https://www.airalo.com/europe-esim
+      api_docs: https://partners.airalo.com/
+      coverage: "Europe regional eSIMs available"
+      notes: "Eurolink package covers most EU countries. Price varies."
+
+    - name: Nomad
+      url: https://www.getnomad.app/europe-esim
+      notes: "Europe regional plans available."
+
+    - name: Saily
+      url: https://saily.com/esim/europe
+      notes: "Newer provider. Competitive EU pricing."
+
+    - name: Holafly
+      url: https://esim.holafly.com/europe/
+      notes: "Unlimited data plans. Higher price point."
+
+    - name: Yesim
+      url: https://yesim.app/
+      notes: "Global coverage. EU plans available."
+
+    - name: RedteaGO
+      url: https://www.redteago.com/
+      notes: "Strong Asia coverage. EU plans available."
+
+# ── BENCHMARK ENTRIES ────────────────────────────────────────────────────────
+# These are the best-estimate figures for EU regional eSIMs.
+# DO NOT present as exact prices — always show "price_snapshot" confidence.
+# Verify at source before each data release.
+
+eu_regional_benchmarks:
+  notes: >
+    EU regional travel eSIMs cover most EU/EEA countries.
+    They do NOT cover: Serbia, Bosnia, Montenegro, Albania, North Macedonia
+    (these are not in the EU/EEA zone).
+
+  plans:
+    - provider: Airalo
+      title: "Eurolink Europe 10 GB"
+      data_gb: 10
+      duration_days: 30
+      price_eur_approx: 19.00
+      currency: USD
+      coverage: "EU + some non-EU European countries"
+      local_number: false
+      esim: true
+      source_url: https://www.airalo.com/europe-esim
+      data_confidence: price_snapshot
+      last_verified: "2026-Q2"
+      verification_needed: true
+
+    - provider: Nomad
+      title: "Nomad Europe 10 GB"
+      data_gb: 10
+      duration_days: 30
+      price_eur_approx: 17.00
+      local_number: false
+      esim: true
+      source_url: https://www.getnomad.app/europe-esim
+      data_confidence: price_snapshot
+      last_verified: "2026-Q2"
+      verification_needed: true
+
+    - provider: Saily
+      title: "Saily Europe 5 GB"
+      data_gb: 5
+      duration_days: 30
+      price_eur_approx: 9.99
+      local_number: false
+      esim: true
+      source_url: https://saily.com/esim/europe
+      data_confidence: price_snapshot
+      last_verified: "2026-Q2"
+      verification_needed: true
+
+    - provider: Holafly
+      title: "Holafly Europe Unlimited"
+      data_gb: null
+      unlimited: true
+      duration_days: 30
+      price_eur_approx: 47.00
+      local_number: false
+      esim: true
+      source_url: https://esim.holafly.com/europe/
+      data_confidence: price_snapshot
+      last_verified: "2026-Q2"
+      verification_needed: true
+      notes: "Unlimited but FUP likely applies. Verify terms before recommending."
+
+# ── COUNTRY-SPECIFIC ────────────────────────────────────────────────────────
+country_specific:
+  notes: "Existing per-country snapshots in plans.json. Add more as verified."
+  existing:
+    - country: RS
+      providers: [GigSky, GoMoWorld, Airalo, Nomad]
+      status: in_plans_json
+    - country: DE
+      providers: [Airalo]
+      status: in_plans_json
+    - country: AT
+      providers: []
+      status: "need_snapshot — add Airalo AT benchmark"
+    - country: ME
+      providers: [Airalo]
+      status: in_plans_json
+    - country: AL
+      providers: [Airalo]
+      status: in_plans_json
+    - country: BA
+      providers: [Airalo]
+      status: in_plans_json
+    - country: MK
+      providers: [Airalo]
+      status: in_plans_json

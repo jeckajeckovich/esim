@@ -1,0 +1,47 @@
+meta:
+  operator_id: orange_flex_pl
+  country_code: PL
+  source_url: https://flex.orange.pl/en/flex-for-you
+  source_name: Orange Flex official
+  last_verified: "2026-Q2"
+  verified_by: manual
+  data_confidence: verified_manual
+  notes: >
+    Orange Flex is app-only. Foreign passports accepted. No EU residency required.
+    EU nomad strategy — Polish number usable across EU via roaming.
+    Spec-provided data: 35 PLN (~€8) / 75 GB domestic / 12.03 GB EU roaming.
+    EU roaming source: https://flex.orange.pl/en/services/roaming
+    PLN→EUR rate used: 4.25 PLN = 1 EUR (approximate, verify before publishing)
+  caveats:
+    - "PLN price is confirmed (35 PLN). EUR conversion approximate."
+    - "12.03 GB EU roaming is spec-confirmed, not fetched live."
+    - "75 GB domestic confirmed per spec. Verify current tier."
+
+plans:
+  - raw_title: "Orange Flex Basic"
+    raw_price_pln: 35.00
+    raw_price_eur: 8.24
+    raw_data_domestic_gb: 75
+    raw_data_eu_roaming_gb: 12.03
+    raw_data: "75 GB (domestic) / 12.03 GB EU roaming"
+    raw_eu_roaming_gb: 12.03
+    raw_duration_days: 30
+    raw_eu_roaming: true
+    raw_esim: true
+    raw_app_only: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_kyc: false
+    raw_passport_required: true
+    raw_foreign_passport_ok: true
+    raw_eu_residency_required: false
+    raw_local_number: true
+    raw_number_country: "PL"
+    raw_renewable: true
+    raw_auto_renew: true
+    raw_highlight: "EU Nomad Pick"
+    raw_category: "regional_eu"
+    raw_nomad_type: "eu_nomad"
+    raw_confidence_note: "Price and roaming GB confirmed per spec. EUR conversion approximate."
+    data_confidence: verified_manual

@@ -1,0 +1,511 @@
+# SimRoam Montenegro Tariff Dataset v1
+# =====================================
+# Source: montenegro_mobile_tariffs_simroam_dataset.md (ingested 2026-Q2)
+# Canonical Montenegro source — future updates override specific fields only.
+# CRITICAL MODELING RULES: separate domestic_gb / unlimited_fup / wb_roaming_gb /
+#   shared_wb_fair_use / eu_roaming_gb / calls_sms / local_number / esim.
+
+meta:
+  country_code: ME
+  country_name: Montenegro
+  last_updated: "2026-Q2"
+  source_version: "draft v1"
+  tier: A
+  wb_roaming_region: ["ME","RS","BA","AL","MK","XK"]
+
+  modeling_rules:
+    - "Do NOT compare plans by marketed GB only."
+    - "Separate domestic_unrestricted_gb from unlimited_data_with_fup_warning."
+    - "wb_roaming_type must be explicit — never assume boolean true/false is enough."
+    - "shared_home_quota_fair_use means the WB quota is the same pool as domestic — no separate GB."
+    - "dedicated_add_on and included_quota have explicit WB GB — score directly."
+    - "fair_use_quota_from_domestic means an explicit WB sub-quota carved from domestic pool."
+    - "roam_like_home_fair_use has no published quota — score conservatively (35/100 max)."
+    - "unlimited domestic must carry fair_use_policy:true and a warning — not treated as infinite."
+    - "Telekom Montenegro publishes overage rate: ~9.32 EUR/GB after quota."
+    - "Telekom MIX packages explicitly do NOT apply in roaming — mark wb=false."
+
+---
+operators:
+
+  one_me:
+    name: One Montenegro
+    operator_id: one_me
+    source_url: https://1.me/cg/for-tourists/
+    source_name: One Montenegro official
+    last_verified: "2026-Q2"
+    research_status: verified_official
+    tourist_usable: true
+
+    positioning: >
+      Strongest Western Balkans roaming integration in Montenegro.
+      Explicit WB GB quotas published per plan — easiest to score.
+      eSIM-first tourist onboarding. Data-only tourist products.
+      One Pripejd has local number and voice minutes.
+
+    wb_roaming_model:
+      wb_roaming_supported: true
+      wb_roaming_type: included_quota
+      wb_roaming_confidence: high
+      covered_region: [RS, BA, MK, AL, XK]
+      notes: >
+        One publishes explicit WB GB per plan — high confidence scoring.
+        Tourist Daily 1GB unusual: WB quota (1.5 GB) exceeds domestic (1 GB).
+
+    operator_scores:
+      tourist_score: 96
+      wb_roaming_strength: 99
+      heavy_usage_score: 95
+      clarity_score: 88
+      esim_score: 97
+      multi_country_score: 99
+      local_number_score: 82
+
+    plans_in_db:
+      base_tourist:
+        - id: one_me_tourist_15   price_eur: 15  dur: 15d  dom: 500GB   wb: 8.5GB
+        - id: one_me_tourist_20   price_eur: 20  dur: 30d  dom: 1TB     wb: 11GB
+        - id: one_me_tourist_25   price_eur: 25  dur: 30d  dom: unlimited(FUP)  wb: 13.5GB
+      add_ons:
+        - id: one_me_addon_daily_1gb    price_eur: 1.99   dur: 1d   dom: 1GB   wb: 1.5GB
+        - id: one_me_addon_5d_100gb     price_eur: 5.99   dur: 5d   dom: 100GB  wb: 3.5GB
+        - id: one_me_addon_15d_500gb    price_eur: 9.99   dur: 15d  dom: 500GB  wb: 5.5GB
+        - id: one_me_addon_30d_1tb      price_eur: 14.99  dur: 30d  dom: 1TB    wb: 8.5GB
+      renewals:
+        - id: one_me_renewal_15  price_eur: 11.99  dur: 15d  dom: 500GB          wb: 6.5GB
+        - id: one_me_renewal_20  price_eur: 16.99  dur: 30d  dom: 1TB            wb: 9.5GB
+        - id: one_me_renewal_25  price_eur: 20.99  dur: 30d  dom: unlimited(FUP) wb: 11.5GB
+      group:
+        - id: one_me_for_two   price_eur: 25  dur: 15d  2×eSIM  wb: 8.5GB(scope unverified)
+      local_number:
+        - id: one_me_pripejd  price_eur: 15  dur: 10d  dom: 500GB  calls: 500min+500min  wb: RLAH_fair_use
+
+  mtel_me:
+    name: m:tel Montenegro
+    operator_id: mtel_me
+    source_url: https://mtel.me/for-tourists
+    source_name: m:tel Montenegro official
+    last_verified: "2026-Q2"
+    research_status: verified_official
+    tourist_usable: true
+
+    positioning: >
+      Best raw GB-per-euro in Montenegro.
+      WB roaming for tourist tiers is shared home quota / fair-use — no explicit GB published.
+      First top-up bonus is critical: Mtel Tourist 20 + first top-up unlocks 10 GB explicit WB6.
+      Dedicated Data Zapadni Balkan add-ons have explicit WB GB — best for Balkans route planning.
+      Move TV included in tourist packages.
+
+    wb_roaming_model:
+      wb_roaming_supported: true
+      wb_roaming_type: shared_home_quota_fair_use
+      wb_roaming_confidence: medium
+      covered_region: [RS, BA, MK, AL, XK]
+      important: >
+        mtel states WB6 roaming via fair-use from initial package resources.
+        Exact WB fair-use threshold NOT published for tourist tiers.
+        First top-up on Tourist 20 / Super Tourist adds explicit 10 GB WB6.
+        Data Zapadni Balkan packages have dedicated WB GB — use those for route planning.
+        Data Crna Gora 1500GB has explicit WB FUP sub-quota: 9.92 GB.
+        Data Crna Gora 2GB has explicit WB FUP sub-quota: 1.33 GB.
+
+    operator_scores:
+      tourist_score: 86
+      wb_roaming_strength: 95
+      heavy_usage_score: 99
+      clarity_score: 72
+      esim_score: 88
+      multi_country_score: 94
+      value_score: 99
+
+    first_top_up_mechanic:
+      applies_to: [mtel_me_tourist_20, mtel_me_super]
+      bonus: "+500 GB domestic + 10 GB WB6 roaming"
+      note: "Activate first top-up to unlock explicit 10 GB WB6 bonus."
+
+    plans_in_db:
+      tourist:
+        - id: mtel_me_tourist_15  price_eur: 15  dur: 15d  dom: 500GB   wb: shared_fup(unquantified)
+        - id: mtel_me_tourist_20  price_eur: 20  dur: 30d  dom: 1TB     wb: shared_fup + 10GB_after_topup
+        - id: mtel_me_super       price_eur: 30  dur: 45d  dom: unlim   wb: shared_fup + 10GB_after_topup
+      data_add_ons:
+        - id: mtel_me_addon_2gb_1d      price_eur: 2    dur: 1d   dom: 2GB
+        - id: mtel_me_addon_500gb_7d    price_eur: 10   dur: 7d   dom: 500GB
+        - id: mtel_me_addon_500gb_15d   price_eur: 15   dur: 15d  dom: 500GB
+        - id: mtel_me_addon_500gb_30d   price_eur: 12   dur: 30d  dom: 500GB
+        - id: mtel_me_addon_1tb_30d     price_eur: 20   dur: 30d  dom: 1TB
+      wb_dedicated:
+        - id: mtel_me_wb_10gb_30d    price_eur: 10   dur: 30d  wb: 10GB  type: dedicated_add_on
+        - id: mtel_me_wb_15gb_30d    price_eur: 15   dur: 30d  wb: 15GB  type: dedicated_add_on
+        - id: mtel_me_wb_100gb_365d  price_eur: 40   dur: 365d wb: 100GB type: dedicated_add_on
+      domestic_with_explicit_wb_fup:
+        - id: mtel_me_dom_1500gb_30d  price_eur: 15  dur: 30d  dom: 1500GB  wb_fup: 9.92GB
+        - id: mtel_me_dom_2gb_1d      price_eur: 2   dur: 1d   dom: 2GB     wb_fup: 1.33GB
+      eu_travel:
+        - id: mtel_me_eu_3gb_3d     price_eur: 4    dur: 3d   eu_roam: 3GB
+        - id: mtel_me_eu_5gb_7d     price_eur: 8    dur: 7d   eu_roam: 5GB
+        - id: mtel_me_eu_10gb_30d   price_eur: 12   dur: 30d  eu_roam: 10GB
+        - id: mtel_me_eu_50gb_365d  price_eur: 50   dur: 365d eu_roam: 50GB
+      local_number:
+        - id: mtel_me_monthly  price_eur: 10  dur: 30d  dom: 100GB  calls: 500min+unlimited_mtel  wb: unknown
+        - id: mtel_me_weekly   price_eur: 5   dur: 7d   dom: 10GB+20GB_social  calls: 100min+5000min_mtel  wb: unknown
+
+  telekom_me:
+    name: Telekom Montenegro / Crnogorski Telekom
+    operator_id: telekom_me
+    source_url: https://telekom.me/privatni-korisnici/turist/en
+    source_name: Telekom Montenegro official
+    last_verified: "2026-Q2"
+    research_status: verified_official
+    tourist_usable: true
+
+    positioning: >
+      Strongest roaming safety UX in Montenegro.
+      Published SMS control codes to prevent unexpected roaming charges.
+      Shared home quota works in Montenegro OR WB zone — same GB pool.
+      All incoming WB calls are free.
+      Telekom Pripejd is the best calls/SMS + data tourist option.
+      MIX packages explicitly do NOT apply in roaming — Montenegro domestic only.
+
+    wb_roaming_model:
+      wb_roaming_supported: true
+      wb_roaming_type: shared_home_quota_fair_use
+      wb_roaming_confidence: high
+      covered_region: [RS, BA, MK, AL, XK]
+      incoming_calls_in_wb: free
+      outgoing_calls_from_wb: treated_as_domestic_to_cg_networks
+      overage_rate_eur_per_gb: 9.32
+      overage_rate_note: "~0.91 cent/MB after quota"
+      sms_control:
+        check_quota: "ZB DATA to 14555"
+        stop_internet: "ZB STOP INTERNET to 14555"
+        start_internet: "ZB START INTERNET to 14555"
+
+    operator_scores:
+      tourist_score: 91
+      roaming_safety_score: 98
+      value_score: 82
+      wb_roaming_score: 93
+      ux_score: 95
+      simplicity_score: 94
+
+    plans_in_db:
+      tourist_base:
+        - id: telekom_me_tourist  price_eur: 15  dur: 10d  dom: 500GB  calls: 500min  sms: 500  wb: shared_quota
+      net_internet:
+        - id: telekom_me_net1   price_eur: 0.70  dur: 1d   dom_or_wb: 2GB   type: shared_quota
+        - id: telekom_me_net7   price_eur: 4.95  dur: 7d   dom_or_wb: 5GB   type: shared_quota
+        - id: telekom_me_net15  price_eur: 6.50  dur: 15d  dom_or_wb: 8GB   type: shared_quota
+        - id: telekom_me_net30  price_eur: 9.50  dur: 30d  dom_or_wb: 12GB  type: shared_quota
+      flex_units:
+        - id: telekom_me_units_1d   price_eur: 1.20   dur: 1d   units: 500  wb: not_confirmed
+        - id: telekom_me_units_7d   price_eur: 6.00   dur: 7d   units: 500  wb: not_confirmed
+        - id: telekom_me_units_15d  price_eur: 8.50   dur: 15d  units: 500  wb: not_confirmed
+        - id: telekom_me_units_30d  price_eur: 14.90  dur: 30d  units: 500  wb: not_confirmed
+      mix_domestic_only:
+        - id: telekom_me_mix_1d   price_eur: 0.70   dur: 1d   dom: 1GB   calls: unlimited_telekom  wb: false
+        - id: telekom_me_mix_7d   price_eur: 5.50   dur: 7d   dom: 3GB   calls: unlimited+130min   wb: false
+        - id: telekom_me_mix_15d  price_eur: 7.50   dur: 15d  dom: 3GB   calls: unlimited+130min   wb: false
+        - id: telekom_me_mix_30d  price_eur: 13.95  dur: 30d  dom: 3GB   calls: unlimited+130min   wb: false
+        - note: "MIX packages explicitly do NOT apply in roaming per operator page."
+      global_roaming:
+        - id: telekom_me_surf_1d   price_eur: 4.90   dur: 1d   global: 2GB   promo_until: 2026-07-01
+        - id: telekom_me_surf_5d   price_eur: 9.90   dur: 5d   global: 4GB   promo_until: 2026-07-01
+        - id: telekom_me_surf_10d  price_eur: 17.90  dur: 10d  global: 8GB   promo_until: 2026-07-01
+        - id: telekom_me_surf_30d  price_eur: 29.90  dur: 30d  global: 20GB  promo_until: 2026-07-01
+        - note: "Hard stop after quota — no surprise bills. Promotional GB valid until 2026-07-01."
+
+---
+uncertainties:
+  - field: one_me_for_two.wb_roaming_quota_scope
+    reason: "Unclear if 8.5 GB WB is per-eSIM or shared between 2 eSIMs"
+    action: "Mark wb_roaming_confidence=medium, needs_verification=true"
+
+  - field: one_me_tourist_25.unlimited_domestic_fup
+    reason: "FUP threshold for unlimited domestic not published by One"
+    action: "Mark fair_use_policy=true, warn — do not score as truly infinite"
+
+  - field: one_me_renewal_25.unlimited_domestic_fup
+    reason: "Same as Tourist 25 — FUP threshold not published"
+    action: "Mark fair_use_policy=true"
+
+  - field: mtel_me_tourist_15.wb_roaming_gb
+    reason: "WB is shared home quota fair-use — exact WB GB NOT stated for Tourist 15"
+    action: "Do not set roaming_cap_gb — use wb_type=shared_home_quota_fair_use"
+
+  - field: mtel_me_super.unlimited_domestic_fup
+    reason: "Unlimited domestic fair-use threshold not confirmed for Super Tourist"
+    action: "Mark confidence=low, fair_use_policy=true"
+
+  - field: mtel_me_super.wb_roaming_initial
+    reason: "Initial WB is fair-use only — first top-up adds explicit 10 GB WB6"
+    action: "Do not model initial WB as 10 GB — only after first top-up"
+
+  - field: mtel_me_monthly.wb_roaming
+    reason: "WB roaming behavior for m:tel Monthly Plan not confirmed"
+    action: "Mark wb_roaming_supported=false until verified"
+
+  - field: mtel_me_weekly.wb_roaming
+    reason: "WB roaming behavior for m:tel Weekly Plan not confirmed"
+    action: "Mark wb_roaming_supported=false until verified"
+
+  - field: mtel_me_addon_*.wb_roaming
+    reason: "WB behavior for post-expiry data add-ons not explicitly confirmed"
+    action: "Mark wb=false until verified separately"
+
+  - field: telekom_me_units_*.wb_roaming
+    reason: "Units packages — WB roaming not confirmed; page states national traffic"
+    action: "Mark wb=false until verified"
+
+  - field: telekom_me_surf_*.promo_validity
+    reason: "Promotional data valid until 2026-07-01 — may have changed"
+    action: "Mark needs_verification=true, promotion_valid_until=2026-07-01"
+
+  - field: one_me_pripejd.esim_supported
+    reason: "eSIM and online purchase availability for One Pripejd not confirmed"
+    action: "Mark esim=unknown, online=unknown"
+
+  - field: telekom_me_a1_roaming_cards
+    reason: "A1 Roaming Cards shown under Telekom Serbia roaming — product relationship unclear"
+    action: "Do NOT add to plans.json until product relationship is clarified"
+
+  - field: mtel_me_super.wb_cap_was_wrong
+    reason: "Previous entry had wb_cap=8.0 — this was incorrect (fair-use, not a quota)"
+    action: "Corrected to wb_cap=null, wb_type=shared_home_quota_fair_use_plus_bonus"
+
+---
+scoring_rules:
+  wb_roaming_type_scoring:
+    included_quota:                "min(100, wb_gb * 8) * confidence_multiplier"
+    dedicated_add_on:              "min(100, wb_gb * 8) * confidence_multiplier"
+    fair_use_quota_from_domestic:  "min(100, wb_gb * 8) * 1.0  # explicit sub-quota"
+    shared_home_quota_fair_use:    "28 * confidence_multiplier  # unquantified"
+    shared_home_quota_fair_use_plus_bonus: "35 * confidence_multiplier  # bonus available"
+    roam_like_home_fair_use:       "22 * confidence_multiplier  # least reliable"
+
+  confidence_multipliers:
+    high: 1.0
+    medium: 0.75
+    low: 0.5
+
+  unlimited_domestic:
+    no_fair_use:  "score as 50 GB equivalent"
+    with_fair_use: "score as 40 GB equivalent, apply -5 point penalty"
+
+  telekom_roaming_safety_boost:
+    applies_to: [telekom_me_tourist, telekom_me_net1, telekom_me_net7, telekom_me_net15, telekom_me_net30]
+    reason: "Published SMS control codes and explicit overage rate = highest transparency"
+    boost: "+15 clarity_score"
+
+  mtel_first_top_up_note:
+    applies_to: [mtel_me_tourist_20, mtel_me_super]
+    note: >
+      First top-up unlocks 10 GB WB6. The recommendation engine should surface this
+      as a 'savings tip' — not automatically add 10 GB to initial score.
+
+---
+scoring_results:
+  generated: "2026-Q2"
+
+  best_balanced_30d:
+    - rank: 1
+      plan: "One Tourist 20"
+      price_eur: 20
+      dom_gb: 1000
+      wb_gb: 11.0
+      wb_type: included_quota
+      score: 96.5
+      why: "Strong domestic + explicit 11 GB WB + eSIM + online. Single activation."
+
+    - rank: 2
+      plan: "m:tel Data Crna Gora 1500GB"
+      price_eur: 15
+      dom_gb: 1500
+      wb_gb: 9.92
+      wb_type: fair_use_quota_from_domestic
+      score: 94.5
+      why: "Best domestic GB/EUR. Explicit WB sub-quota 9.92 GB. Very strong value."
+
+    - rank: 3
+      plan: "One Tourist 25"
+      price_eur: 25
+      dom_gb: "unlimited (FUP)"
+      wb_gb: 13.5
+      wb_type: included_quota
+      score: 93.9
+      why: "Highest explicit WB quota in 30d tier. FUP uncertainty is only caveat."
+
+  best_balkans_route:
+    - rank: 1
+      plan: "m:tel Data Zapadni Balkan 100GB"
+      price_eur: 40
+      wb_gb: 100
+      wb_type: dedicated_add_on
+      dur: 365d
+      score: 99.9
+      why: "Best WB-dedicated product by far. 100 GB for 365 days. Usable in ME too."
+
+    - rank: 2
+      plan: "One Tourist 25"
+      price_eur: 25
+      wb_gb: 13.5
+      wb_type: included_quota
+      score: 97.4
+      why: "Highest One WB quota + unlimited domestic + eSIM."
+
+    - rank: 3
+      plan: "m:tel Data Zapadni Balkan 15GB"
+      price_eur: 15
+      wb_gb: 15
+      wb_type: dedicated_add_on
+      score: 94.8
+      why: "Best-value dedicated WB add-on for 30-day Balkans trips."
+
+  best_calls_sms:
+    - rank: 1
+      plan: "Telekom Pripejd"
+      price_eur: 15
+      dom_gb: 500
+      calls: "500 min Telekom + 500 min other"
+      sms: "500 all CG"
+      local_number: true
+      score: 61.7
+      why: "Best all-in tourist plan with calls, SMS, data, and local number."
+
+    - rank: 2
+      plan: "One Pripejd"
+      price_eur: 15
+      dom_gb: 500
+      calls: "500 in-network + 500 other"
+      score: 56.7
+      why: "Voice + data with large domestic quota. WB via RLAH (unquantified)."
+
+    - rank: 3
+      plan: "m:tel Monthly Plan"
+      price_eur: 10
+      dom_gb: 100
+      calls: "500 min all + unlimited m:tel"
+      sms: "500 all"
+      score: 52.8
+      why: "Cheapest calls/SMS + data bundle. WB not confirmed."
+
+  best_cheap_usable:
+    - plan: "Telekom NET 1"
+      price_eur: 0.70
+      dom_or_wb_gb: 2
+      dur: 1d
+      why: "Cheapest usable internet — Montenegro or WB zone."
+
+    - plan: "One Tourist Daily 1GB"
+      price_eur: 1.99
+      dom_gb: 1
+      wb_gb: 1.5
+      dur: 1d
+      why: "Cheapest One add-on with explicit WB — WB quota actually LARGER than domestic."
+
+    - plan: "m:tel Data Crna Gora 2GB"
+      price_eur: 2.0
+      dom_gb: 2
+      wb_fup: 1.33
+      dur: 1d
+      why: "Best 1-day explicit-WB option with published WB quota."
+
+  best_esim_only:
+    - plan: "One Tourist 20"
+      score: 97.9
+      why: "Best eSIM + WB + domestic combination."
+    - plan: "m:tel Data Crna Gora 1500GB"
+      score: 96.7
+      why: "eSIM + massive domestic + explicit WB sub-quota."
+
+  best_convenience_activate_once:
+    - plan: "One Tourist 20 (30d, activate once)"
+      price_eur: 20
+      wb_gb: 11.0
+      renewal: "One Tourist 20 Renewal (€16.99) if extending"
+      score: 97.6
+
+    - plan: "m:tel Data Zapadni Balkan 100GB (365d, activate once)"
+      price_eur: 40
+      wb_gb: 100
+      dur: 365d
+      score: 100.0
+      note: "Best long-stay or multi-trip option — one activation for a year."
+
+---
+savings_vs_convenience:
+  thirty_day_strategies:
+    - label: "Convenience — One Tourist 20"
+      cost_eur: 20
+      wb_gb: 11.0
+      activations: 1
+      tradeoffs: "Single activation. No renewal friction. Best mid-range balance."
+
+    - label: "Savings — 2× One Tourist 15"
+      cost_eur: 30
+      wb_gb: 17.0
+      activations: 2
+      tradeoffs: "More WB GB (17 vs 11). Requires manual renewal after 15 days."
+
+    - label: "Savings — One Tourist 15 + One Tourist 15 Renewal"
+      cost_eur: 26.99
+      wb_gb: 15.0
+      activations: 2
+      tradeoffs: "€3 cheaper than 2× Tourist 15. 15 GB WB vs 11 GB. One renewal."
+
+    - label: "Value — m:tel Tourist 20 (no explicit WB)"
+      cost_eur: 20
+      wb_gb: "unquantified (FUP)"
+      activations: 1
+      tradeoffs: "Same price as One Tourist 20 but WB is uncertain fair-use. Activate first top-up for +10 GB WB."
+
+    - label: "Best WB — m:tel Data Zapadni Balkan 15GB"
+      cost_eur: 15
+      wb_gb: 15.0
+      activations: 1
+      tradeoffs: "Best dedicated WB per-GB value (€1/GB). Add-on only — needs base plan."
+
+    - label: "Local number — Telekom Pripejd + NET 15"
+      cost_eur: 21.50
+      wb_gb: "shared quota"
+      activations: 2
+      tradeoffs: "Only option with calls + SMS + data. WB uses shared quota — overage risk."
+
+  fifteen_day_strategies:
+    - label: "Convenience — One Tourist 15"
+      cost_eur: 15
+      wb_gb: 8.5
+      activations: 1
+      tradeoffs: "Standard. Clean single activation."
+
+    - label: "Cheap WB — 3× One Tourist Daily 1GB"
+      cost_eur: 5.97
+      wb_gb: 4.5
+      activations: 3
+      tradeoffs: "Very cheap but only 4.5 GB WB and 3 manual activations needed."
+
+    - label: "More WB — One Tourist 5d 100GB × 3"
+      cost_eur: 17.97
+      wb_gb: 10.5
+      activations: 3
+      tradeoffs: "More WB than One Tourist 15 (10.5 vs 8.5 GB). €2.97 more. 3 activations."
+
+    - label: "Returning user — One Tourist 15 Renewal"
+      cost_eur: 11.99
+      wb_gb: 6.5
+      activations: 1
+      tradeoffs: "€3 cheaper than base Tourist 15. Only for existing subscribers."
+
+---
+travel_esim:
+  provider: Airalo
+  source_url: https://www.airalo.com/montenegro-esim
+  source_name: Airalo official
+  last_verified: "2026-Q2"
+  data_confidence: provider_listed
+  currency: USD
+  usd_eur_rate: 0.92
+  note: >
+    Airalo plans for Montenegro are data-only and serve Montenegro domestic traffic.
+    They do NOT include Western Balkans roaming — separate SIM or plan needed for WB routes.
+    Compare against One/m:tel/Telekom tourist plans for WB travel.

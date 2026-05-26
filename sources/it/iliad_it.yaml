@@ -1,0 +1,150 @@
+meta:
+  country_code: IT
+  country_name: Italy
+  last_updated: "2026-Q2"
+  tier: A
+  market_note: >
+    Italy is a high-priority destination with a structural research question:
+    Codice Fiscale (Italian tax code) may be required by some operators.
+    Iliad accepts foreign passports at stores — confirmed.
+    Online activation for tourists is NOT confirmed for any Italian operator.
+    CRITICAL DATA NOTE: EU roaming caps are much lower than domestic data.
+    Iliad Giga 180 = 180 GB domestic / 6 GB EU roaming.
+    Always document both separately — never use "EU roaming included" alone.
+
+operators:
+
+  iliad_it:
+    operator_id: iliad_it
+    name: Iliad Italy
+    source_url: https://www.iliad.it/tariffe/
+    source_name: Iliad Italy official
+    last_verified: "2026-Q2"
+    verified_by: manual_partial
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: partial          # store required, CF uncertain
+
+    confirmed_data:
+      foreign_passport_accepted: true
+      store_required: true
+      activation_before_arrival: false
+      local_number: true
+      auto_renew: true
+      airport_stores: "Rome FCO, Milan MXP confirmed"
+
+    unconfirmed_blocker:
+      codice_fiscale_required: uncertain
+      codice_fiscale_note: >
+        Codice Fiscale (CF) is an Italian tax ID.
+        CF can be obtained online in ~5 min at:
+        https://telematici.agenziaentrate.gov.it
+        BUT: it is unclear if Iliad REQUIRES it for prepaid SIM.
+        Some reports say passport only is enough.
+        This is the key question to verify.
+      esim_for_tourists: unknown
+
+    plans:
+      - raw_title: "Iliad Giga 180"
+        raw_price_eur: 9.99
+        raw_domestic_data_gb: 180
+        raw_eu_roaming_gb: 6         # confirmed — notably low vs domestic
+        raw_duration_days: 30
+        raw_calls_sms: true
+        raw_esim: unknown
+        raw_online_purchase: false
+        raw_store_required: true
+        raw_activation_before_arrival: false
+        raw_local_number: true
+        raw_foreign_passport_accepted: true
+        raw_codice_fiscale_uncertain: true
+        data_confidence: needs_review
+        plan_id_in_db: iliad_it_giga_180
+        confidence_note: >
+          Price €9.99 confirmed. Domestic 180 GB confirmed. EU 6 GB confirmed.
+          Foreign passport confirmed. Codice Fiscale requirement NOT confirmed.
+
+      - raw_title: "Iliad Giga 120"
+        raw_price_eur: 7.99
+        raw_domestic_data_gb: 120
+        raw_eu_roaming_gb: 6         # assumed same as Giga 180 — needs verification
+        raw_duration_days: 30
+        raw_calls_sms: true
+        raw_esim: unknown
+        raw_online_purchase: false
+        raw_store_required: true
+        raw_activation_before_arrival: false
+        raw_local_number: true
+        raw_foreign_passport_accepted: true
+        raw_codice_fiscale_uncertain: true
+        data_confidence: needs_review
+        plan_id_in_db: null          # not in DB until Codice Fiscale resolved
+        confidence_note: "EU roaming 6 GB assumed same as Giga 180 — verify."
+
+    roaming_exclusions: [CH, UK, RS, ME, AL, BA, MK]
+
+  tim_it:
+    operator_id: tim_it
+    name: TIM (Telecom Italia)
+    source_url: https://www.tim.it/privati/mobile/sim-prepagata
+    source_name: TIM official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown           # SEPARATE from domestic — document explicitly
+      esim_supported: unknown
+      codice_fiscale_required: unknown # likely yes for TIM
+      foreign_passport_ok: unknown
+      remote_activation: unknown
+      calls_sms: unknown
+    notes: >
+      Italy's largest operator by coverage.
+      Codice Fiscale likely required based on reports.
+      Store activation only — no confirmed tourist online path.
+
+  vodafone_it:
+    operator_id: vodafone_it
+    name: Vodafone Italy
+    source_url: https://www.vodafone.it/portal/Privati/Offerte/Mobile/Prepagato
+    source_name: Vodafone Italy official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown
+      esim_supported: unknown
+      codice_fiscale_required: unknown
+      foreign_passport_ok: unknown
+      remote_activation: unknown
+      calls_sms: unknown
+    notes: "Major operator. Codice Fiscale requirement unclear for prepaid."
+
+  windtre_it:
+    operator_id: windtre_it
+    name: WINDTRE
+    source_url: https://www.windtre.it/ricaricabile/
+    source_name: WINDTRE official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown
+      esim_supported: unknown
+      codice_fiscale_required: unknown
+      foreign_passport_ok: unknown
+      remote_activation: unknown
+      calls_sms: unknown
+    notes: "Wind and Tre merged. Competitive prepaid. Tourist path not documented."

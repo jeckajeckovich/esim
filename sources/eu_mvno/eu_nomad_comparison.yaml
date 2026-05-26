@@ -1,0 +1,151 @@
+meta:
+  type: research_comparison
+  title: "EU Cross-Border Nomad SIM Comparison"
+  last_updated: "2026-Q2"
+  author: manual_research
+  notes: >
+    Comparative research on EU SIM options for multi-country travel without residency.
+    This file drives the EU nomad recommendation logic.
+    TRUST LEVEL: mixed — some entries verified, some community-reported.
+    Do NOT surface entries marked confidence=needs_review in UI without a caveat.
+
+options:
+  - name: "Orange Flex Poland"
+    operator_id: orange_flex_pl
+    country: PL
+    price_eur_per_month: 8.00
+    eu_roaming_gb: 12
+    esim: true
+    foreign_passport: confirmed
+    residency_required: false
+    online_activation: true
+    local_number: true
+    fup_risk: low
+    recharge: easy_app
+    long_term_viability: high
+    confidence: verified_manual
+    verdict: >
+      Currently the strongest documented EU nomad option without residency.
+      €8/month, 12 GB EU roaming, foreign passport accepted, app-only.
+      Polish number — not local for each country.
+    limitations:
+      - "Polish number — not local German/French/Italian"
+      - "~12 GB EU roaming cap — not for very heavy users"
+      - "App-only — requires smartphone"
+
+  - name: "HoT Austria"
+    operator_id: hot_at
+    country: AT
+    price_eur_per_month: 9.00
+    eu_roaming_gb: 8
+    esim: true
+    foreign_passport: confirmed
+    residency_required: false
+    online_activation: true
+    local_number: true
+    fup_risk: medium
+    recharge: online
+    long_term_viability: medium
+    confidence: verified_manual
+    verdict: >
+      Strong Austrian option. Foreign passport confirmed, online activation, eSIM.
+      EU roaming lower than Orange Flex (8 GB vs 12 GB) at similar price.
+      Good for Austria-centric travel; less optimized for pan-EU use.
+    limitations:
+      - "Austrian number — not local elsewhere"
+      - "8 GB EU roaming — moderate"
+      - "FUP enforcement for long-term EU roaming not well documented"
+
+  - name: "Free Mobile France"
+    operator_id: free_mobile_fr
+    country: FR
+    price_eur_per_month: 9.99
+    eu_roaming_gb: 25
+    esim: true
+    foreign_passport: reported_not_confirmed
+    residency_required: unknown
+    online_activation: partial
+    local_number: true
+    fup_risk: medium
+    recharge: online
+    long_term_viability: high_if_accessible
+    confidence: needs_review
+    verdict: >
+      Attractive on paper: 25 GB EU roaming at €9.99/month.
+      HOWEVER: French address requirement is a real blocker for most tourists.
+      Some nomads report success with foreign payment methods and hotel addresses.
+      This needs verification before we can recommend it confidently.
+    limitations:
+      - "French address likely required — NOT confirmed tourist-accessible"
+      - "French bank card or specific payment methods required"
+      - "25 GB EU roaming FUP terms not fully transparent"
+      - "DO NOT recommend until tourist activation is verified"
+
+  - name: "Iliad Italy"
+    operator_id: iliad_it
+    country: IT
+    price_eur_per_month: 9.99
+    eu_roaming_gb: 6
+    esim: unknown
+    foreign_passport: confirmed
+    residency_required: false
+    online_activation: false
+    local_number: true
+    fup_risk: low
+    recharge: online
+    long_term_viability: medium
+    confidence: needs_review
+    verdict: >
+      Foreign passport confirmed. Requires store visit for activation.
+      Codice Fiscale requirement is uncertain — may block some tourists.
+      EU roaming only 6 GB — lowest among compared options.
+      Not recommended as primary EU nomad strategy until verified.
+    limitations:
+      - "Store visit required — no before-arrival activation"
+      - "Codice Fiscale requirement uncertain for non-residents"
+      - "Only 6 GB EU roaming — weakest roaming allowance"
+      - "eSIM availability for tourists unconfirmed"
+
+  - name: "Lycamobile EU"
+    operator_id: lycamobile_eu
+    country: MULTIPLE
+    price_eur_per_month: 7.00
+    eu_roaming_gb: 5
+    esim: partial
+    foreign_passport: confirmed
+    residency_required: false
+    online_activation: true
+    local_number: true
+    fup_risk: high
+    recharge: complex
+    long_term_viability: low
+    confidence: needs_review
+    verdict: >
+      Lycamobile operates across many EU countries as an MVNO.
+      Foreign passports confirmed. BUT: known for complex recharge,
+      unclear FUP enforcement, and customer service issues.
+      EU roaming only 5 GB. Not recommended as primary strategy.
+      May suit: short trips where a local number from a specific country is needed.
+    limitations:
+      - "Complex recharge process — multiple top-up methods"
+      - "High FUP risk — roaming throttling reported frequently"
+      - "Only 5 GB EU roaming"
+      - "Customer service issues widely reported"
+      - "Country-specific Lycamobile accounts — not seamlessly pan-EU"
+
+recommendation_ranking:
+  eu_nomad_best:
+    rank_1: orange_flex_pl     # Best overall: price, roaming, convenience, confidence
+    rank_2: hot_at             # Good second option: verified, online, eSIM
+    rank_3: free_mobile_fr     # Best roaming IF accessible — needs verification
+    unranked:
+      - iliad_it               # Store-only, Codice Fiscale risk
+      - lycamobile_eu          # FUP issues, complexity
+
+  balkans_nomad_best:
+    note: >
+      For Balkans travel, local SIMs are usually better value.
+      One Montenegro Tourist 20/25 offers the best regional coverage.
+      Serbia Yettel covers Serbia well.
+      Travel eSIM from Airalo suitable for very short stays.
+      EU nomad SIMs (Orange Flex etc.) do NOT cover Western Balkans roaming.

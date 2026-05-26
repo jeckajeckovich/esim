@@ -1,0 +1,669 @@
+# SimRoam — EU Telecom Research Matrix
+# =======================================
+# Purpose: structured tracker for manual verification of prepaid/eSIM
+#          options for tourists and foreigners without local residency.
+#
+# How to use:
+#   1. Pick an operator from the priority_queue below
+#   2. Visit the source_url
+#   3. Fill in the unknown fields
+#   4. If verified: update operators.json + add/update plan in plans.json
+#   5. Mark research_status: verified_official or verified_manual
+#   6. Set do_not_surface: false in the relevant source YAML
+#
+# Field key:
+#   true       = confirmed yes
+#   false      = confirmed no
+#   unknown    = not yet verified — do NOT assume
+#   "text"     = specific note
+#
+# Confidence levels:
+#   verified_official   — directly from operator's official page
+#   verified_manual     — cross-checked from official page manually
+#   needs_verification  — some data available, key fields unconfirmed
+#   seed                — operator listed, no plan data yet
+#
+# CRITICAL RULE: domestic_data_gb ≠ eu_roaming_gb
+#   Always document both separately.
+#   "EU roaming included" alone is NOT enough.
+
+schema_version: "2026-Q2"
+
+---
+priority_queue:
+  tier_1_verify_now:
+    - operator: free_mobile_fr
+      why: "Best EU roaming (25 GB) in France. Blocker: French address requirement for tourists unverified."
+      key_question: "Can a non-EU tourist activate with foreign passport + no French address?"
+
+    - operator: digi_es
+      why: "Cheapest data in Spain. Tourism-heavy country with no verified option."
+      key_question: "Is NIE/address required, or just passport? Is eSIM available?"
+
+    - operator: iliad_it
+      why: "Price and foreign passport confirmed. Blocker: Codice Fiscale uncertainty."
+      key_question: "Is Codice Fiscale required for prepaid? Can it be obtained online?"
+
+    - operator: lyca_de
+      why: "Only unverified German option. May fill price gap below Vodafone."
+      key_question: "Current plan prices, EU roaming GB, tourist activation."
+
+  tier_2_verify_next:
+    - orange_fr
+    - bouygues_fr
+    - vodafone_es
+    - tim_it
+    - play_pl
+    - plus_pl
+    - tmobile_pl
+
+  tier_3_lower_priority:
+    - sfr_fr
+    - orange_es
+    - movistar_es
+    - vodafone_it
+    - windtre_it
+
+---
+# ══════════════════════════════════════════
+# GERMANY
+# ══════════════════════════════════════════
+
+de:
+  country_name: Germany
+  market_context: >
+    Germany legally requires identity verification for all prepaid SIMs.
+    Online VideoIdent is accepted by Vodafone and O2 — hotel address ok.
+    Telekom requires a permanent German address (tourist blocker).
+    EU roaming is a SEPARATE cap from domestic data — always different.
+
+  operators:
+
+    vodafone_de:
+      name: Vodafone Germany — CallYa
+      operator_id: vodafone_de
+      source_url: https://www.vodafone.de/hilfe/callya.html
+      research_status: verified_official
+      last_verified: "2026-Q2"
+      tourist_usable: true
+      plans_verified:
+        - title: "CallYa Start"
+          price_eur: 4.99
+          domestic_data_gb: 2
+          eu_roaming_gb: 2
+          duration_days: 28
+          calls_sms: false          # data-only plan
+          esim: true
+          remote_activation: true
+          passport_only: true       # no German address needed
+          kyc_type: "VideoIdent online — hotel address accepted"
+          plan_id_in_db: vodafone_de_callya_s
+        - title: "CallYa Allnet Flat S"
+          price_eur: 9.99
+          domestic_data_gb: 25
+          eu_roaming_gb: 25
+          duration_days: 28
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          passport_only: true
+          plan_id_in_db: vodafone_de_callya_allnet_s
+        - title: "CallYa Allnet Flat M"
+          price_eur: 14.99
+          domestic_data_gb: 50
+          eu_roaming_gb: 50
+          duration_days: 28
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          passport_only: true
+          plan_id_in_db: vodafone_de_callya_m
+        - title: "CallYa Allnet Flat L"
+          price_eur: 19.99
+          domestic_data_gb: 100
+          eu_roaming_gb: 100
+          duration_days: 28
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          passport_only: true
+          plan_id_in_db: vodafone_de_callya_l
+      roaming_exclusions: [CH, UK, RS, ME, AL, BA, MK]
+      notes: "EU roaming cap = domestic cap per plan. Auto-renew on Allnet Flat tiers."
+
+    o2_de:
+      name: O2 Germany — Prepaid
+      operator_id: o2_de
+      source_url: https://www.o2online.de/mobilfunk/prepaid/
+      research_status: verified_official
+      last_verified: "2026-Q2"
+      tourist_usable: true
+      plans_verified:
+        - title: "O2 Prepaid M"
+          price_eur: 9.99
+          domestic_data_gb: 20
+          eu_roaming_gb: 20
+          duration_days: 30
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          passport_only: true
+          throttled_after_cap: true
+          plan_id_in_db: o2_de_prepaid_m
+        - title: "O2 Prepaid L"
+          price_eur: 14.99
+          domestic_data_gb: 40
+          eu_roaming_gb: 40
+          duration_days: 30
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          passport_only: true
+          plan_id_in_db: o2_de_prepaid_l
+        - title: "O2 Prepaid XL"
+          price_eur: 19.99
+          domestic_data_gb: 80
+          eu_roaming_gb: 80
+          duration_days: 30
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          passport_only: true
+          plan_id_in_db: o2_de_prepaid_xl
+      roaming_exclusions: [CH, UK, RS, ME, AL, BA, MK]
+      notes: "Speed throttled after data cap. EU roaming cap = domestic cap."
+
+    telekom_de:
+      name: Telekom Germany — MagentaMobil Prepaid
+      operator_id: telekom_de
+      source_url: https://www.telekom.de/prepaid
+      research_status: verified_official
+      last_verified: "2026-Q2"
+      tourist_usable: false         # German address required
+      tourist_blocker: "German permanent address required for registration"
+      plans_verified:
+        - title: "MagentaMobil Prepaid M"
+          price_eur: 9.95
+          domestic_data_gb: 33        # approximate (~33 GB)
+          eu_roaming_gb: 33
+          duration_days: 28
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          german_address_required: true
+          plan_id_in_db: telekom_de_prepaid_m
+        - title: "MagentaMobil Prepaid L"
+          price_eur: 14.95
+          domestic_data_gb: 40
+          eu_roaming_gb: 40
+          duration_days: 28
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          german_address_required: true
+          plan_id_in_db: telekom_de_prepaid_l
+        - title: "MagentaMobil Prepaid XL"
+          price_eur: 19.95
+          domestic_data_gb: 80
+          eu_roaming_gb: 80
+          duration_days: 28
+          calls_sms: true
+          esim: true
+          remote_activation: true
+          german_address_required: true
+          plan_id_in_db: telekom_de_prepaid_xl
+      roaming_exclusions: [CH, UK, RS, ME, AL, BA, MK]
+      notes: >
+        Best network quality (T-Mobile globally). Suitable for expats with German address.
+        Not for short-stay tourists.
+
+    lyca_de:
+      name: Lyca Mobile Germany
+      operator_id: lyca_de
+      source_url: https://www.lycamobile.de/
+      research_status: needs_verification
+      last_verified: null
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown         # KEY — separate from domestic
+        esim_supported: unknown
+        remote_activation: unknown
+        passport_only: unknown
+        german_address_required: unknown
+        calls_sms: unknown
+      research_notes: >
+        Lyca is an international MVNO with good track record in other EU markets.
+        May offer no-address prepaid for tourists. Needs manual check.
+      verification_url: https://www.lycamobile.de/en/plans/
+
+---
+# ══════════════════════════════════════════
+# POLAND
+# ══════════════════════════════════════════
+
+pl:
+  country_name: Poland
+  market_context: >
+    Orange Flex is the standout EU nomad option — verified.
+    Other operators (Play, Plus, T-Mobile PL) have prepaid
+    but their EU roaming GB caps and tourist activation are unverified.
+
+  operators:
+
+    orange_flex_pl:
+      name: Orange Flex Poland
+      operator_id: orange_flex_pl
+      source_url: https://flex.orange.pl/en/flex-for-you
+      research_status: verified_manual
+      last_verified: "2026-Q2"
+      tourist_usable: true
+      plans_verified:
+        - title: "Orange Flex Basic"
+          price_eur: 8.24            # 35 PLN / 4.25 rate — approximate
+          price_pln: 35
+          domestic_data_gb: 75
+          eu_roaming_gb: 12.03       # spec-confirmed
+          duration_days: 30
+          calls_sms: true            # real Polish number
+          esim: true
+          app_only: true
+          remote_activation: true
+          activation_before_arrival: true
+          foreign_passport_ok: true
+          polish_address_required: false
+          eu_residency_required: false
+          plan_id_in_db: orange_flex_pl_eu
+      roaming_exclusions: [CH, UK, RS, ME, AL, BA, MK]
+      notes: >
+        Best EU nomad setup currently documented. App-only activation.
+        Polish number — not a local number for each destination country.
+        EU roaming capped at 12.03 GB/month.
+
+    play_pl:
+      name: Play Poland
+      operator_id: play_pl
+      source_url: https://www.play.pl/oferta/karty-sim/prepaid/
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown         # KEY — may differ significantly from domestic
+        esim_supported: unknown
+        remote_activation: unknown
+        passport_only: unknown
+        calls_sms: unknown
+      notes: "Play merged with T-Mobile PL. Market leader. Tourist activation unknown."
+
+    plus_pl:
+      name: Plus Poland
+      operator_id: plus_pl
+      source_url: https://www.plus.pl/oferty/karty-sim/prepaid/
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        remote_activation: unknown
+        passport_only: unknown
+
+    tmobile_pl:
+      name: T-Mobile Poland
+      operator_id: tmobile_pl
+      source_url: https://www.t-mobile.pl/oferty/karty-sim/prepaid/
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        remote_activation: unknown
+        passport_only: unknown
+      notes: "T-Mobile PL absorbed Play. May share network. Tourist path unknown."
+
+---
+# ══════════════════════════════════════════
+# FRANCE
+# ══════════════════════════════════════════
+
+fr:
+  country_name: France
+  market_context: >
+    France has technically excellent prepaid plans (Free Mobile especially)
+    but a structural tourist blocker: French address or French bank card
+    typically required for online activation.
+    This is NOT confirmed for all operators — it is the key research question.
+    Until the address requirement is clarified, France should not be promoted
+    as a tourist SIM destination.
+
+  operators:
+
+    free_mobile_fr:
+      name: Free Mobile France
+      operator_id: free_mobile_fr
+      source_url: https://mobile.free.fr/forfaits/
+      research_status: needs_verification
+      last_verified: "2026-Q2"
+      tourist_usable: unknown        # CRITICAL OPEN QUESTION
+      plans_partially_known:
+        - title: "Forfait 5G"
+          price_eur: 9.99
+          domestic_data_gb: 300
+          eu_roaming_gb: 25          # confirmed from official page
+          eu_roaming_fup: "FUP applies — exact threshold not published clearly"
+          duration_days: 30
+          calls_sms: true
+          esim: true
+          plan_id_in_db: free_mobile_fr_forfait_5g
+          db_confidence: needs_review
+      confirmed_fields:
+        price_eur: 9.99
+        eu_roaming_gb: 25
+        esim: true
+        local_number: true
+        renewable: true
+      unconfirmed_fields:
+        french_address_required: "reported yes — but tourist workarounds reported by community"
+        foreign_passport_ok: "reported yes — not officially documented"
+        french_bank_card_required: "uncertain — some report international cards work"
+        activation_before_arrival: unknown
+      key_research_question: >
+        Can a tourist without French address or IBAN activate with:
+        - foreign passport (e.g. Serbian, Russian, American)
+        - international Mastercard/Visa
+        - hotel address or no address
+        This is the single blocker. If YES → upgrade to verified_manual.
+        If NO → mark tourist_usable: false and add clear warning.
+      verification_method: >
+        1. Visit https://mobile.free.fr/forfaits/
+        2. Begin subscription flow
+        3. Check what address/payment fields are required
+        4. Try completing with foreign card
+        Alternatively: check r/expats, r/france, nomad forums for recent reports.
+      roaming_exclusions: [CH, UK, RS, ME, AL, BA, MK]
+
+    orange_fr:
+      name: Orange France
+      operator_id: orange_fr
+      source_url: https://boutique.orange.fr/mobile/offres-mobiles/forfaits-prepaye
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown         # KEY — document separately
+        esim_supported: unknown
+        remote_activation: unknown
+        french_address_required: unknown
+        foreign_passport_ok: unknown
+        calls_sms: unknown
+      notes: "Major operator. May have similar address blocker to Free Mobile."
+
+    bouygues_fr:
+      name: Bouygues Telecom
+      operator_id: bouygues_fr
+      source_url: https://www.bouyguestelecom.fr/offres-mobiles/prepaye
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        french_address_required: unknown
+        foreign_passport_ok: unknown
+
+    sfr_fr:
+      name: SFR
+      operator_id: sfr_fr
+      source_url: https://www.sfr.fr/offre-mobile/forfait-prepaye/
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        french_address_required: unknown
+        foreign_passport_ok: unknown
+
+---
+# ══════════════════════════════════════════
+# SPAIN
+# ══════════════════════════════════════════
+
+es:
+  country_name: Spain
+  market_context: >
+    Spain has a competitive prepaid market with genuine tourist potential.
+    Passport-only registration is generally possible — NIE (Spanish ID)
+    is NOT required for prepaid. This needs per-operator confirmation.
+    DIGI Spain is the price leader (Romanian-owned MVNO on Movistar network).
+    No Spanish operator currently has plan data in plans.json.
+    DO NOT add plans until price + EU roaming GB is confirmed from official source.
+
+  operators:
+
+    digi_es:
+      name: DIGI Spain
+      operator_id: digi_es
+      source_url: https://www.digimobil.es/es/tarifas
+      research_status: needs_verification
+      tourist_usable: unknown
+      known_context: >
+        DIGI is a Romanian MVNO operating on Movistar's network.
+        Known for very low prices (often cheapest data in Spain).
+        Widely used by Eastern European expats — suggests passport registration likely works.
+        But no official tourist-specific documentation found.
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown         # critical — document separately from domestic
+        esim_supported: unknown
+        remote_activation: unknown
+        nie_or_passport_only: unknown  # NIE = Spanish ID — is it required?
+        spanish_address_required: unknown
+        calls_sms: unknown
+      verification_url: https://www.digimobil.es/es/tarifas
+      notes: >
+        High-priority verification. If tourist-accessible and no NIE required:
+        could be the best-value Spain option.
+
+    vodafone_es:
+      name: Vodafone Spain Prepago
+      operator_id: vodafone_es
+      source_url: https://www.vodafone.es/tienda/particulares/es/prepago/
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        nie_or_passport_only: unknown
+        spanish_address_required: unknown
+        calls_sms: unknown
+      notes: "Major operator. Passport registration reportedly possible — unconfirmed."
+
+    orange_es:
+      name: Orange Spain Prepago
+      operator_id: orange_es
+      source_url: https://www.orange.es/movil/tarifas-prepago/
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        nie_or_passport_only: unknown
+        spanish_address_required: unknown
+
+    movistar_es:
+      name: Movistar Prepago
+      operator_id: movistar_es
+      source_url: https://www.movistar.es/particulares/movil/tarifas/
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        nie_or_passport_only: unknown
+      notes: "Telefonica brand. Full coverage. Tourist registration method unknown."
+
+---
+# ══════════════════════════════════════════
+# ITALY
+# ══════════════════════════════════════════
+
+it:
+  country_name: Italy
+  market_context: >
+    Italy is a high-priority tourist destination with a structural barrier:
+    Codice Fiscale (Italian tax ID) may be required by some operators.
+    Iliad is the exception — foreign passport accepted at stores.
+    Online activation for tourists is NOT confirmed for any Italian operator.
+    EU roaming caps in Italy are notably LOW relative to domestic data:
+    Iliad gives 180 GB domestic but only 6 GB EU roaming.
+    Always document these separately.
+
+  operators:
+
+    iliad_it:
+      name: Iliad Italy
+      operator_id: iliad_it
+      source_url: https://www.iliad.it/tariffe/
+      research_status: needs_verification
+      last_verified: "2026-Q2"
+      tourist_usable: partial        # store required, CF uncertain
+      plans_partially_known:
+        - title: "Giga 180"
+          price_eur: 9.99
+          domestic_data_gb: 180
+          eu_roaming_gb: 6           # confirmed — notably low
+          duration_days: 30
+          calls_sms: true
+          esim: unknown              # eSIM exists but tourist path unclear
+          store_required: true
+          activation_before_arrival: false
+          foreign_passport_accepted: true   # confirmed
+          codice_fiscale_required: uncertain
+          plan_id_in_db: iliad_it_giga_180
+          db_confidence: needs_review
+        - title: "Giga 120"
+          price_eur: 7.99
+          domestic_data_gb: 120
+          eu_roaming_gb: 6
+          duration_days: 30
+          store_required: true
+          foreign_passport_accepted: true
+          codice_fiscale_required: uncertain
+          plan_id_in_db: null        # not yet in DB — add after CF question resolved
+      confirmed_fields:
+        foreign_passport_accepted: true
+        store_required: true
+        eu_roaming_gb_giga180: 6
+        price_eur_giga180: 9.99
+        local_number: true
+      key_research_question: >
+        Is Codice Fiscale required for Iliad Giga 180 prepaid?
+        Options:
+        A) Not required for prepaid — just passport → tourist_usable: yes
+        B) Required but obtainable online in 5 min → tourist_usable: partial (extra step)
+        C) Required and impractical for tourists → tourist_usable: no
+        CF can be obtained at: https://telematici.agenziaentrate.gov.it
+      roaming_exclusions: [CH, UK, RS, ME, AL, BA, MK]
+      notes: "Airport stores in Rome (FCO), Milan (MXP) confirmed. 6 GB EU roaming is low."
+
+    tim_it:
+      name: TIM (Telecom Italia)
+      operator_id: tim_it
+      source_url: https://www.tim.it/privati/mobile/sim-prepagata
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown         # document SEPARATELY — likely much less than domestic
+        esim_supported: unknown
+        codice_fiscale_required: unknown
+        foreign_passport_ok: unknown
+        remote_activation: unknown
+        calls_sms: unknown
+      notes: "Italy's largest operator by network coverage. Codice Fiscale likely required."
+
+    vodafone_it:
+      name: Vodafone Italy
+      operator_id: vodafone_it
+      source_url: https://www.vodafone.it/portal/Privati/Offerte/Mobile/Prepagato
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        codice_fiscale_required: unknown
+        foreign_passport_ok: unknown
+        remote_activation: unknown
+      notes: "Major operator. Codice Fiscale status unclear for prepaid."
+
+    windtre_it:
+      name: WINDTRE
+      operator_id: windtre_it
+      source_url: https://www.windtre.it/ricaricabile/
+      research_status: needs_verification
+      tourist_usable: unknown
+      fields_to_verify:
+        prepaid_plan_prices: unknown
+        domestic_data_gb: unknown
+        eu_roaming_gb: unknown
+        esim_supported: unknown
+        codice_fiscale_required: unknown
+        foreign_passport_ok: unknown
+        remote_activation: unknown
+      notes: "Wind and Tre merged. Competitive prepaid. Tourist path not documented."
+
+---
+# ══════════════════════════════════════════
+# ROAMING EXCLUSIONS — ALL EU OPERATORS
+# ══════════════════════════════════════════
+
+standard_eu_roaming_exclusions:
+  note: >
+    Standard EU/EEA roaming applies across EU member states.
+    The following countries are NOT in EU roaming zone and require
+    extra verification or separate SIM:
+  excluded:
+    - code: CH
+      name: Switzerland
+      reason: "Not EU member. Swiss operators have separate roaming agreements."
+    - code: UK
+      name: United Kingdom
+      reason: "Post-Brexit. No longer in EU roaming zone since 2021."
+    - code: RS
+      name: Serbia
+      reason: "Not EU member. Western Balkans."
+    - code: ME
+      name: Montenegro
+      reason: "Not EU member. Western Balkans."
+    - code: AL
+      name: Albania
+      reason: "Not EU member. Western Balkans."
+    - code: BA
+      name: Bosnia and Herzegovina
+      reason: "Not EU member. Western Balkans."
+    - code: MK
+      name: North Macedonia
+      reason: "Not EU member. Western Balkans."
+  note_for_balkans: >
+    For Balkans travel, EU SIMs do NOT work.
+    Use One Montenegro Tourist 20 (€20) for multi-country WB coverage,
+    or local SIM per country.

@@ -1,0 +1,133 @@
+name: SimRoam Data Pipeline
+
+on:
+  # Nightly run at 3:00 UTC
+  schedule:
+    - cron: "0 3 * * *"
+
+  # Manual trigger with options
+  workflow_dispatch:
+    inputs:
+      operator:
+        description: "Operator ID to parse (e.g. vodafone_de) — leave empty for all"
+        required: false
+        default: ""
+      country:
+        description: "Country code to parse (e.g. DE) — leave empty for all"
+        required: false
+        default: ""
+      merge:
+        description: "Merge results into plans.json (true/false)"
+        required: false
+        default: "false"
+
+  # Also run on changes to source files
+  push:
+    paths:
+      - "sources/**/*.yaml"
+      - "parsers/**/*.py"
+
+jobs:
+  validate:
+    name: Validate current plans.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate plans.json
+        run: python3 scripts/validate.py --verbose
+
+  pipeline:
+    name: Run data pipeline
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml requests beautifulsoup4
+
+      - name: Run pipeline — single operator
+        if: ${{ github.event.inputs.operator != '' }}
+        run: |
+          python3 scripts/pipeline.py \
+            --operator ${{ github.event.inputs.operator }} \
+            ${{ github.event.inputs.merge == 'true' && '--merge' || '' }}
+
+      - name: Run pipeline — country
+        if: ${{ github.event.inputs.country != '' && github.event.inputs.operator == '' }}
+        run: |
+          python3 scripts/pipeline.py \
+            --country ${{ github.event.inputs.country }} \
+            ${{ github.event.inputs.merge == 'true' && '--merge' || '' }}
+
+      - name: Run pipeline — all parsers (nightly)
+        if: ${{ github.event_name == 'schedule' || (github.event.inputs.operator == '' && github.event.inputs.country == '') }}
+        run: python3 scripts/pipeline.py --all
+
+      - name: Show diff summary
+        run: python3 scripts/validate.py
+
+      - name: Commit changes (if merge was requested and changes exist)
+        if: ${{ github.event.inputs.merge == 'true' }}
+        run: |
+          git config user.name "SimRoam Bot"
+          git config user.email "bot@simroam.app"
+          git add app/data/plans.json
+          git diff --staged --quiet || git commit -m "chore: update plans.json via data pipeline [$(date -u +%Y-%m-%d)]"
+          git push
+
+  check-stale:
+    name: Check for stale plan data
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check stale plans
+        run: |
+          python3 - <<'EOF'
+          import json
+          from datetime import datetime
+
+          with open("app/data/plans.json") as f:
+              plans = json.load(f)
+
+          current_year = datetime.now().year
+          current_q = (datetime.now().month - 1) // 3 + 1
+          current_period = f"{current_year}-Q{current_q}"
+
+          stale = []
+          for p in plans:
+              lv = p.get("last_verified", "")
+              if lv and lv < current_period:
+                  # More than 1 quarter old
+                  prev_q = f"{current_year}-Q{current_q - 1}" if current_q > 1 else f"{current_year - 1}-Q4"
+                  if lv <= prev_q:
+                      stale.append(f"{p['id']} ({lv})")
+
+          if stale:
+              print(f"⚠ {len(stale)} plan(s) not verified this quarter:")
+              for s in stale:
+                  print(f"  {s}")
+          else:
+              print("✅ All plans verified this quarter")
+          EOF

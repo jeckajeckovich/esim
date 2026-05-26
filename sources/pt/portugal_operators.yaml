@@ -1,0 +1,32 @@
+meta:
+  country_code: PT
+  country_name: Portugal
+  last_updated: "2026-Q2"
+  tier: A
+  data_confidence: research_needed
+  notes: >
+    Portugal prepaid widespread. Vodafone PT, MEO, NOS are main operators.
+    Strong EU roaming market. Specific plan data NOT fetched — needs verification.
+
+  sources:
+    - https://www.vodafone.pt/particulares/tarifarios/prepagos
+    - https://www.meo.pt/telemovel/tarifarios-prepagos
+    - https://www.nos.pt/particulares/telemovel/prepagos
+
+  research_needed:
+    - "Current plan prices, GB, EU roaming caps"
+    - "Tourist eSIM availability"
+    - "Online purchase with foreign passport"
+
+operators:
+  vodafone_pt:
+    name: Vodafone Portugal
+    source_url: https://www.vodafone.pt/particulares/tarifarios/prepagos
+    data_confidence: research_needed
+    do_not_surface: true
+
+  meo_pt:
+    name: MEO Portugal
+    source_url: https://www.meo.pt/telemovel/tarifarios-prepagos
+    data_confidence: research_needed
+    do_not_surface: true

@@ -1,0 +1,85 @@
+meta:
+  operator_id: vodafone_de
+  country_code: DE
+  source_url: https://www.vodafone.de/hilfe/callya.html
+  source_name: Vodafone Germany official
+  last_verified: "2026-Q2"
+  verified_by: manual
+  notes: "CallYa prepaid plans. Hotel address accepted for VideoIdent. No permanent address required."
+
+plans:
+  - raw_title: "CallYa Start"
+    raw_price_eur: 4.99
+    raw_data: "2 GB"
+    raw_duration_days: 28
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 2
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "VideoIdent online"
+    raw_address_required: false
+    raw_hotel_address_ok: true
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: false
+    raw_highlight: "Cheapest DE entry"
+
+  - raw_title: "CallYa Allnet Flat S"
+    raw_price_eur: 9.99
+    raw_data: "25 GB"
+    raw_duration_days: 28
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 25
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "VideoIdent online"
+    raw_address_required: false
+    raw_hotel_address_ok: true
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: true
+    raw_highlight: "Best value DE mid"
+
+  - raw_title: "CallYa Allnet Flat M"
+    raw_price_eur: 14.99
+    raw_data: "50 GB"
+    raw_duration_days: 28
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 50
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "VideoIdent online"
+    raw_address_required: false
+    raw_hotel_address_ok: true
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: true
+    raw_highlight: "Best tourist-friendly DE"
+
+  - raw_title: "CallYa Allnet Flat L"
+    raw_price_eur: 19.99
+    raw_data: "100 GB"
+    raw_duration_days: 28
+    raw_eu_roaming: true
+    raw_eu_roaming_cap_gb: 100
+    raw_esim: true
+    raw_online_purchase: true
+    raw_activation_before_arrival: true
+    raw_store_visit: false
+    raw_kyc: true
+    raw_kyc_type: "VideoIdent online"
+    raw_address_required: false
+    raw_hotel_address_ok: true
+    raw_local_number: true
+    raw_renewable: true
+    raw_auto_renew: true
+    raw_highlight: "Best data DE"

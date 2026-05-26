@@ -1,0 +1,107 @@
+meta:
+  country_code: ES
+  country_name: Spain
+  last_updated: "2026-Q2"
+  tier: A
+  market_note: >
+    Spain has competitive prepaid with genuine tourist potential.
+    Key difference from France/Italy: Spanish prepaid does NOT require NIE
+    (National Identity Number) — passport is generally sufficient.
+    This makes Spain more tourist-accessible in principle, but needs per-operator confirmation.
+    DIGI Spain is the price leader (Romanian MVNO on Movistar network).
+    No Spanish operator has verified plan data in plans.json yet.
+    DO NOT add plans until price + EU roaming GB confirmed from official source.
+
+operators:
+
+  digi_es:
+    operator_id: digi_es
+    name: DIGI Spain
+    source_url: https://www.digimobil.es/es/tarifas
+    source_name: DIGI Spain official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    priority: high                   # cheapest option, tourist accessible likely
+    known_context: >
+      Romanian-owned MVNO operating on Movistar network.
+      Very low prices — typically the cheapest mobile data in Spain.
+      Widely used by Eastern European expats — suggests passport registration
+      probably works without NIE. But NOT officially confirmed for tourists.
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown           # document SEPARATELY
+      esim_supported: unknown
+      remote_activation: unknown
+      nie_required: unknown            # NIE = Spanish ID — likely NOT required
+      passport_only: unknown
+      spanish_address_required: unknown
+      calls_sms: unknown
+
+  vodafone_es:
+    operator_id: vodafone_es
+    name: Vodafone Spain Prepago
+    source_url: https://www.vodafone.es/tienda/particulares/es/prepago/
+    source_name: Vodafone Spain official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    known_context: "Major operator. Passport reportedly accepted — unconfirmed."
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown
+      esim_supported: unknown
+      remote_activation: unknown
+      nie_required: unknown
+      passport_only: unknown
+      spanish_address_required: unknown
+      calls_sms: unknown
+
+  orange_es:
+    operator_id: orange_es
+    name: Orange Spain Prepago
+    source_url: https://www.orange.es/movil/tarifas-prepago/
+    source_name: Orange Spain official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown
+      esim_supported: unknown
+      remote_activation: unknown
+      nie_required: unknown
+      passport_only: unknown
+      calls_sms: unknown
+
+  movistar_es:
+    operator_id: movistar_es
+    name: Movistar Prepago
+    source_url: https://www.movistar.es/particulares/movil/tarifas/
+    source_name: Movistar official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    known_context: >
+      Telefonica brand. Full nationwide coverage.
+      Premium pricing relative to DIGI/Orange.
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown
+      esim_supported: unknown
+      remote_activation: unknown
+      nie_required: unknown
+      passport_only: unknown
+      calls_sms: unknown

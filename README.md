@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SimRoam — Data Sources
 
-## Getting Started
+This directory contains **raw source snapshots** for each operator.
+These are the ground truth before normalization.
 
-First, run the development server:
+## Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+sources/
+  {country_code}/
+    {operator_id}.yaml   ← raw snapshot from official source
+parsers/
+  {operator_id}.py       ← operator-specific parser → normalized Plan objects
+scripts/
+  validate.py            ← checks all plans against schema
+  merge.py               ← merges parsed output into app/data/plans.json
+  diff.py                ← shows what changed since last run
+  pipeline.py            ← runs: parse → validate → diff → merge
+app/data/
+  plans.json             ← generated output (do not edit by hand)
+  operators.json         ← manually maintained (operator metadata)
+  countries.json         ← manually maintained (country metadata)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Source YAML Format
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Each source file captures the raw data from the operator's website.
+Fields map 1:1 to what's visible on the page — no interpretation yet.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```yaml
+meta:
+  operator_id: vodafone_de
+  country_code: DE
+  source_url: https://www.vodafone.de/hilfe/callya.html
+  source_name: Vodafone Germany official
+  last_verified: "2026-Q2"
+  verified_by: manual
+  notes: "Manually captured from Vodafone DE website"
 
-## Learn More
+plans:
+  - raw_title: "CallYa Start"
+    raw_price: "4,99 €"
+    raw_data: "2 GB"
+    raw_duration: "4 Wochen"
+    raw_roaming: "EU-Roaming inklusive"
+    raw_esim: true
+    raw_online: true
+    raw_kyc: "VideoIdent"
+    raw_address: "hotel accepted"
+    raw_number: true
+    raw_renewable: true
+    raw_auto_renew: false
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Workflow
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Manual update (current)
+1. Check operator website
+2. Update the source YAML
+3. Run `python3 scripts/pipeline.py --country DE`
+4. Review diff output
+5. Commit if correct
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Semi-automated (future)
+- GitHub Actions runs parsers nightly
+- Diffs are posted as PR comments
+- Human reviews and merges
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Adding a new operator
+1. Create `sources/{country_code}/{operator_id}.yaml`
+2. Create `parsers/{operator_id}.py`
+3. Run `python3 scripts/pipeline.py --country {CC}`
+4. Check output in `app/data/plans.json`

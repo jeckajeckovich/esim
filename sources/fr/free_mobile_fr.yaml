@@ -1,0 +1,143 @@
+meta:
+  country_code: FR
+  country_name: France
+  last_updated: "2026-Q2"
+  tier: A
+  market_note: >
+    France has technically excellent prepaid plans (Free Mobile is the
+    standout at €9.99/month with 25 GB EU roaming) but activation for
+    tourists is blocked by a French address/bank card requirement that
+    is not officially documented as bypassable.
+    DO NOT add any French operator to the recommendation engine until
+    the tourist activation path is manually verified.
+
+operators:
+
+  free_mobile_fr:
+    operator_id: free_mobile_fr
+    name: Free Mobile France
+    source_url: https://mobile.free.fr/forfaits/
+    roaming_info_url: https://mobile.free.fr/assistance/155-57-voyager-en-europe.html
+    source_name: Free Mobile France official
+    last_verified: "2026-Q2"
+    verified_by: manual_partial
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+
+    confirmed_data:
+      esim: true
+      local_number: true
+      renewable: true
+      auto_renew: true
+
+    unconfirmed_blocker:
+      french_address_required: "likely yes — official site shows address field"
+      french_payment_method: "likely — some international cards reported to work"
+      foreign_passport_accepted: "reported yes by community, not officially documented"
+
+    key_question: >
+      Can a tourist without French address activate with:
+      - foreign (non-EU) passport
+      - international Mastercard/Visa
+      If YES: upgrade to verified_manual, set tourist_usable: true
+      If NO: set tourist_usable: false, update plans.json warning
+
+    plans:
+      - raw_title: "Free Mobile Forfait 5G"
+        raw_price_eur: 9.99
+        raw_domestic_data_gb: 300
+        raw_eu_roaming_gb: 25
+        raw_eu_roaming_fup: "FUP applies — throttled after 25 GB in EU"
+        raw_duration_days: 30
+        raw_calls_sms: true
+        raw_esim: true
+        raw_online_purchase: true
+        raw_local_number: true
+        raw_renewable: true
+        raw_auto_renew: true
+        raw_kyc: true
+        raw_french_address_required: true
+        raw_foreign_passport_confirmed: false
+        data_confidence: needs_review
+        plan_id_in_db: free_mobile_fr_forfait_5g
+        confidence_note: >
+          Price €9.99 confirmed. EU roaming 25 GB confirmed.
+          Tourist activation WITHOUT French address is NOT confirmed.
+
+      - raw_title: "Free Mobile Forfait 4G"
+        raw_price_eur: 7.99
+        raw_domestic_data_gb: 200
+        raw_eu_roaming_gb: 25
+        raw_duration_days: 30
+        raw_calls_sms: true
+        raw_esim: true
+        raw_online_purchase: true
+        raw_local_number: true
+        raw_french_address_required: true
+        data_confidence: needs_review
+        plan_id_in_db: null
+        confidence_note: "Promotional pricing — may not be permanent. Same address blocker."
+
+    roaming_exclusions: [CH, UK, RS, ME, AL, BA, MK]
+
+  orange_fr:
+    operator_id: orange_fr
+    name: Orange France
+    source_url: https://boutique.orange.fr/mobile/offres-mobiles/forfaits-prepaye
+    source_name: Orange France official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown           # document SEPARATELY from domestic
+      esim_supported: unknown
+      remote_activation: unknown
+      french_address_required: unknown
+      foreign_passport_ok: unknown
+      calls_sms: unknown
+    notes: "Major operator. Similar address blocker likely as Free Mobile."
+
+  bouygues_fr:
+    operator_id: bouygues_fr
+    name: Bouygues Telecom
+    source_url: https://www.bouyguestelecom.fr/offres-mobiles/prepaye
+    source_name: Bouygues Telecom official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown
+      esim_supported: unknown
+      french_address_required: unknown
+      foreign_passport_ok: unknown
+      calls_sms: unknown
+
+  sfr_fr:
+    operator_id: sfr_fr
+    name: SFR
+    source_url: https://www.sfr.fr/offre-mobile/forfait-prepaye/
+    source_name: SFR official
+    last_verified: null
+    data_confidence: needs_review
+    research_status: needs_verification
+    tourist_usable: unknown
+    do_not_surface: true
+    fields_to_verify:
+      prepaid_plan_prices: unknown
+      domestic_data_gb: unknown
+      eu_roaming_gb: unknown
+      esim_supported: unknown
+      french_address_required: unknown
+      foreign_passport_ok: unknown
+      calls_sms: unknown
+    notes: "Third major French operator. Tourist path undocumented."

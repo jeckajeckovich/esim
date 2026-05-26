@@ -1,26 +1,1180 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+  background-color: #f6f7f9;
+  color: #0f1117;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+/* ── Nav ──────────────────────────────────────────────────────────────────── */
+.nav {
+  background: #ffffff; border-bottom: 1px solid #e8eaef;
+  padding: 0.875rem 1.5rem; display: flex; align-items: center; gap: 1rem;
+  position: sticky; top: 0; z-index: 50;
+}
+.nav-logo { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; letter-spacing: -0.02em; color: #0f1117; }
+.nav-dot { width: 8px; height: 8px; border-radius: 50%; background: #2563eb; flex-shrink: 0; }
+.nav-sub { font-size: 12px; color: #9ca3af; font-weight: 400; }
+.nav-right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px;
+  border: 1px solid #e0e3ea; border-radius: 8px; background: #ffffff; color: #4b5563;
+  font-size: 12px; cursor: pointer; transition: all 0.12s; white-space: nowrap; font-family: inherit;
+}
+.btn-ghost:hover { border-color: #b0b8c8; color: #0f1117; background: #f6f7f9; }
+.btn-ghost.active { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 500; }
+
+.btn-lang {
+  display: inline-flex; align-items: center; padding: 4px 10px;
+  border: 1px solid #e0e3ea; border-radius: 6px; background: #f6f7f9; color: #4b5563;
+  font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.12s; font-family: inherit; letter-spacing: 0.04em;
+}
+.btn-lang.active { background: #0f1117; color: #ffffff; border-color: #0f1117; }
+.btn-lang:not(.active):hover { border-color: #b0b8c8; color: #0f1117; }
+
+.btn-primary {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; padding: 12px 20px; background: #1a1a2e; color: #ffffff;
+  border: none; border-radius: 10px; font-size: 14px; font-weight: 500;
+  cursor: pointer; letter-spacing: -0.01em; transition: opacity 0.12s; font-family: inherit;
+}
+.btn-primary:hover:not(:disabled) { opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Official source — blue (local operators only) */
+.btn-source {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+  border: 1px solid #dbeafe; border-radius: 6px; background: #eff6ff; color: #1d4ed8;
+  font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.12s; font-family: inherit; font-weight: 500;
+}
+.btn-source:hover { background: #dbeafe; border-color: #93c5fd; }
+
+/* View snapshot — amber (aggregator snapshots without affiliate link) */
+.btn-source-snap {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+  border: 1px solid #fcd34d; border-radius: 6px; background: #fffbeb; color: #b45309;
+  font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.12s; font-family: inherit; font-weight: 500;
+}
+.btn-source-snap:hover { background: #fef3c7; border-color: #f59e0b; }
+
+/* Buy travel eSIM — amber filled (when affiliate_url exists) */
+.btn-buy-esim {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+  border: 1px solid #f59e0b; border-radius: 6px; background: #fef3c7; color: #92400e;
+  font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.12s; font-family: inherit; font-weight: 600;
+}
+.btn-buy-esim:hover { background: #fde68a; border-color: #d97706; }
+
+/* ── Page layout ──────────────────────────────────────────────────────────── */
+.page-wrap { max-width: 620px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+.results-wrap { max-width: 680px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+
+/* ── Labels ──────────────────────────────────────────────────────────────── */
+.field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; display: block; }
+.top-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; }
+.sec-title { font-size: 13px; font-weight: 600; color: #0f1117; margin: 1.25rem 0 8px; }
+
+/* Section divider — separates local plans from snapshot benchmarks in All Plans tab */
+.sec-divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 1.25rem 0 10px; font-size: 11px; font-weight: 700;
+  color: #92400e; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.sec-divider::before, .sec-divider::after {
+  content: ""; flex: 1; height: 1px; background: #fcd34d;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ── Homepage layout ─────────────────────────────────────────────────────────
+   home-wrap: wider than page-wrap (620) so country grid has room at 4 columns.
+   All homepage-specific classes are prefixed "home-" or "h" to avoid collision. */
+
+.home-wrap {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 0 1.25rem 3.5rem;
+}
+
+/* Hero */
+.home-hero {
+  padding: 2.75rem 0 2rem;
+  text-align: center;
+}
+.home-hero-h1 {
+  font-size: clamp(24px, 5vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0f1117;
+  line-height: 1.15;
+  margin: 0 0 10px;
+}
+.home-hero-sub {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.65;
+  margin: 0 0 1.75rem;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Hero search button (navigates to CountriesPage with full search) */
+.home-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  border: 1.5px solid #e0e3ea;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.12s, box-shadow 0.12s;
+  color: #9ca3af;
+  text-align: left;
+}
+.home-search-btn:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+}
+.home-search-placeholder {
+  font-size: 13px;
+  color: #9ca3af;
+  flex: 1;
+}
+
+/* ── Country picker (inline on homepage) ─────────────────────────────────── */
+.hpicker {
+  margin-bottom: 2rem;
+}
+.hpicker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.hpicker-head .field-label {
+  margin-bottom: 0;
+}
+.hpicker-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+/* Region tabs */
+.htabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.htab {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #e0e3ea;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+.htab:hover { border-color: #b0b8c8; }
+.htab.active {
+  background: #0f1117;
+  color: #ffffff;
+  border-color: #0f1117;
+  font-weight: 600;
+}
+
+/* Country grid — popular: 4 col; other: 4 col compact */
+.hgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin-bottom: 10px;
+}
+.hgrid.hgrid-pop {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+@media (max-width: 640px) {
+  .hgrid, .hgrid.hgrid-pop { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 340px) {
+  .hgrid, .hgrid.hgrid-pop { grid-template-columns: 1fr; }
+}
+
+/* Country card */
+.hcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 11px 9px;
+  border: 1px solid #e0e3ea;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.12s, box-shadow 0.12s, background 0.1s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.hcard:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.hcard.hcard-sel {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+/* Popular variant: slightly larger, stronger contrast */
+.hcard.hcard-lg {
+  padding: 13px 13px 11px;
+  border-radius: 11px;
+}
+.hcard.hcard-lg .hcard-flag {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+.hcard.hcard-lg .hcard-name {
+  font-size: 13px;
+}
+.hcard.hcard-lg .hcard-insight {
+  font-size: 10px;
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hcard-flag {
+  font-size: 22px;
+  line-height: 1;
+  margin-bottom: 4px;
+  display: block;
+}
+.hcard-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f1117;
+  line-height: 1.25;
+  display: block;
+}
+.hcard.hcard-sel .hcard-name { color: #1d4ed8; }
+.hcard-insight {
+  font-size: 9px;
+  color: #6b7280;
+  line-height: 1.4;
+  display: none; /* hidden on compact tiles, shown on lg */
+}
+
+/* Badges */
+.hbadge {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 5px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  display: inline-block;
+  align-self: flex-start;
+}
+.hbadge-ok      { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+.hbadge-eu      { background: #eff6ff; color: #1d4ed8; border: 1px solid #93c5fd; }
+.hbadge-fav     { background: #fdf4ff; color: #7e22ce; border: 1px solid #d8b4fe; }
+.hbadge-pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+/* "Browse all" link */
+.hbrowse-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 4px 0;
+  transition: color 0.1s;
+  text-decoration: none;
+}
+.hbrowse-all:hover { color: #0f1117; }
+
+/* Config section (duration + prefs + CTA) */
+.home-config {
+  padding-top: 1.5rem;
+  border-top: 1px solid #e8eaef;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.home-config-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+/* ── Trip Simulator layout ───────────────────────────────────────────────────
+   sim-wrap: wider container for the two-column layout.
+   sim-body / sim-layout: side-by-side left (country grid) + right (config card). */
+
+.sim-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.25rem 3.5rem;
+}
+.sim-header {
+  margin-bottom: 1.75rem;
+}
+
+/* Two-column layout — sim-body and sim-layout are the same */
+.sim-body,
+.sim-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .sim-body,
+  .sim-layout {
+    grid-template-columns: 1fr;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─ Left panel: country grid ─ */
+.sim-left {
+  min-width: 0;
+}
+
+/* country-grid and sim-country-grid are the same */
+.sim-country-grid,
+.country-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+@media (max-width: 540px) {
+  .sim-country-grid,
+  .country-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 360px) {
+  .sim-country-grid,
+  .country-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Country card — sim-cc and country-card are the same */
+.sim-cc,
+.country-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 9px 9px 7px;
+  border: 1px solid #e0e3ea;
+  border-radius: 9px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.12s, box-shadow 0.1s;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 1px;
+}
+.sim-cc:hover,
+.country-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+}
+.sim-cc.sim-cc-sel,
+.country-card.selected {
+  border-color: #2563eb;
+  border-width: 1.5px;
+  background: #eff6ff;
+}
+.sim-cc.sim-cc-seed {
+  opacity: 0.65;
+}
+.sim-cc.sim-cc-seed:hover {
+  opacity: 0.85;
+}
+
+.sim-cc-check {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sim-cc-flag {
+  font-size: 18px;
+  line-height: 1;
+  margin-bottom: 2px;
+  display: block;
+}
+.sim-cc-code {
+  font-size: 9px;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 0.05em;
+  display: block;
+}
+.sim-cc.sim-cc-sel .sim-cc-code,
+.country-card.selected .sim-cc-code { color: #93c5fd; }
+.sim-cc-name {
+  font-size: 10px;
+  font-weight: 600;
+  color: #0f1117;
+  line-height: 1.25;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+.sim-cc.sim-cc-sel .sim-cc-name,
+.country-card.selected .sim-cc-name { color: #1d4ed8; }
+
+/* Country badge — sim-cc-badge and country-badge are the same */
+.sim-cc-badge,
+.country-badge {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #86efac;
+  margin-top: 3px;
+  display: inline-block;
+}
+.sim-cc-badge.sim-cc-badge-seed {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fde68a;
+}
+.sim-cc-badge.sim-cc-badge-sel {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+}
+
+/* Seed countries info note */
+.sim-seed-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11px;
+  color: #9ca3af;
+  line-height: 1.5;
+  padding: 6px 0;
+}
+
+/* ─ Right panel: trip config ─ */
+.sim-right {
+  position: sticky;
+  top: 1rem;
+}
+
+/* trip-panel and sim-config-card are the same */
+.sim-config-card,
+.trip-panel {
+  background: #ffffff;
+  border: 1px solid #e0e3ea;
+  border-radius: 12px;
+  padding: 1.125rem 1.25rem;
+}
+.sim-config-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f1117;
+  margin-bottom: 10px;
+}
+.sim-config-divider {
+  height: 1px;
+  background: #e8eaef;
+  margin: 0.875rem 0;
+}
+
+/* trip-section — wraps a labeled config section inside trip-panel */
+.trip-section {
+  margin-bottom: 1rem;
+}
+.trip-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Empty route placeholder */
+.sim-empty-route {
+  font-size: 12px;
+  color: #9ca3af;
+  padding: 10px 0;
+  text-align: center;
+}
+
+/* Selected countries as removable rows */
+.sim-route-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+/* selected-country-row and sim-route-row are the same */
+.sim-route-row,
+.selected-country-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 0;
+}
+.sim-route-arrow {
+  font-size: 12px;
+  color: #9ca3af;
+  width: 14px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.sim-route-flag {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.sim-route-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f1117;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sim-route-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: color 0.1s;
+  font-family: inherit;
+}
+.sim-route-remove:hover { color: #374151; }
+
+/* trip-note and sim-helper-note are the same */
+.sim-helper-note,
+.trip-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 8px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 11px;
+  color: #92400e;
+  line-height: 1.5;
+}
+/* Route planner promo card */
+.home-sim-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f6f7f9;
+  border: 1px solid #e0e3ea;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.home-sim-card:hover { border-color: #b0b8c8; }
+.home-sim-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f1117;
+  margin-bottom: 3px;
+}
+.home-sim-sub {
+  font-size: 12px;
+  color: #4b5563;
+}
+.home-sim-arrow {
+  font-size: 18px;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+/* ── Duration pills ──────────────────────────────────────────────────────── */
+.dur-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.dur-btn {
+  padding: 8px 14px; border: 1px solid #e0e3ea; border-radius: 20px;
+  background: #ffffff; cursor: pointer; transition: all 0.12s; font-family: inherit;
+  font-size: 13px; font-weight: 500; color: #374151;
+}
+.dur-btn:hover { border-color: #b0b8c8; background: #f6f7f9; }
+.dur-btn.selected { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 600; }
+
+/* ── Preference tiles ────────────────────────────────────────────────────── */
+.pref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.pref-tile {
+  display: flex; align-items: center; gap: 8px; padding: 9px 11px;
+  border: 1px solid #e0e3ea; border-radius: 8px; background: #ffffff;
+  font-size: 12px; color: #4b5563; cursor: pointer; transition: all 0.12s;
+  font-family: inherit; text-align: left;
+}
+.pref-tile:hover { border-color: #b0b8c8; color: #0f1117; }
+.pref-tile.selected { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
+
+/* ── Chips ───────────────────────────────────────────────────────────────── */
+.chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1.25rem; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border: 1px solid #e0e3ea; border-radius: 20px; background: #ffffff; font-size: 11px; color: #4b5563; font-weight: 500; }
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.tab-bar { display: flex; border-bottom: 1px solid #e8eaef; overflow-x: auto; scrollbar-width: none; }
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn {
+  padding: 9px 15px; font-size: 12px; color: #9ca3af; background: none;
+  border: none; border-bottom: 2px solid transparent; cursor: pointer;
+  transition: all 0.12s; margin-bottom: -1px; white-space: nowrap; font-family: inherit; font-weight: 500;
+}
+.tab-btn:hover { color: #4b5563; }
+.tab-btn.active { color: #0f1117; border-bottom-color: #0f1117; }
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+.card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; padding: 1.125rem 1.25rem; }
+.card-featured { background: #ffffff; border: 1.5px solid #2563eb; border-radius: 12px; padding: 1.125rem 1.25rem; }
+.card-clickable { cursor: pointer; transition: border-color 0.12s; }
+.card-clickable:hover { border-color: #b0b8c8; }
+.card-green { background: #f0fdf4; border-color: #86efac; }
+/* Amber card — used when travel eSIM is the recommended option */
+.card-amber { background: #fffbeb; border-color: #fcd34d; }
+
+/* ── Stat grid ───────────────────────────────────────────────────────────── */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.stat-box { background: #f2f4f8; border-radius: 8px; padding: 8px 10px; }
+.stat-val { font-size: 16px; font-weight: 700; color: #0f1117; letter-spacing: -0.02em; }
+.stat-lbl { font-size: 10px; color: #9ca3af; margin-top: 2px; }
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid;
+  font-weight: 500; white-space: nowrap;
+}
+.badge-ok       { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+.badge-warn     { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
+.badge-bad      { background: #fef2f2; border-color: #fca5a5; color: #b91c1c; }
+.badge-info     { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
+.badge-muted    { background: #f2f4f8; border-color: #d1d5db; color: #4b5563; }
+.badge-purple   { background: #f5f3ff; border-color: #c4b5fd; color: #6d28d9; }
+.badge-green    { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+.badge-travel   { background: #fef3c7; border-color: #fcd34d; color: #78350f; }
+/* Price snapshot badge — italic amber for plans where price may change */
+.badge-snapshot { background: #fef3c7; border-color: #f59e0b; color: #92400e; font-style: italic; }
+
+.badge-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+
+/* ── Verified / snapshot inline row badges ───────────────────────────────── */
+.verified-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
+/* Green checkmark — local operator plans with verified: true */
+.verified-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500;
+  background: #f0fdf4; border: 1px solid #86efac; color: #15803d;
+}
+
+/* Amber italic — aggregator snapshot / travel eSIM benchmark */
+.snapshot-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 500;
+  background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; font-style: italic;
+}
+
+/* ── Friction bar ────────────────────────────────────────────────────────── */
+.friction-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.friction-label { font-size: 11px; color: #9ca3af; min-width: 88px; }
+.friction-track { flex: 1; height: 4px; background: #e8eaef; border-radius: 2px; overflow: hidden; }
+.friction-fill { height: 100%; border-radius: 2px; }
+.friction-val { font-size: 11px; min-width: 32px; text-align: right; font-weight: 600; }
+
+/* ── Alerts ──────────────────────────────────────────────────────────────── */
+.alert { display: flex; align-items: flex-start; gap: 8px; padding: 9px 11px; border-radius: 8px; border: 1px solid; font-size: 12px; line-height: 1.55; }
+.alert + .alert { margin-top: 5px; }
+.alert-warn   { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
+.alert-info   { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
+.alert-ok     { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+.alert-purple { background: #f5f3ff; border-color: #c4b5fd; color: #6d28d9; }
+
+/* ── Reality check block ─────────────────────────────────────────────────── */
+.reality-block {
+  background: #fffbf0; border: 1px solid #fcd34d; border-left: 3px solid #f59e0b;
+  border-radius: 0 8px 8px 0; padding: 10px 13px; margin: 10px 0;
+}
+.reality-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #b45309; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;
+}
+.reality-text { font-size: 12px; color: #374151; line-height: 1.6; }
+
+/* ── Optimizer / insight block ───────────────────────────────────────────── */
+.optimizer-block {
+  background: #f6f7f9; border-left: 2.5px solid #2563eb;
+  padding: 10px 13px; margin: 10px 0; border-radius: 0 6px 6px 0;
+}
+.optimizer-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #2563eb; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;
+}
+.optimizer-text { font-size: 12px; color: #374151; line-height: 1.6; }
+
+/* ── App-only data note block ────────────────────────────────────────────── */
+/* Left-bordered amber block surfacing the general vs app-specific data split  */
+.app-data-block {
+  display: flex; align-items: flex-start; gap: 7px;
+  background: #fffbeb; border: 1px solid #fcd34d; border-left: 3px solid #f59e0b;
+  border-radius: 0 6px 6px 0; padding: 8px 11px;
+  font-size: 11px; color: #92400e; line-height: 1.55; margin-bottom: 8px;
+}
+.app-data-block strong { color: #78350f; font-weight: 700; }
+
+/* ── Data confidence note — replaces "Aggregator snapshot" disclaimer ────────
+   Used when price may vary (price_snapshot, provider_listed) or data needs
+   review (needs_review). Kept subtle — one line, not a warning box.        */
+.confidence-note {
+  display: flex; align-items: flex-start; gap: 7px;
+  background: #fef3c7; border: 1px solid #f59e0b; border-radius: 7px;
+  padding: 7px 10px; font-size: 11px; color: #92400e; line-height: 1.5;
+  margin-bottom: 10px; font-style: italic;
+}
+/* Grey variant for needs_review state */
+.confidence-note-grey {
+  background: #f9fafb; border-color: #d1d5db; color: #6b7280;
+}
+
+/* ── Alt card ────────────────────────────────────────────────────────────── */
+.alt-card {
+  background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px;
+  padding: 1rem 1.125rem; cursor: pointer; display: flex; align-items: flex-start;
+  gap: 12px; transition: border-color 0.12s; margin-bottom: 6px;
+}
+.alt-card:hover { border-color: #b0b8c8; }
+
+/* Aggregator snapshot card — amber tint to visually separate from local plans */
+.snapshot-card { border-color: #fcd34d; background: #fffbf0; }
+.snapshot-card:hover { border-color: #f59e0b; }
+
+/* ── vs Travel eSIM comparison block ─────────────────────────────────────── */
+.vs-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; padding: 1.125rem 1.25rem; margin-bottom: 10px; }
+/* Green border = local SIM recommended */
+.vs-card-local { border-color: #86efac; background: #f9fefb; }
+/* Amber border = travel eSIM recommended */
+.vs-card-travel { border-color: #fcd34d; background: #fffbf0; }
+.vs-verdict { font-size: 14px; font-weight: 700; color: #15803d; margin-bottom: 6px; letter-spacing: -0.01em; }
+.vs-detail { font-size: 12px; color: #374151; line-height: 1.6; margin-bottom: 12px; }
+.vs-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.vs-option { background: #f2f4f8; border-radius: 8px; padding: 10px 12px; }
+.vs-option.highlight { background: #f0fdf4; border: 1px solid #86efac; }
+/* Amber highlight for travel eSIM recommended side */
+.vs-option.highlight-travel { background: #fef3c7; border: 1px solid #f59e0b; }
+.vs-provider { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #9ca3af; margin-bottom: 4px; }
+.vs-price { font-size: 20px; font-weight: 700; color: #0f1117; letter-spacing: -0.02em; }
+.vs-price-sub { font-size: 10px; color: #9ca3af; margin-top: 1px; margin-bottom: 8px; }
+.vs-feat { font-size: 11px; display: flex; align-items: center; gap: 5px; padding: 2px 0; }
+.vs-feat.ok   { color: #15803d; }
+.vs-feat.no   { color: #9ca3af; }
+
+/* ── Why this recommendation — key factor list ───────────────────────────── */
+.why-factors { display: flex; flex-direction: column; gap: 3px; margin: 8px 0 4px; }
+.why-factor { display: flex; align-items: flex-start; gap: 6px; font-size: 11px; line-height: 1.45; padding: 1px 0; }
+.why-factor-travel { color: #92400e; }
+.why-factor-local  { color: #15803d; }
+.vs-feat.warn { color: #b45309; }  /* app-specific data note on local side */
+
+/* ── Top-up & extension options ──────────────────────────────────────────── */
+.topup-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 7px;
+  padding: 5px 9px; font-size: 11px; color: #6d28d9; margin-top: 6px; font-weight: 500;
+}
+.ext-options { background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+.ext-title { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #6d28d9; margin-bottom: 6px; }
+.ext-row { display: flex; justify-content: space-between; font-size: 12px; color: #374151; padding: 3px 0; }
+.ext-row + .ext-row { border-top: 1px solid #ddd6fe; }
+
+/* ── Roaming matrix ──────────────────────────────────────────────────────── */
+.roaming-matrix { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+.matrix-header { background: #f2f4f8; padding: 10px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #4b5563; }
+.matrix-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.matrix-table th { background: #f8f9fb; padding: 8px 10px; text-align: center; font-weight: 600; color: #4b5563; border-bottom: 1px solid #e8eaef; border-right: 1px solid #e8eaef; }
+.matrix-table th:first-child { text-align: left; }
+.matrix-table td { padding: 8px 10px; text-align: center; border-bottom: 1px solid #f2f4f8; border-right: 1px solid #f2f4f8; color: #374151; }
+.matrix-table td:first-child { text-align: left; font-weight: 500; color: #0f1117; background: #f8f9fb; }
+.matrix-table tr:last-child td { border-bottom: none; }
+.matrix-cell-ok   { color: #15803d; font-size: 15px; }
+.matrix-cell-warn { color: #b45309; font-size: 15px; }
+.matrix-cell-no   { color: #d1d5db; font-size: 15px; }
+.matrix-tooltip { padding: 8px 14px; font-size: 11px; color: #1d4ed8; background: #eff6ff; border-top: 1px solid #93c5fd; }
+.matrix-note { padding: 8px 14px; font-size: 11px; color: #9ca3af; background: #f8f9fb; border-top: 1px solid #e8eaef; }
+
+/* ── Country / operator cards ────────────────────────────────────────────── */
+.insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1rem; }
+.insight-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 8px; padding: 10px; }
+.insight-label { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #9ca3af; margin-bottom: 3px; }
+.insight-val { font-size: 12px; color: #0f1117; line-height: 1.4; }
+
+.score-row { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.score-track { flex: 1; height: 3px; background: #e8eaef; border-radius: 2px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 2px; }
+
+/* ── Countries panel ─────────────────────────────────────────────────────────
+   Self-contained block: cpanel wraps all country-selector chrome.
+   Keeps max-width wider than the standard page-wrap (620px) so 4 columns
+   have enough room without feeling cramped.                                  */
+
+.cpanel {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+/* ─ Header chrome ─ */
+.cpanel-head {
+  padding: 1.5rem 1.25rem 0.75rem;
+}
+.cpanel-title {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f1117;
+  margin: 0 0 14px;
+}
+
+/* ─ Search ─ */
+.csearch {
+  position: relative;
+  margin-bottom: 10px;
+}
+.csearch-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+.csearch-input {
+  width: 100%;
+  padding: 9px 36px 9px 32px;
+  border: 1px solid #e0e3ea;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #ffffff;
+  color: #0f1117;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.12s;
+}
+.csearch-input:focus {
+  border-color: #93c5fd;
+}
+.csearch-clear {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 12px;
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 4px;
+}
+.csearch-clear:hover { color: #374151; }
+
+/* ─ Filter chips ─ */
+.cfilters {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.cfilter {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid #e0e3ea;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  white-space: nowrap;
+}
+.cfilter:hover {
+  border-color: #b0b8c8;
+  color: #0f1117;
+}
+.cfilter.active {
+  background: #0f1117;
+  color: #ffffff;
+  border-color: #0f1117;
+  font-weight: 600;
+}
+
+/* ─ Section label ─ */
+.csection-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9ca3af;
+  margin-bottom: 2px;
+}
+
+/* ─ No results ─ */
+.cno-results {
+  padding: 2.5rem 1.25rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+/* ─ Country grid ─ */
+.cgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 0.5rem 1.25rem 1.5rem;
+}
+@media (max-width: 800px) {
+  .cgrid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 560px) {
+  .cgrid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 340px) {
+  .cgrid { grid-template-columns: 1fr; }
+}
+
+/* ─ Country tile ─ */
+.ctile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #ffffff;
+  border: 1px solid #e0e3ea;
+  border-radius: 11px;
+  padding: 0.875rem 0.875rem 0.75rem;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.12s, box-shadow 0.12s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.ctile:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.ctile-flag {
+  font-size: 26px;
+  line-height: 1;
+  margin-bottom: 6px;
+  display: block;
+}
+.ctile-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f1117;
+  line-height: 1.3;
+  margin-bottom: 3px;
+  display: block;
+}
+.ctile-tag {
+  font-size: 10px;
+  color: #6b7280;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 7px;
+  flex: 1;
+}
+
+/* Tiny dual score bars — one per metric */
+.ctile-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  margin-top: auto;
+}
+.ctile-score-bar {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: #e8eaef;
+  position: relative;
+  overflow: hidden;
+}
+.ctile-score-bar::after {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: var(--pct, 0%);
+  background: var(--col, #9ca3af);
+  border-radius: 2px;
+}
+
+/* Research-pending badge on seed tiles */
+.ctile-pending {
+  font-size: 9px;
+  font-weight: 600;
+  color: #b45309;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-top: auto;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+/* Seed tiles: slightly muted but NOT broken-looking */
+.ctile:has(.ctile-pending) {
+  opacity: 0.82;
+}
+
+/* Keep big-tile/big-grid for any other usages */
+.big-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 1.5rem; }
+.big-tile { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: border-color 0.12s; }
+.big-tile:hover { border-color: #b0b8c8; }
+
+.op-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 10px; padding: 1rem; margin-bottom: 6px; }
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+.modal-overlay { position: fixed; inset: 0; z-index: 999; display: flex; align-items: flex-end; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
+.modal-sheet {
+  position: relative; background: #ffffff; border-radius: 16px 16px 0 0;
+  padding: 1.5rem 1.25rem; width: 100%; max-height: 90vh; overflow-y: auto;
+}
+.modal-handle { width: 32px; height: 3px; background: #d1d5db; border-radius: 2px; margin: 0 auto 1.25rem; }
+.modal-title { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 3px; }
+.modal-subtitle { font-size: 12px; color: #9ca3af; margin-bottom: 1rem; }
+.modal-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1rem; }
+.modal-cell { background: #f2f4f8; border-radius: 8px; padding: 9px 10px; }
+.modal-key { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #9ca3af; margin-bottom: 3px; }
+.modal-val { font-size: 13px; font-weight: 600; color: #0f1117; }
+.notes-text { font-size: 12px; color: #374151; line-height: 1.65; margin-top: 8px; }
+.modal-close {
+  width: 100%; margin-top: 1.25rem; padding: 10px;
+  border: 1px solid #e0e3ea; background: none; border-radius: 8px;
+  cursor: pointer; font-size: 12px; color: #9ca3af; transition: color 0.12s; font-family: inherit;
+}
+.modal-close:hover { color: #0f1117; }
+
+/* ── EU Nomad card ────────────────────────────────────────────────────────── */
+/* Indigo accent — visually distinct from local (green) and travel eSIM (amber) */
+.eu-nomad-card {
+  background: #eef2ff; border: 1.5px solid #818cf8; border-radius: 12px;
+  padding: 1.125rem 1.25rem; margin-top: 10px; cursor: pointer;
+  transition: border-color 0.12s;
+}
+.eu-nomad-card:hover { border-color: #4f46e5; }
+
+.eu-nomad-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+.eu-nomad-icon { font-size: 20px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+.eu-nomad-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #6366f1; margin-bottom: 2px; }
+.eu-nomad-title { font-size: 14px; font-weight: 700; color: #1e1b4b; letter-spacing: -0.01em; }
+
+.eu-nomad-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 10px; }
+.eu-nomad-stat { background: #c7d2fe; border-radius: 8px; padding: 8px 10px; text-align: center; }
+.eu-nomad-stat-val { font-size: 15px; font-weight: 700; color: #1e1b4b; letter-spacing: -0.02em; }
+.eu-nomad-stat-lbl { font-size: 10px; color: #4338ca; margin-top: 2px; }
+
+.eu-nomad-feats { display: flex; flex-direction: column; gap: 3px; margin-bottom: 10px; }
+.eu-nomad-feat { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #312e81; }
+
+.eu-nomad-vs { background: #e0e7ff; border-radius: 8px; padding: 9px 11px; margin-bottom: 8px; }
+.eu-nomad-vs-row { display: flex; gap: 8px; font-size: 11px; line-height: 1.45; }
+.eu-nomad-vs-label { font-weight: 700; color: #4338ca; min-width: 80px; flex-shrink: 0; }
+.eu-nomad-vs-text { color: #374151; }
+
+.eu-nomad-caveats { font-size: 11px; color: #6366f1; line-height: 1.5; }
+
+.badge-eu-nomad { background: #eef2ff; border-color: #818cf8; color: #4f46e5; font-weight: 700; }
+.hcard.hcard-seed {
+  opacity: 0.72;
+}
+
+.hcard.hcard-seed:hover {
+  border-color: #fcd34d;
+  box-shadow: none;
+  opacity: 0.88;
+}
+
+.hcard-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.hcard-pending-msg {
+  font-size: 10px;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-top: none;
+  border-radius: 0 0 7px 7px;
+  padding: 6px 9px 7px;
+  line-height: 1.5;
 }

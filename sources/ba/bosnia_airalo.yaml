@@ -1,0 +1,37 @@
+meta:
+  country_code: BA
+  country_name: Bosnia and Herzegovina
+  last_updated: "2026-Q2"
+  tier: B
+
+operators:
+  bhtelecom_ba:
+    source_url: https://www.bhtelecom.ba/en/tourist-offer/
+    source_name: BH Telecom official
+    last_verified: "2026-Q2"
+    data_confidence: verified_official
+
+travel_esim:
+  provider: Airalo
+  source_url: https://www.airalo.com/bosnia-and-herzegovina-esim
+  source_name: Airalo
+  last_verified: "2026-Q2"
+  data_confidence: provider_listed
+  currency: USD
+  usd_eur_rate: 0.92
+  note: "Prices in USD from Airalo official listing."
+
+  plans:
+    # 7-day plans
+    - data_gb: 3  duration_days: 7  price_usd: 9.00
+    - data_gb: 5  duration_days: 7  price_usd: 12.00
+    - data_gb: 10 duration_days: 7  price_usd: 19.50
+    # 15-day plans
+    - data_gb: 5  duration_days: 15 price_usd: 12.50
+    - data_gb: 10 duration_days: 15 price_usd: 20.00
+    - data_gb: 20 duration_days: 15 price_usd: 30.50
+    # 30-day plans
+    - data_gb: 5  duration_days: 30 price_usd: 13.00
+    - data_gb: 10 duration_days: 30 price_usd: 21.00
+    - data_gb: 20 duration_days: 30 price_usd: 32.00
+    - data_gb: 50 duration_days: 30 price_usd: 48.50

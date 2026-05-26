@@ -1,0 +1,36 @@
+meta:
+  country_code: RO
+  country_name: Romania
+  last_updated: "2026-Q2"
+  tier: A
+  data_confidence: needs_review
+  notes: >
+    Romania: cheap mobile data, prepaid common, EU roaming strong.
+    Orange RO, Vodafone RO, Digi RO confirmed as operators.
+    Romania is notable for very cheap data rates (Digi especially).
+    Specific tourist accessibility needs verification.
+
+  sources:
+    - https://www.orange.ro/abonamente-si-cartele/cartele-prepaid/
+    - https://www.vodafone.ro/personal/telefon/cartele-prepaid/
+    - https://www.rcs-rds.ro/digi-mobil/cartele-prepaid
+
+  research_needed:
+    - "Current plan prices and EU roaming caps"
+    - "Tourist activation without Romanian address"
+    - "eSIM availability for tourists"
+    - "Is physical passport registration required in store?"
+
+operators:
+  digi_ro:
+    name: Digi Romania
+    source_url: https://www.rcs-rds.ro/digi-mobil/cartele-prepaid
+    data_confidence: needs_review
+    tourist_note: "Digi RO known for very competitive pricing. Tourist access unverified."
+    do_not_surface: true
+
+  orange_ro:
+    name: Orange Romania
+    source_url: https://www.orange.ro/abonamente-si-cartele/cartele-prepaid/
+    data_confidence: needs_review
+    do_not_surface: true

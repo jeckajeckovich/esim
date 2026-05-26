@@ -1,0 +1,40 @@
+meta:
+  operator_id: lycamobile_be
+  country_code: BE
+  source_url: https://www.lycamobile.be/en/
+  source_name: Lycamobile Belgium official
+  last_verified: "2026-Q2"
+  verified_by: not_verified
+  data_confidence: needs_review
+  notes: >
+    Lycamobile Belgium — MVNO focused on international calling and EU roaming.
+    eSIM available per official site. QR activation. Prepaid.
+    IMPORTANT CAVEATS (from spec and community reports):
+    - FUP risk historically high across EU Lycamobile brands
+    - Recharge process complex
+    - EU roaming caps NOT confirmed — needs manual verification
+    - Customer service issues widely reported
+    DO NOT recommend as primary strategy until EU roaming terms are verified.
+
+  research_needed:
+    - "What is the exact EU roaming GB cap per plan tier?"
+    - "Is foreign passport accepted without Belgian address?"
+    - "Is eSIM actually available without a Belgian bank card?"
+    - "What is the realistic activation process for tourists?"
+
+plans:
+  - raw_title: "Lycamobile BE — needs verification"
+    raw_price_eur: null
+    raw_data: "unknown"
+    raw_eu_roaming_gb: null
+    raw_duration_days: 30
+    raw_eu_roaming: true
+    raw_esim: true
+    raw_online_purchase: true
+    raw_local_number: true
+    raw_renewable: true
+    data_confidence: needs_review
+    raw_do_not_surface: true
+    raw_confidence_note: >
+      Price and data caps not fetched from source.
+      Candidate for EU nomad comparison only after verification.
