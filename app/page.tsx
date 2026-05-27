@@ -23,6 +23,7 @@ type CountryCode =
 type PrefId = "cheapest" | "esim" | "nostore" | "roaming" | "longterm" | "tourist";
 type TabId = "rec" | "all" | "travel" | "setup" | "roaming";
 type PageId = "home" | "results" | "countries" | "country" | "sim";
+type RegionFilter = "popular" | "balkans" | "eu" | "all";
 type PlanType = "local_operator" | "travel_esim" | "aggregator_snapshot" | "regional_eu";
 
 interface Plan {
@@ -42,7 +43,7 @@ interface Plan {
   passport_required?: boolean; kyc_required?: boolean;
   renewable: boolean; auto_renew?: boolean; disposable_number?: boolean;
   setup_difficulty?: "easy" | "medium" | "hard"; friction_score?: number;
-  friction_notes?: string[]; fair_use_policy?: boolean; benchmark_type?: string;
+  friction_notes?: string[]; fair_use_policy?: boolean;
   extension_options?: { topup_local: number; total_validity_days: number; note?: string }[];
   top_up_bonus?: string; highlight?: string;
   why?: string; why_ru?: string; verified?: boolean; last_verified?: string;
@@ -2770,7 +2771,7 @@ const WB_ROAMING_CAPABLE: CountryCode[] = ["RS", "ME", "BA", "MK"]; // AL exclud
 const WB_ALL: CountryCode[] = ["RS", "BA", "ME", "AL", "MK"];
 
 // Route types — determined before scoring
-type RouteType = "single" | "pure_balkans" | "pure_eu" | "mixed_eu_balkans" | "mixed_complex";
+type RouteType = "single" | "pure_eu" | "pure_balkans" | "mixed_eu_balkans" | "mixed_complex";
 
 function classifyRoute(countries: CountryCode[]): RouteType {
   if (countries.length <= 1) return "single";
@@ -2793,6 +2794,7 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
     const routeType  = classifyRoute(countries);
     const allBalkan  = routeType === "pure_balkans";
     const allEU      = routeType === "pure_eu";
+    const mixedEuBalkans = routeType === "mixed_eu_balkans";
     const isSingle   = routeType === "single";
     const multiCountry = countries.length > 1;
 
@@ -2939,8 +2941,8 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
     const euRegionalCost = euRegionalEsim
       ? getPriceEur(euRegionalEsim) * Math.ceil(days / 30)
       : Infinity;
-    const useEuRegional = (allEU || routeType === "pure_eu") && euRegionalEsim
-      && euRegionalCost <= perCountryTravelCost * 1.2; // allow 20% premium for single-plan convenience
+    const useEuRegional = allEU && !!euRegionalEsim
+  && euRegionalCost <= perCountryTravelCost * 1.2;
     const travelTotalCost = useEuRegional ? euRegionalCost : perCountryTravelCost;
     const travelCoveredCount = useEuRegional
       ? countries.filter(c => EU_ROAMING_ZONE.includes(c)).length
@@ -2969,7 +2971,8 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
           "Airalo Eurolink covers all EU countries on this route in one plan",
           "Instant activation — no setup before travel",
           ...(days <= 14 ? ["Short-to-medium trip — data-only eSIM is cost-effective"] : []),
-          ...(routeType === "mixed_eu_balkans" ? ["Covers EU portion of this mixed route"] : []),
+          ...(mixedEuBalkans ? ["Covers EU portion of this mixed route"] : []),
+          ...(mixedEuBalkans ? ["Покрывает часть маршрута в ЕС"] : []),
         ]
       : [
           "Instant activation — no setup before travel required",
