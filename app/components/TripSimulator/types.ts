@@ -10,22 +10,19 @@ export type SimUsage = "light" | "medium" | "heavy";
 // Minimal CountryCode — extend when countries.json grows
 export type CountryCode = string;
 
-export interface CountryMeta {
+export type CountryMeta = {
   code: string;
   name: string;
-  name_ru: string;
+  name_ru?: string;
   flag: string;
-  tagline: string;
-  tagline_ru: string;
-  tourist_ease?: number;
-  esim_quality?: number;
-  eu_member?: boolean;
   region?: string;
+  eu_member?: boolean;
   research_status?: string;
-  ops?: string[];
-  // allow additional keys without breaking
+  tourist_ease?: number;
+  tagline?: string;
+  tagline_ru?: string;
   [key: string]: unknown;
-}
+};
 
 export type SimStrategyId = "local" | "travel" | "nomad";
 
