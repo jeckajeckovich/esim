@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useMemo, type ReactNode } from "react";
 import plansData from "./data/plans.json";
 import operatorsData from "./data/operators.json";
@@ -9,51 +9,77 @@ import {
   SimulatorResults,
 } from "./components/TripSimulator";
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Types РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Types ────────────────────────────────────────────────────────────────────
 type Lang = "en" | "ru";
 type CountryCode =
   // Western Balkans
   "RS" | "DE" | "AL" | "ME" | "BA" | "MK" |
-  // EU РІР‚вЂќ verified or partially verified
+  // EU — verified or partially verified
   "AT" | "PL" | "BE" |
-  // EU РІР‚вЂќ seed (operator candidates, plans pending)
+  // EU — seed (operator candidates, plans pending)
   "BG" | "HR" | "CY" | "CZ" | "DK" | "EE" | "FI" | "FR" | "GR" |
   "HU" | "IE" | "IT" | "LV" | "LT" | "LU" | "MT" | "NL" | "PT" |
   "RO" | "SK" | "SI" | "ES" | "SE";
 type PrefId = "cheapest" | "esim" | "nostore" | "roaming" | "longterm" | "tourist";
 type TabId = "rec" | "all" | "travel" | "setup" | "roaming";
 type PageId = "home" | "results" | "countries" | "country" | "sim";
-type RegionFilter = "popular" | "balkans" | "eu" | "all";
+type RegionFilter = "popular" | "eu" | "balkans" | "all";
 type PlanType = "local_operator" | "travel_esim" | "aggregator_snapshot" | "regional_eu";
 
 interface Plan {
   id: string; operator_id: string; country_code: CountryCode | "EU";
   operator_type: PlanType; provider_name: string; title: string;
-  price_eur?: number; price_local?: number; price_rub?: number; currency: string;
+  price_eur?: number; price_local?: number; price_rub?: number;
+  price_rsd?: number; currency: string;
   duration_days: number;
   data_gb?: number; data_gb_core?: number; data_gb_apps?: number;
   data_gb_total_display?: string; apps_data_note?: string;
   unlimited_data: boolean;
-  roaming_cap_gb?: number; roaming_region?: string; western_balkans_roaming?: boolean;
-  eu_roaming?: boolean;
-  local_number: boolean; esim_supported: boolean | "unknown";
+  roaming_cap_gb?: number; roaming_region?: string;
+  western_balkans_roaming?: boolean;
+  // Roaming type — authoritative field for WB scoring
+  // "included_quota" | "dedicated_add_on" | "fair_use_quota_from_domestic"
+  // | "shared_home_quota_fair_use" | "shared_home_quota_fair_use_plus_bonus"
+  // | "roam_like_home_fair_use" | "fair_use_rlah"
+  wb_roaming_type?: string;
+  wb_roaming_confidence?: "high" | "medium" | "low";
+  wb_activation_method?: string;
+  first_top_up_bonus?: Record<string, unknown>;
+  eu_roaming?: boolean; eu_roaming_gb?: number;
+  global_roaming_gb?: number;
+  local_number: boolean;
+  calls_included?: Record<string, unknown> | boolean;
+  sms_included?: Record<string, unknown> | boolean;
+  esim_supported: boolean | "unknown";
   physical_sim_supported?: boolean; online_purchase: boolean;
   activation_before_arrival: boolean; store_visit_required: boolean;
   airport_purchase_available?: boolean; registration_required?: boolean;
   passport_required?: boolean; kyc_required?: boolean;
+  address_required?: boolean; foreign_passport_ok?: boolean;
+  eu_residency_required?: boolean;
+  hotspot_blocked?: boolean;
   renewable: boolean; auto_renew?: boolean; disposable_number?: boolean;
   setup_difficulty?: "easy" | "medium" | "hard"; friction_score?: number;
-  friction_notes?: string[]; fair_use_policy?: boolean;
+  friction_notes?: string[]; fair_use_policy?: boolean; benchmark_type?: string;
   extension_options?: { topup_local: number; total_validity_days: number; note?: string }[];
   top_up_bonus?: string; highlight?: string;
   why?: string; why_ru?: string; verified?: boolean; last_verified?: string;
   source_url: string; source_name?: string;
   affiliate_url?: string; affiliate_network?: string;
-  data_confidence?: string;  // "verified_official" | "verified_manual" | "community_verified" | "provider_listed" | "price_snapshot" | "needs_review"
-  plan_category?: string;    // "local_operator" | "travel_esim" | "roaming_bundle" | "balkans_roaming" | "eu_nomad"
-  nomad_type?: string;       // "eu_nomad" | "global_travel" | null
-  benchmark_type?: string;
+  data_confidence?: string;
+  plan_category?: string;
+  nomad_type?: string;
   warnings?: string[]; notes?: string;
+  // Extra dataset fields (stored in JSON, typed loosely)
+  hbo_max_months?: number;
+  move_tv_included?: boolean;
+  social_app_breakdown?: Record<string, boolean>;
+  social_app_gb?: number;
+  roaming_after_quota_rate?: string;
+  needs_verification?: boolean;
+  verification_notes?: string;
+  roaming_safety_score?: number;
+  [key: string]: unknown; // allow extra JSON keys without TS errors
 }
 interface Operator {
   id: string; name: string; country: CountryCode | null;
@@ -83,7 +109,7 @@ const PLANS = plansData as Plan[];
 const OPERATORS = operatorsData as Record<string, Operator>;
 const COUNTRIES = countriesData as Record<CountryCode, CountryMeta>;
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Helpers РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function getPriceEur(p: Plan): number {
   if (p.price_eur) return p.price_eur;
   if (p.price_rub) return parseFloat((p.price_rub / 91).toFixed(2));
@@ -96,13 +122,13 @@ function getDataCore(p: Plan): number | null {
   return null;
 }
 function getDataShort(p: Plan, totalCore?: number | null): string {
-  if (p.unlimited_data) return "РІв‚¬С›";
+  if (p.unlimited_data) return "∞";
   const n = totalCore !== undefined ? totalCore : getDataCore(p);
   if (n === null) return "?";
   return n >= 1000 ? `${Math.round(n / 1000)} TB` : `${n} GB`;
 }
 function fc(fx: number) { return fx <= 3 ? "#15803d" : fx <= 6 ? "#b45309" : "#b91c1c"; }
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Plan category helpers РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Plan category helpers ────────────────────────────────────────────────────
 // plan_category is the authoritative field (added in data architecture stabilisation).
 // operator_type is kept for backwards compat and as a fallback.
 // Rule: always prefer plan_category when present.
@@ -159,7 +185,7 @@ function buildReportMailto(ctx: ReportCtx): string {
     "",
     "I found a data issue in SimRoam and would like to report it.",
     "",
-    "РІвЂќР‚РІвЂќР‚РІвЂќР‚ Context РІвЂќР‚РІвЂќР‚РІвЂќР‚",
+    "─── Context ───",
     `Country: ${ctx.countryName} (${ctx.countryCode})`,
     `Trip duration: ${ctx.tripDuration} days`,
     `Section: ${ctx.section}`,
@@ -167,7 +193,7 @@ function buildReportMailto(ctx: ReportCtx): string {
 
   if (hasPlan) {
     lines.push("");
-    lines.push("РІвЂќР‚РІвЂќР‚РІвЂќР‚ Plan details РІвЂќР‚РІвЂќР‚РІвЂќР‚");
+    lines.push("─── Plan details ───");
     if (ctx.planTitle)    lines.push(`Plan: ${ctx.planTitle}`);
     if (ctx.providerName) lines.push(`Provider: ${ctx.providerName}`);
     if (ctx.lastVerified) lines.push(`Last verified: ${ctx.lastVerified}`);
@@ -175,7 +201,7 @@ function buildReportMailto(ctx: ReportCtx): string {
   }
 
   lines.push("");
-  lines.push("РІвЂќР‚РІвЂќР‚РІвЂќР‚ What's wrong РІвЂќР‚РІвЂќР‚РІвЂќР‚");
+  lines.push("─── What's wrong ───");
   lines.push("(Please describe the issue here)");
   lines.push("");
   lines.push("Thanks");
@@ -185,7 +211,7 @@ function buildReportMailto(ctx: ReportCtx): string {
 }
 
 function ReportErrorLink({ ctx, lang }: { ctx: ReportCtx; lang: Lang }) {
-  const label = lang === "ru" ? "Р РЋР С•Р С•Р В±РЎвЂ°Р С‘РЎвЂљРЎРЉ Р С•Р В± Р С•РЎв‚¬Р С‘Р В±Р С”Р Вµ" : "Report data error";
+  const label = lang === "ru" ? "Сообщить об ошибке" : "Report data error";
   return (
     <a
       href={buildReportMailto(ctx)}
@@ -194,7 +220,7 @@ function ReportErrorLink({ ctx, lang }: { ctx: ReportCtx; lang: Lang }) {
         fontSize: 10, color: "#9ca3af", textDecoration: "none",
         padding: "2px 0", lineHeight: 1.4,
       }}
-      title={lang === "ru" ? "Р С›РЎвЂљР С—РЎР‚Р В°Р Р†Р С‘РЎвЂљРЎРЉ Р С‘РЎРѓР С—РЎР‚Р В°Р Р†Р В»Р ВµР Р…Р С‘Р Вµ Р С—Р С• email" : "Send a correction by email"}
+      title={lang === "ru" ? "Отправить исправление по email" : "Send a correction by email"}
     >
       <svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
@@ -204,7 +230,7 @@ function ReportErrorLink({ ctx, lang }: { ctx: ReportCtx; lang: Lang }) {
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ i18n РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── i18n ─────────────────────────────────────────────────────────────────────
 const T = {
   en: {
     tagline: "connectivity intelligence",
@@ -235,7 +261,7 @@ const T = {
     why_this: "Why this plan?",
     duration_opt: "Duration optimizer",
     reality_check: "Reality check",
-    travel_esim_intro: "Travel eSIMs (Airalo, Nomad, GigSky, GoMoWorldРІР‚В¦) offer instant no-KYC setup РІР‚вЂќ but cost significantly more per GB and include no local phone number.",
+    travel_esim_intro: "Travel eSIMs (Airalo, Nomad, GigSky, GoMoWorld…) offer instant no-KYC setup — but cost significantly more per GB and include no local phone number.",
     travel_esim_disclaimer: "Prices are aggregator snapshots and may change. Verify at source before purchasing.",
     all_travel_esims: "Travel eSIM options for this country",
     travel_esim_note: "Travel eSIMs are best for: same-day arrival with no setup time, short visits under 3 days, or when local SIM activation is impractical.",
@@ -246,21 +272,21 @@ const T = {
     easy: "Easy", medium: "Moderate", hard: "High friction",
     activate_before: "Activate before arrival",
     store_required: "Physical store or airport visit required",
-    setup_intro: "Friction score rates how hard activation actually is in practice РІР‚вЂќ not just on paper.",
+    setup_intro: "Friction score rates how hard activation actually is in practice — not just on paper.",
     pref_cheapest: "Cheapest option", pref_esim: "Instant eSIM",
     pref_nostore: "No store visit", pref_roaming: "Balkans roaming",
     pref_longterm: "Long-term stay", pref_tourist: "Tourist friendly",
     days_7: "7 days", days_14: "14 days", days_21: "21 days", days_30: "30 days", days_45: "45 days", days_60: "60 days",
     tourist_ease: "Tourist ease", esim_quality: "eSIM quality",
     close: "Close",
-    local_wins: (pct: number, ld: string, td: string) => `Local SIM saves ${pct}% РІР‚вЂќ ${ld} general data vs ${td}`,
-    local_better: (pct: number, ld: string, td: string) => `Local SIM saves ${pct}% РІР‚вЂќ ${ld} vs ${td} + real phone number`,
+    local_wins: (pct: number, ld: string, td: string) => `Local SIM saves ${pct}% — ${ld} general data vs ${td}`,
+    local_better: (pct: number, ld: string, td: string) => `Local SIM saves ${pct}% — ${ld} vs ${td} + real phone number`,
     local_similar: "Local SIM: similar price, real local number + more data",
     travel_wins: "Travel eSIM: instant setup. Local SIM requires passport registration.",
     roaming_matrix_title: "Western Balkans roaming matrix",
     roaming_matrix_desc: "Which SIMs work across Western Balkans borders.",
-    matrix_sim_from: "SIM from РІвЂ вЂ™",
-    matrix_note: "РІСљвЂ¦ Full roaming  РІС™В РїС‘РЏ Limited / fair use  РІСњРЉ No roaming",
+    matrix_sim_from: "SIM from →",
+    matrix_note: "✅ Full roaming  ⚠️ Limited / fair use  ❌ No roaming",
     plans_in: (c: string, n: number) => `${n} local plans in ${c}`,
     per_gb: "/GB",
     no_local_num: "No local number",
@@ -275,11 +301,11 @@ const T = {
     verify_price: "Verify current price before buying",
     app_data_label: "App-only data",
     for_trip: (d: number) => `For ${d}-day trip`,
-    purchases: (n: number) => `${n}Р“вЂ” purchase${n !== 1 ? "s" : ""}`,
+    purchases: (n: number) => `${n}× purchase${n !== 1 ? "s" : ""}`,
     ext_options: "Extension options",
     general_data: "General data",
     shown_as: "Shown as",
-    // РІвЂќР‚РІвЂќР‚ Trip Simulator РІвЂќР‚РІвЂќР‚
+    // ── Trip Simulator ──
     sim_title: "Trip Simulator",
     sim_sub: "Multi-country connectivity intelligence",
     sim_countries: "Countries you're visiting",
@@ -308,118 +334,210 @@ const T = {
     sim_not_applicable: "Not applicable for this route",
     sim_no_data: "No data available for this country yet",
     sim_back: "Back to simulator",
-    sim_caveat_snapshot: "Travel eSIM prices are estimates РІР‚вЂќ verify before buying",
+    sim_caveat_snapshot: "Travel eSIM prices are estimates — verify before buying",
+    // ── Trip Intent Engine ──
+    tie_title: "Plan my trip connectivity",
+    tie_sub: "Answer 5 quick questions — get a personalised SIM recommendation.",
+    tie_step_route: "Where are you going?",
+    tie_step_route_sub: "Select all countries on your route",
+    tie_step_duration: "How long is your trip?",
+    tie_step_usage: "How do you use your phone while travelling?",
+    tie_step_number: "Do you need a local phone number?",
+    tie_step_optim: "What matters most to you?",
+    tie_next: "Continue",
+    tie_back: "Back",
+    tie_see_results: "Show recommendations",
+    tie_results_title: "Your connectivity recommendation",
+    tie_convenience: "Easiest option",
+    tie_savings: "Best savings",
+    tie_alternative: "Also consider",
+    tie_strategy_label_convenience: "Activate once and forget",
+    tie_strategy_label_savings: "Cheapest with renewals",
+    tie_vs: "vs",
+    tie_save: "saves",
+    tie_activations: (n: number) => `${n} activation${n !== 1 ? "s" : ""}`,
+    tie_renewals_needed: (n: number) => `Requires ${n} manual renewal${n !== 1 ? "s" : ""}`,
+    tie_no_renewals: "No renewals needed",
+    tie_edit: "Edit answers",
+    tie_route_summary: "Your route",
+    // Duration options
+    dur_1_3: "1–3 days",    dur_1_3_sub: "Weekend trip",
+    dur_4_7: "4–7 days",    dur_4_7_sub: "Short holiday",
+    dur_8_14: "8–14 days",  dur_8_14_sub: "Two weeks",
+    dur_15_30: "15–30 days",dur_15_30_sub: "A month away",
+    dur_30p: "30+ days",    dur_30p_sub: "Long stay or nomad",
+    // Usage options
+    use_light: "Maps + messaging",      use_light_sub: "Google Maps, WhatsApp. ~300 MB/day",
+    use_medium: "Normal browsing",      use_medium_sub: "Social, YouTube clips, navigation. ~1 GB/day",
+    use_heavy: "Video + hotspot",       use_heavy_sub: "Streaming, remote work, tethering laptop. 3+ GB/day",
+    use_work: "Remote work",            use_work_sub: "Laptop hotspot all day. 5+ GB/day",
+    // Number options
+    num_none: "No — data only",         num_none_sub: "I use WhatsApp / Signal for calls",
+    num_sms: "SMS only",                num_sms_sub: "For 2FA codes and check-ins",
+    num_calls: "Calls + SMS",           num_calls_sub: "I need a real local number",
+    // Optimisation options
+    optim_cheap: "Cheapest",            optim_cheap_sub: "Save money, even if extra steps",
+    optim_easy: "Easiest setup",        optim_easy_sub: "eSIM, activate before I leave",
+    optim_one_sim: "One SIM for all",   optim_one_sim_sub: "No swapping, no renewals",
+    optim_coverage: "Best coverage",    optim_coverage_sub: "Works everywhere on the route",
+    optim_data: "Most data",            optim_data_sub: "Heaviest user, need headroom",
   },
   ru: {
-    tagline: "Р В°Р Р…Р В°Р В»Р С‘РЎвЂљР С‘Р С”Р В° РЎРѓР Р†РЎРЏР В·Р С‘",
-    where: "Р С™РЎС“Р Т‘Р В° Р ВµР Т‘Р ВµРЎвЂљР Вµ?",
-    trip_length: "Р вЂќР В»Р С‘РЎвЂљР ВµР В»РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ",
-    priorities: "Р В§РЎвЂљР С• Р Р†Р В°Р В¶Р Р…Р ВµР Вµ?",
-    find: (c: string) => `Р СћР В°РЎР‚Р С‘РЎвЂћРЎвЂ№ Р Т‘Р В»РЎРЏ ${c}`,
-    select_dest: "Р вЂ™РЎвЂ№Р В±Р ВµРЎР‚Р С‘РЎвЂљР Вµ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎС“",
-    browse: "Р вЂ™РЎРѓР Вµ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№",
-    countries: "Р РЋРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№",
-    back: "Р СњР В°Р В·Р В°Р Т‘",
-    best_overall: "Р вЂєРЎС“РЎвЂЎРЎв‚¬Р С‘Р в„– Р Р†РЎвЂ№Р В±Р С•РЎР‚",
-    best_instant: "Р СџРЎР‚Р С•РЎвЂ°Р Вµ Р В°Р С”РЎвЂљР С‘Р Р†Р С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉ",
-    best_value: "Р вЂ™РЎвЂ№Р С–Р С•Р Т‘Р Р…Р ВµР Вµ Р Р†РЎРѓР ВµР С–Р С•",
-    best_unlimited: "Р вЂР ВµР В·Р В»Р С‘Р СР С‘РЎвЂљ",
-    best_long_stay: "Р вЂќР В»РЎРЏ Р Т‘Р С•Р В»Р С–Р С•Р С–Р С• Р С—РЎР‚Р ВµР В±РЎвЂ№Р Р†Р В°Р Р…Р С‘РЎРЏ",
-    cheapest: "Р РЋР В°Р СРЎвЂ№Р в„– Р Т‘Р ВµРЎв‚¬РЎвЂР Р†РЎвЂ№Р в„–",
-    more_options: "Р вЂўРЎвЂ°РЎвЂ Р Р†Р В°РЎР‚Р С‘Р В°Р Р…РЎвЂљРЎвЂ№",
-    tab_rec: "Р В Р ВµР С”Р С•Р СР ВµР Р…Р Т‘Р В°РЎвЂ Р С‘РЎРЏ",
-    tab_all: "Р вЂ™РЎРѓР Вµ РЎвЂљР В°РЎР‚Р С‘РЎвЂћРЎвЂ№",
+    tagline: "аналитика связи",
+    where: "Куда едете?",
+    trip_length: "Длительность",
+    priorities: "Что важнее?",
+    find: (c: string) => `Тарифы для ${c}`,
+    select_dest: "Выберите страну",
+    browse: "Все страны",
+    countries: "Страны",
+    back: "Назад",
+    best_overall: "Лучший выбор",
+    best_instant: "Проще активировать",
+    best_value: "Выгоднее всего",
+    best_unlimited: "Безлимит",
+    best_long_stay: "Для долгого пребывания",
+    cheapest: "Самый дешёвый",
+    more_options: "Ещё варианты",
+    tab_rec: "Рекомендация",
+    tab_all: "Все тарифы",
     tab_travel: "vs Travel eSIM",
-    tab_setup: "Р С’Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ",
-    tab_roaming: "Р В Р С•РЎС“Р СР С‘Р Р…Р С–",
-    verified: "Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚Р ВµР Р…Р С•",
-    official_source: "Р С›РЎвЂћР С‘РЎвЂ Р С‘Р В°Р В»РЎРЉР Р…РЎвЂ№Р в„– РЎРѓР В°Р в„–РЎвЂљ",
-    view_snapshot: "Р С›РЎвЂљР С”РЎР‚РЎвЂ№РЎвЂљРЎРЉ Р С—РЎР‚Р ВµР Т‘Р В»Р С•Р В¶Р ВµР Р…Р С‘Р Вµ",
-    buy_esim: "Р С™РЎС“Р С—Р С‘РЎвЂљРЎРЉ Travel eSIM",
-    why_this: "Р СџР С•РЎвЂЎР ВµР СРЎС“ РЎРЊРЎвЂљР С•РЎвЂљ РЎвЂљР В°РЎР‚Р С‘РЎвЂћ?",
-    duration_opt: "Р С›Р С—РЎвЂљР С‘Р СР С‘Р В·Р В°РЎвЂ Р С‘РЎРЏ",
-    reality_check: "Р В§РЎвЂљР С• Р Р†Р В°Р В¶Р Р…Р С• Р В·Р Р…Р В°РЎвЂљРЎРЉ",
-    travel_esim_intro: "Р СћРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р С‘Р Вµ eSIM (Airalo, Nomad, GigSkyРІР‚В¦) РІР‚вЂќ Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р В°РЎРЏ Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ Р В±Р ВµР В· РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘. Р СњР С• РЎРѓРЎС“РЎвЂ°Р ВµРЎРѓРЎвЂљР Р†Р ВµР Р…Р Р…Р С• Р Т‘Р С•РЎР‚Р С•Р В¶Р Вµ Р В·Р В° Р вЂњР вЂ Р С‘ Р В±Р ВµР В· Р СР ВµРЎРѓРЎвЂљР Р…Р С•Р С–Р С• Р Р…Р С•Р СР ВµРЎР‚Р В°.",
-    travel_esim_disclaimer: "Р В¦Р ВµР Р…РЎвЂ№ Р С•РЎР‚Р С‘Р ВµР Р…РЎвЂљР С‘РЎР‚Р С•Р Р†Р С•РЎвЂЎР Р…РЎвЂ№Р Вµ РІР‚вЂќ Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚РЎРЏР в„–РЎвЂљР Вµ Р В°Р С”РЎвЂљРЎС“Р В°Р В»РЎРЉР Р…РЎвЂ№Р Вµ Р Р…Р В° РЎРѓР В°Р в„–РЎвЂљР Вµ Р С—РЎР‚Р С•Р Р†Р В°Р в„–Р Т‘Р ВµРЎР‚Р В° Р С—Р ВµРЎР‚Р ВµР Т‘ Р С—Р С•Р С”РЎС“Р С—Р С”Р С•Р в„–.",
-    all_travel_esims: "Р СћРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р С‘Р Вµ eSIM Р Т‘Р В»РЎРЏ РЎРЊРЎвЂљР С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№",
-    travel_esim_note: "Р СћРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р В°РЎРЏ eSIM Р С•Р С—РЎР‚Р В°Р Р†Р Т‘Р В°Р Р…Р В°, Р ВµРЎРѓР В»Р С‘: Р Р…РЎС“Р В¶Р ВµР Р… Р С‘Р Р…РЎвЂљР ВµРЎР‚Р Р…Р ВµРЎвЂљ РЎРѓРЎР‚Р В°Р В·РЎС“ Р С—Р С• Р С—РЎР‚Р С‘Р В»РЎвЂРЎвЂљРЎС“, Р С—Р С•Р ВµР В·Р Т‘Р С”Р В° Р Т‘Р С• 3 Р Т‘Р Р…Р ВµР в„–, Р С‘Р В»Р С‘ Р СР ВµРЎРѓРЎвЂљР Р…РЎС“РЎР‹ SIM Р С—Р С•Р В»РЎС“РЎвЂЎР С‘РЎвЂљРЎРЉ Р В·Р В°РЎвЂљРЎР‚РЎС“Р Т‘Р Р…Р С‘РЎвЂљР ВµР В»РЎРЉР Р…Р С•.",
-    operators: "Р С›Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚РЎвЂ№",
-    all_local_plans: "Р СљР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р Вµ РЎвЂљР В°РЎР‚Р С‘РЎвЂћРЎвЂ№",
-    all_snapshot_plans: "Р СћРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р С‘Р Вµ eSIM РІР‚вЂќ РЎвЂ Р ВµР Р…РЎвЂ№",
-    friction_setup: "Р РЋР В»Р С•Р В¶Р Р…Р С•РЎРѓРЎвЂљРЎРЉ Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘Р С‘",
-    easy: "Р вЂєР ВµР С–Р С”Р С•", medium: "Р Р€Р СР ВµРЎР‚Р ВµР Р…Р Р…Р С•", hard: "Р РЋР В»Р С•Р В¶Р Р…Р С•",
-    activate_before: "Р СљР С•Р В¶Р Р…Р С• Р В°Р С”РЎвЂљР С‘Р Р†Р С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉ Р Т‘Р С• Р С—РЎР‚Р С‘Р В»РЎвЂРЎвЂљР В°",
-    store_required: "Р СћРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљРЎРѓРЎРЏ Р Р†Р С‘Р В·Р С‘РЎвЂљ Р Р† Р С•РЎвЂћР С‘РЎРѓ Р С•Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚Р В° Р С‘Р В»Р С‘ Р В°РЎРЊРЎР‚Р С•Р С—Р С•РЎР‚РЎвЂљ",
-    setup_intro: "Р СњР В°РЎРѓР С”Р С•Р В»РЎРЉР С”Р С• Р С—РЎР‚Р С•РЎРѓРЎвЂљР С• Р В°Р С”РЎвЂљР С‘Р Р†Р С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉ РЎвЂљР В°РЎР‚Р С‘РЎвЂћ Р Р…Р В° Р С—РЎР‚Р В°Р С”РЎвЂљР С‘Р С”Р Вµ РІР‚вЂќ Р Р…Р Вµ Р Р…Р В° Р В±РЎС“Р СР В°Р С–Р Вµ.",
-    pref_cheapest: "Р вЂќР ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ Р Р†РЎРѓР ВµР С–Р С•", pref_esim: "Р СћР С•Р В»РЎРЉР С”Р С• eSIM",
-    pref_nostore: "Р вЂР ВµР В· Р С•РЎвЂћР С‘РЎРѓР В° Р С•Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚Р В°", pref_roaming: "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р С—Р С• Р вЂР В°Р В»Р С”Р В°Р Р…Р В°Р С",
-    pref_longterm: "Р вЂќР В»Р С‘РЎвЂљР ВµР В»РЎРЉР Р…Р С•Р Вµ Р С—РЎР‚Р ВµР В±РЎвЂ№Р Р†Р В°Р Р…Р С‘Р Вµ", pref_tourist: "Р вЂќР В»РЎРЏ РЎвЂљРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С•Р Р†",
-    days_7: "7 Р Т‘Р Р…Р ВµР в„–", days_14: "14 Р Т‘Р Р…Р ВµР в„–", days_21: "21 Р Т‘Р ВµР Р…РЎРЉ", days_30: "30 Р Т‘Р Р…Р ВµР в„–", days_45: "45 Р Т‘Р Р…Р ВµР в„–", days_60: "60 Р Т‘Р Р…Р ВµР в„–",
-    tourist_ease: "Р Р€Р Т‘Р С•Р В±РЎРѓРЎвЂљР Р†Р С• Р Т‘Р В»РЎРЏ РЎвЂљРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С•Р Р†", esim_quality: "eSIM",
-    close: "Р вЂ”Р В°Р С”РЎР‚РЎвЂ№РЎвЂљРЎРЉ",
-    local_wins: (pct: number, ld: string, td: string) => `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ Р Р…Р В° ${pct}% РІР‚вЂќ ${ld} РЎР‚Р ВµР В°Р В»РЎРЉР Р…Р С•Р С–Р С• РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С”Р В° Р Р†Р СР ВµРЎРѓРЎвЂљР С• ${td}`,
-    local_better: (pct: number, ld: string, td: string) => `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ Р Р…Р В° ${pct}% РІР‚вЂќ ${ld} Р Р†Р СР ВµРЎРѓРЎвЂљР С• ${td}, Р С—Р В»РЎР‹РЎРѓ Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚`,
-    local_similar: "Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM: РЎРѓР С•Р С—Р С•РЎРѓРЎвЂљР В°Р Р†Р С‘Р СР В°РЎРЏ РЎвЂ Р ВµР Р…Р В°, РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚ Р С‘ Р В±Р С•Р В»РЎРЉРЎв‚¬Р Вµ РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С”Р В°",
-    travel_wins: "Travel eSIM: Р В±Р ВµР В· РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘, Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ Р Т‘Р С• Р С—РЎР‚Р С‘Р В»РЎвЂРЎвЂљР В°. Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM РЎвЂљРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљ Р С—Р В°РЎРѓР С—Р С•РЎР‚РЎвЂљ.",
-    roaming_matrix_title: "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р С—Р С• Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№Р С Р вЂР В°Р В»Р С”Р В°Р Р…Р В°Р С",
-    roaming_matrix_desc: "Р С™Р В°Р С”Р С‘Р Вµ SIM-Р С”Р В°РЎР‚РЎвЂљРЎвЂ№ РЎР‚Р В°Р В±Р С•РЎвЂљР В°РЎР‹РЎвЂљ Р В·Р В° Р С—РЎР‚Р ВµР Т‘Р ВµР В»Р В°Р СР С‘ РЎРѓР Р†Р С•Р ВµР в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р Р† РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р Вµ.",
-    matrix_sim_from: "SIM Р С‘Р В· РІвЂ вЂ™",
-    matrix_note: "РІСљвЂ¦ Р СџР С•Р В»Р Р…РЎвЂ№Р в„– РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–  РІС™В РїС‘РЏ Р С›Р С–РЎР‚Р В°Р Р…Р С‘РЎвЂЎР ВµР Р…Р Р…РЎвЂ№Р в„–  РІСњРЉ Р СњР ВµРЎвЂљ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В°",
-    plans_in: (c: string, n: number) => `${n} РЎвЂљР В°РЎР‚Р С‘РЎвЂћ${n === 1 ? "" : n < 5 ? "Р В°" : "Р С•Р Р†"} Р Р† ${c}`,
-    per_gb: "/Р вЂњР вЂ",
-    no_local_num: "Р вЂР ВµР В· Р СР ВµРЎРѓРЎвЂљР Р…Р С•Р С–Р С• Р Р…Р С•Р СР ВµРЎР‚Р В°",
-    data_only: "Р СћР С•Р В»РЎРЉР С”Р С• Р С‘Р Р…РЎвЂљР ВµРЎР‚Р Р…Р ВµРЎвЂљ",
-    instant: "Р РЋРЎР‚Р В°Р В·РЎС“",
-    snapshot_label: "Р В¦Р ВµР Р…Р В° Р С•РЎР‚Р С‘Р ВµР Р…РЎвЂљР С‘РЎР‚Р С•Р Р†Р С•РЎвЂЎР Р…Р В°РЎРЏ",
-    confidence_official: "Р С›РЎвЂћР С‘РЎвЂ Р С‘Р В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р С‘РЎРѓРЎвЂљР С•РЎвЂЎР Р…Р С‘Р С”",
-    confidence_manual: "Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚Р ВµР Р…Р С• Р Р†РЎР‚РЎС“РЎвЂЎР Р…РЎС“РЎР‹",
-    confidence_provider: "Р вЂќР В°Р Р…Р Р…РЎвЂ№Р Вµ Р С—РЎР‚Р С•Р Р†Р В°Р в„–Р Т‘Р ВµРЎР‚Р В°",
-    confidence_snapshot: "Р В¦Р ВµР Р…Р В° Р СР С•Р В¶Р ВµРЎвЂљ Р С‘Р В·Р СР ВµР Р…Р С‘РЎвЂљРЎРЉРЎРѓРЎРЏ",
-    confidence_review: "Р СћРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљ Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚Р С”Р С‘",
-    verify_price: "Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚РЎРЉРЎвЂљР Вµ РЎвЂ Р ВµР Р…РЎС“ Р С—Р ВµРЎР‚Р ВµР Т‘ Р С—Р С•Р С”РЎС“Р С—Р С”Р С•Р в„–",
-    app_data_label: "Р СћР С•Р В»РЎРЉР С”Р С• Р Т‘Р В»РЎРЏ Р С—РЎР‚Р С‘Р В»Р С•Р В¶Р ВµР Р…Р С‘Р в„–",
-    for_trip: (d: number) => `Р СњР В° ${d} Р Т‘Р Р…Р ВµР в„–`,
-    purchases: (n: number) => `${n}Р“вЂ” Р С—Р С•Р С”РЎС“Р С—Р С”${n === 1 ? "Р В°" : n < 5 ? "Р С‘" : "Р С•Р С”"}`,
-    ext_options: "Р СџРЎР‚Р С•Р Т‘Р В»Р ВµР Р…Р С‘Р Вµ",
-    general_data: "Р СљР С•Р В±Р С‘Р В»РЎРЉР Р…РЎвЂ№Р в„– Р С‘Р Р…РЎвЂљР ВµРЎР‚Р Р…Р ВµРЎвЂљ",
-    shown_as: "Р С›РЎвЂљР С•Р В±РЎР‚Р В°Р В¶Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р С”Р В°Р С”",
-    // РІвЂќР‚РІвЂќР‚ Р СљРЎС“Р В»РЎРЉРЎвЂљР С‘РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– РІвЂќР‚РІвЂќР‚
-    sim_title: "Р СљРЎС“Р В»РЎРЉРЎвЂљР С‘РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–",
-    sim_sub: "Р С›Р С—РЎвЂљР С‘Р СР В°Р В»РЎРЉР Р…Р В°РЎРЏ РЎРѓР Р†РЎРЏР В·РЎРЉ Р Т‘Р В»РЎРЏ Р С—Р С•Р ВµР В·Р Т‘Р С”Р С‘ Р С—Р С• Р Р…Р ВµРЎРѓР С”Р С•Р В»РЎРЉР С”Р С‘Р С РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р В°Р С",
-    sim_countries: "Р РЋРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°",
-    sim_add_country: "Р вЂќР С•Р В±Р В°Р Р†Р С‘РЎвЂљРЎРЉ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎС“",
-    sim_duration: "Р вЂќР В»Р С‘РЎвЂљР ВµР В»РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ Р С—Р С•Р ВµР В·Р Т‘Р С”Р С‘",
-    sim_usage: "Р СџР С•РЎвЂљРЎР‚Р ВµР В±Р В»Р ВµР Р…Р С‘Р Вµ РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С”Р В°",
-    sim_usage_light: "Р вЂєРЎвЂР С–Р С”Р С•Р Вµ",
-    sim_usage_medium: "Р РЋРЎР‚Р ВµР Т‘Р Р…Р ВµР Вµ",
-    sim_usage_heavy: "Р С’Р С”РЎвЂљР С‘Р Р†Р Р…Р С•Р Вµ",
-    sim_hotspot: "Р СњРЎС“Р В¶Р Р…Р В° РЎР‚Р В°Р В·Р Т‘Р В°РЎвЂЎР В° Р С‘Р Р…РЎвЂљР ВµРЎР‚Р Р…Р ВµРЎвЂљР В°?",
-    sim_esim_only: "Р СћР С•Р В»РЎРЉР С”Р С• eSIM?",
-    sim_need_number: "Р СњРЎС“Р В¶Р ВµР Р… Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚?",
-    sim_yes: "Р вЂќР В°",
-    sim_no: "Р СњР ВµРЎвЂљ",
-    sim_run: "Р СњР В°Р в„–РЎвЂљР С‘ Р В»РЎС“РЎвЂЎРЎв‚¬Р С‘Р в„– Р Р†Р В°РЎР‚Р С‘Р В°Р Р…РЎвЂљ",
-    sim_strategy_local: "Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Р† Р С”Р В°Р В¶Р Т‘Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Вµ",
-    sim_strategy_travel: "Р СћРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р В°РЎРЏ eSIM",
+    tab_setup: "Активация",
+    tab_roaming: "Роуминг",
+    verified: "Проверено",
+    official_source: "Официальный сайт",
+    view_snapshot: "Открыть предложение",
+    buy_esim: "Купить Travel eSIM",
+    why_this: "Почему этот тариф?",
+    duration_opt: "Оптимизация",
+    reality_check: "Что важно знать",
+    travel_esim_intro: "Туристические eSIM (Airalo, Nomad, GigSky…) — мгновенная активация без регистрации. Но существенно дороже за ГБ и без местного номера.",
+    travel_esim_disclaimer: "Цены ориентировочные — проверяйте актуальные на сайте провайдера перед покупкой.",
+    all_travel_esims: "Туристические eSIM для этой страны",
+    travel_esim_note: "Туристическая eSIM оправдана, если: нужен интернет сразу по прилёту, поездка до 3 дней, или местную SIM получить затруднительно.",
+    operators: "Операторы",
+    all_local_plans: "Местные тарифы",
+    all_snapshot_plans: "Туристические eSIM — цены",
+    friction_setup: "Сложность активации",
+    easy: "Легко", medium: "Умеренно", hard: "Сложно",
+    activate_before: "Можно активировать до прилёта",
+    store_required: "Требуется визит в офис оператора или аэропорт",
+    setup_intro: "Насколько просто активировать тариф на практике — не на бумаге.",
+    pref_cheapest: "Дешевле всего", pref_esim: "Только eSIM",
+    pref_nostore: "Без офиса оператора", pref_roaming: "Роуминг по Балканам",
+    pref_longterm: "Длительное пребывание", pref_tourist: "Для туристов",
+    days_7: "7 дней", days_14: "14 дней", days_21: "21 день", days_30: "30 дней", days_45: "45 дней", days_60: "60 дней",
+    tourist_ease: "Удобство для туристов", esim_quality: "eSIM",
+    close: "Закрыть",
+    local_wins: (pct: number, ld: string, td: string) => `Местная SIM дешевле на ${pct}% — ${ld} реального трафика вместо ${td}`,
+    local_better: (pct: number, ld: string, td: string) => `Местная SIM дешевле на ${pct}% — ${ld} вместо ${td}, плюс местный номер`,
+    local_similar: "Местная SIM: сопоставимая цена, реальный номер и больше трафика",
+    travel_wins: "Travel eSIM: без регистрации, активация до прилёта. Местная SIM требует паспорт.",
+    roaming_matrix_title: "Роуминг по Западным Балканам",
+    roaming_matrix_desc: "Какие SIM-карты работают за пределами своей страны в регионе.",
+    matrix_sim_from: "SIM из →",
+    matrix_note: "✅ Полный роуминг  ⚠️ Ограниченный  ❌ Нет роуминга",
+    plans_in: (c: string, n: number) => `${n} тариф${n === 1 ? "" : n < 5 ? "а" : "ов"} в ${c}`,
+    per_gb: "/ГБ",
+    no_local_num: "Без местного номера",
+    data_only: "Только интернет",
+    instant: "Сразу",
+    snapshot_label: "Цена ориентировочная",
+    confidence_official: "Официальный источник",
+    confidence_manual: "Проверено вручную",
+    confidence_provider: "Данные провайдера",
+    confidence_snapshot: "Цена может измениться",
+    confidence_review: "Требует проверки",
+    verify_price: "Проверьте цену перед покупкой",
+    app_data_label: "Только для приложений",
+    for_trip: (d: number) => `На ${d} дней`,
+    purchases: (n: number) => `${n}× покупк${n === 1 ? "а" : n < 5 ? "и" : "ок"}`,
+    ext_options: "Продление",
+    general_data: "Мобильный интернет",
+    shown_as: "Отображается как",
+    // ── Мультироуминг ──
+    sim_title: "Мультироуминг",
+    sim_sub: "Оптимальная связь для поездки по нескольким странам",
+    sim_countries: "Страны маршрута",
+    sim_add_country: "Добавить страну",
+    sim_duration: "Длительность поездки",
+    sim_usage: "Потребление трафика",
+    sim_usage_light: "Лёгкое",
+    sim_usage_medium: "Среднее",
+    sim_usage_heavy: "Активное",
+    sim_hotspot: "Нужна раздача интернета?",
+    sim_esim_only: "Только eSIM?",
+    sim_need_number: "Нужен местный номер?",
+    sim_yes: "Да",
+    sim_no: "Нет",
+    sim_run: "Найти лучший вариант",
+    sim_strategy_local: "Местная SIM в каждой стране",
+    sim_strategy_travel: "Туристическая eSIM",
     sim_strategy_nomad: "EU Nomad (Orange Flex)",
-    sim_recommended: "Р В Р ВµР С”Р С•Р СР ВµР Р…Р Т‘РЎС“Р ВµР С",
-    sim_total_cost: "Р СџРЎР‚Р С‘Р СР ВµРЎР‚Р Р…Р В°РЎРЏ РЎРѓРЎвЂљР С•Р С‘Р СР С•РЎРѓРЎвЂљРЎРЉ",
-    sim_per_month: "/Р СР ВµРЎРѓ.",
-    sim_why: "Р СџР С•РЎвЂЎР ВµР СРЎС“ РЎРЊРЎвЂљР С•РЎвЂљ Р Р†Р В°РЎР‚Р С‘Р В°Р Р…РЎвЂљ?",
-    sim_tradeoffs: "Р В§РЎвЂљР С• РЎС“РЎвЂЎР ВµРЎРѓРЎвЂљРЎРЉ",
-    sim_setup_complexity: "Р С’Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ",
-    sim_roaming_note: "Р В Р С•РЎС“Р СР С‘Р Р…Р С–",
-    sim_not_applicable: "Р СњР Вµ Р С—Р С•Р Т‘РЎвЂ¦Р С•Р Т‘Р С‘РЎвЂљ Р Т‘Р В»РЎРЏ РЎРЊРЎвЂљР С•Р С–Р С• Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°",
-    sim_no_data: "Р вЂќР В°Р Р…Р Р…РЎвЂ№РЎвЂ¦ Р С—Р С• РЎРЊРЎвЂљР С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Вµ Р С—Р С•Р С”Р В° Р Р…Р ВµРЎвЂљ",
-    sim_back: "Р вЂ™Р ВµРЎР‚Р Р…РЎС“РЎвЂљРЎРЉРЎРѓРЎРЏ",
-    sim_caveat_snapshot: "Р В¦Р ВµР Р…РЎвЂ№ РЎвЂљРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р С‘РЎвЂ¦ eSIM Р С•РЎР‚Р С‘Р ВµР Р…РЎвЂљР С‘РЎР‚Р С•Р Р†Р С•РЎвЂЎР Р…РЎвЂ№Р Вµ РІР‚вЂќ Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚РЎРЏР в„–РЎвЂљР Вµ Р С—Р ВµРЎР‚Р ВµР Т‘ Р С—Р С•Р С”РЎС“Р С—Р С”Р С•Р в„–",
+    sim_recommended: "Рекомендуем",
+    sim_total_cost: "Примерная стоимость",
+    sim_per_month: "/мес.",
+    sim_why: "Почему этот вариант?",
+    sim_tradeoffs: "Что учесть",
+    sim_setup_complexity: "Активация",
+    sim_roaming_note: "Роуминг",
+    sim_not_applicable: "Не подходит для этого маршрута",
+    sim_no_data: "Данных по этой стране пока нет",
+    sim_back: "Вернуться",
+    sim_caveat_snapshot: "Цены туристических eSIM ориентировочные — проверяйте перед покупкой",
+    // ── Trip Intent Engine ──
+    tie_title: "Подобрать связь для поездки",
+    tie_sub: "Ответьте на 5 вопросов — получите персональную рекомендацию.",
+    tie_step_route: "Куда едете?",
+    tie_step_route_sub: "Выберите все страны маршрута",
+    tie_step_duration: "Сколько времени вы в поездке?",
+    tie_step_usage: "Как вы используете телефон в поездке?",
+    tie_step_number: "Нужен ли вам местный номер телефона?",
+    tie_step_optim: "Что для вас важнее всего?",
+    tie_next: "Продолжить",
+    tie_back: "Назад",
+    tie_see_results: "Показать рекомендации",
+    tie_results_title: "Рекомендация по связи",
+    tie_convenience: "Самый удобный",
+    tie_savings: "Самый выгодный",
+    tie_alternative: "Также рассмотрите",
+    tie_strategy_label_convenience: "Активировать один раз",
+    tie_strategy_label_savings: "Дешевле с продлениями",
+    tie_vs: "или",
+    tie_save: "экономия",
+    tie_activations: (n: number) => `${n} активаци${n === 1 ? "я" : n < 5 ? "и" : "й"}`,
+    tie_renewals_needed: (n: number) => `Требует ${n} ручн${n === 1 ? "ого" : "ых"} продлени${n === 1 ? "я" : "й"}`,
+    tie_no_renewals: "Продление не нужно",
+    tie_edit: "Изменить ответы",
+    tie_route_summary: "Ваш маршрут",
+    // Длительность
+    dur_1_3: "1–3 дня",     dur_1_3_sub: "Выходные",
+    dur_4_7: "4–7 дней",    dur_4_7_sub: "Короткий отпуск",
+    dur_8_14: "8–14 дней",  dur_8_14_sub: "Две недели",
+    dur_15_30: "15–30 дней",dur_15_30_sub: "Около месяца",
+    dur_30p: "30+ дней",    dur_30p_sub: "Долгое путешествие или номадизм",
+    // Использование
+    use_light: "Карты и мессенджеры",  use_light_sub: "Google Maps, WhatsApp. ~300 МБ/день",
+    use_medium: "Обычный интернет",    use_medium_sub: "Соцсети, видео, навигация. ~1 ГБ/день",
+    use_heavy: "Видео + раздача",      use_heavy_sub: "Стриминг, удалённая работа, тетеринг. 3+ ГБ/день",
+    use_work: "Удалённая работа",      use_work_sub: "Раздача весь день для ноутбука. 5+ ГБ/день",
+    // Местный номер
+    num_none: "Нет — только интернет", num_none_sub: "Для звонков использую WhatsApp / Signal",
+    num_sms: "Только SMS",             num_sms_sub: "Для кодов 2FA и сервисов",
+    num_calls: "Звонки + SMS",         num_calls_sub: "Нужен настоящий местный номер",
+    // Оптимизация
+    optim_cheap: "Дешевле всего",         optim_cheap_sub: "Сэкономить, даже если нужны лишние шаги",
+    optim_easy: "Проще всего",            optim_easy_sub: "eSIM, активировать до отъезда",
+    optim_one_sim: "Одна SIM на всё",     optim_one_sim_sub: "Без замен и продлений",
+    optim_coverage: "Лучшее покрытие",    optim_coverage_sub: "Работает везде на маршруте",
+    optim_data: "Максимум трафика",       optim_data_sub: "Активный пользователь, нужен запас",
   },
 } as const;
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Roaming data РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Roaming data ─────────────────────────────────────────────────────────────
 type RoamVal = "yes" | "limited" | "no";
 // Balkans roaming matrix: which SIMs from country A work in country B.
-// Values are from-country perspective РІР‚вЂќ does a SIM purchased in 'from' roam in 'to'?
+// Values are from-country perspective — does a SIM purchased in 'from' roam in 'to'?
 // ME is the strongest for multi-country: One Tourist includes RS, BA, ME, MK.
 // AL is the weakest: most operators have no meaningful WB roaming.
 const ROAMING_MATRIX: Record<string, Record<string, RoamVal>> = {
@@ -440,24 +558,24 @@ const ROAMING_NOTES: Record<string, Record<string, string>> = {
     MK: "No Serbian tourist plan includes WB roaming to North Macedonia",
   },
   ME: {
-    RS: "One Tourist 15: 8.5 GB Р’В· One Tourist 20: 11 GB Р’В· One Tourist 25: 13.5 GB WB roaming Р’В· m:tel Tourist: 5РІР‚вЂњ8 GB WB",
-    BA: "One Tourist 20: 11 GB Р’В· One Tourist 25: 13.5 GB WB roaming includes Bosnia",
+    RS: "One Tourist 15: 8.5 GB · One Tourist 20: 11 GB · One Tourist 25: 13.5 GB WB roaming · m:tel Tourist: 5–8 GB WB",
+    BA: "One Tourist 20: 11 GB · One Tourist 25: 13.5 GB WB roaming includes Bosnia",
     ME: "Full domestic coverage",
-    AL: "Limited РІР‚вЂќ Albania coverage not guaranteed on all WB roaming plans. Verify before travel.",
-    MK: "One Tourist 20: 11 GB Р’В· One Tourist 25: 13.5 GB WB roaming includes N. Macedonia",
+    AL: "Limited — Albania coverage not guaranteed on all WB roaming plans. Verify before travel.",
+    MK: "One Tourist 20: 11 GB · One Tourist 25: 13.5 GB WB roaming includes N. Macedonia",
   },
   BA: {
     RS: "BH Telecom tourist eSIM includes WB roaming to Serbia",
     BA: "Full domestic coverage",
     ME: "BH Telecom tourist eSIM includes WB roaming to Montenegro",
-    AL: "Limited РІР‚вЂќ Albania not guaranteed",
+    AL: "Limited — Albania not guaranteed",
     MK: "BH Telecom tourist eSIM includes WB roaming to N. Macedonia",
   },
   MK: {
-    RS: "A1 Roam Surf Balkan S (2 GB, РІвЂљВ¬4.82) or L (5 GB, РІвЂљВ¬8.05) add-on covers WB including Serbia",
+    RS: "A1 Roam Surf Balkan S (2 GB, €4.82) or L (5 GB, €8.05) add-on covers WB including Serbia",
     BA: "A1 Roam Surf Balkan add-on covers Bosnia",
     ME: "A1 Roam Surf Balkan add-on covers Montenegro",
-    AL: "Limited РІР‚вЂќ Albania not guaranteed in WB roaming add-on",
+    AL: "Limited — Albania not guaranteed in WB roaming add-on",
     MK: "Full domestic coverage",
   },
   AL: {
@@ -470,7 +588,7 @@ const ROAMING_NOTES: Record<string, Record<string, string>> = {
 };
 const MATRIX_CC: CountryCode[] = ["RS", "BA", "ME", "AL", "MK"];
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Icons РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Icons ────────────────────────────────────────────────────────────────────
 function Ic({ d, size = 14, color }: { d: string; size?: number; color?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -505,7 +623,7 @@ const IC = {
   x:        "M18 6 6 18M6 6l12 12",
 };
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Badge types & builder РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Badge types & builder ────────────────────────────────────────────────────
 type BC = "badge-ok" | "badge-warn" | "badge-bad" | "badge-info" | "badge-muted" | "badge-purple" | "badge-green" | "badge-travel" | "badge-snapshot";
 
 // Returns max 3 decision-relevant tags. Only signals that change a user's choice.
@@ -538,7 +656,7 @@ function mkBadges(p: Plan): { t: string; c: BC }[] {
   return b;
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Scoring engine РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Scoring engine ───────────────────────────────────────────────────────────
 interface Scored {
   plan: Plan;
   score: number;
@@ -582,18 +700,18 @@ function scorePlan(p: Plan, days: number, prefs: Set<PrefId>): Scored {
   if (p.renewable) s += 6;
   if (p.auto_renew) s += 3;
 
-  // Registration burden РІР‚вЂќ distinguish between online KYC and true address/store requirement
+  // Registration burden — distinguish between online KYC and true address/store requirement
   if (!p.passport_required && !p.kyc_required && !p.registration_required) s += 10;
-  else if (p.kyc_required && p.online_purchase && !p.store_visit_required) s += 2; // online KYC only РІР‚вЂќ moderate, not severe
+  else if (p.kyc_required && p.online_purchase && !p.store_visit_required) s += 2; // online KYC only — moderate, not severe
   else if (!p.kyc_required) s += 4;
 
-  // Friction penalty РІР‚вЂќ cap effective friction for online-only markets (e.g. Germany KYC is online, not a store visit)
+  // Friction penalty — cap effective friction for online-only markets (e.g. Germany KYC is online, not a store visit)
   const effectiveFx = (p.kyc_required && p.online_purchase && !p.store_visit_required && fx <= 5)
     ? Math.min(fx, 4)  // online KYC capped at 4 effective friction
     : fx;
   s -= effectiveFx * 3;
 
-  // Cost РІР‚вЂќ scale penalty with trip length so short trips aren't over-penalised
+  // Cost — scale penalty with trip length so short trips aren't over-penalised
   const costWeight = days <= 7 ? 0.15 : days <= 14 ? 0.25 : 0.35;
   s -= total_cost * costWeight;
 
@@ -627,7 +745,7 @@ function scorePlan(p: Plan, days: number, prefs: Set<PrefId>): Scored {
   return { plan: p, score: s, purchases, total_cost, total_data_core, cost_per_day };
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Objective travel-vs-local comparison РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Objective travel-vs-local comparison ─────────────────────────────────────
 // Verdict is derived from a multi-factor score, NOT just price %.
 // travel_wins = travel eSIM is objectively better for this scenario.
 // local_wins  = local SIM is clearly better.
@@ -652,7 +770,7 @@ interface TravelCmp {
 function buildTravelCmp(best: Scored, allScored: Scored[], snaps: Plan[], days: number, prefs: Set<PrefId>): TravelCmp | null {
   if (!snaps.length) return null;
 
-  // РІвЂќР‚РІвЂќР‚ Pick most relevant snapshot РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+  // ── Pick most relevant snapshot ──────────────────────────────────────────────
   // Prefer covering + meaningful data (>=3 GB); fall back gracefully.
   const coveringMeaningful = snaps.filter(s => s.duration_days >= days && (s.data_gb || 0) >= 3);
   const coveringAny = snaps.filter(s => s.duration_days >= days);
@@ -661,13 +779,13 @@ function buildTravelCmp(best: Scored, allScored: Scored[], snaps: Plan[], days: 
     coveringAny.sort((a, b) => getPriceEur(a) - getPriceEur(b))[0] ||
     [...snaps].sort((a, b) => getPriceEur(a) - getPriceEur(b))[0];
 
-  // РІвЂќР‚РІвЂќР‚ Pick most representative local plan for comparison РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
-  // Use cheapest adequate plan (РІвЂ°Тђ0.5 GB/day, min 3 GB) that:
+  // ── Pick most representative local plan for comparison ───────────────────────
+  // Use cheapest adequate plan (≥0.5 GB/day, min 3 GB) that:
   // - covers trip in one purchase or is renewable
   // - doesn't require store visit
   // Sort: cost first, then friction, then prefer activation_before_arrival
   // (avoids picking address-restricted plans like Telekom DE over tourist-friendly ones)
-  const minData = Math.max(days * 0.3, 3); // at least 0.3 GB/day or 3 GB РІР‚вЂќ avoids entry-level but not overly strict
+  const minData = Math.max(days * 0.3, 3); // at least 0.3 GB/day or 3 GB — avoids entry-level but not overly strict
   const adequateScored = [...allScored]
     .filter(s => (s.purchases === 1 || s.plan.renewable) &&
       !s.plan.store_visit_required &&
@@ -691,7 +809,7 @@ function buildTravelCmp(best: Scored, allScored: Scored[], snaps: Plan[], days: 
   // positive = local is cheaper; negative = travel is cheaper
   const savePct = tEur > 0 ? Math.round(((tEur - lEur) / tEur) * 100) : 0;
 
-  const localDataStr = comparableLocal.plan.unlimited_data ? "РІв‚¬С›"
+  const localDataStr = comparableLocal.plan.unlimited_data ? "∞"
     : comparableLocal.total_data_core !== null ? `${comparableLocal.total_data_core} GB` : "?";
   const snapDataStr = snap.data_gb ? `${snap.data_gb} GB` : "?";
 
@@ -703,9 +821,9 @@ function buildTravelCmp(best: Scored, allScored: Scored[], snaps: Plan[], days: 
   const localMuchBetterPpg = lPpg !== null && sPpg !== null && lPpg < sPpg * 0.5;
   // true = travel is actually cheaper overall
   const travelCheaper = savePct < 0;
-  // true = travel margin is tiny (under РІвЂљВ¬2) РІР‚вЂќ not worth weighting heavily
+  // true = travel margin is tiny (under €2) — not worth weighting heavily
   const travelMarginTiny = travelCheaper && Math.abs(tEur - lEur) < 2;
-  // local data core for trip vs snap data РІР‚вЂќ how much more does local offer?
+  // local data core for trip vs snap data — how much more does local offer?
   const localDataAdv = (comparableLocal.total_data_core !== null && snap.data_gb)
     ? comparableLocal.total_data_core / snap.data_gb : 0;
 
@@ -722,7 +840,7 @@ function buildTravelCmp(best: Scored, allScored: Scored[], snaps: Plan[], days: 
   const localEasyEnough = localFx <= 3 && comparableLocal.plan.esim_supported === true
     && comparableLocal.plan.activation_before_arrival && !needsStore;
 
-  // РІвЂќР‚РІвЂќР‚ Travel convenience score РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+  // ── Travel convenience score ─────────────────────────────────────────────────
   let travelConvScore = 0;
   if (needsPassport) travelConvScore += 3;
   if (needsStore) travelConvScore += 3;
@@ -731,13 +849,13 @@ function buildTravelCmp(best: Scored, allScored: Scored[], snaps: Plan[], days: 
   // wantsNoKyc boost is halved when local SIM is already easy to activate online
   if (wantsNoKyc) travelConvScore += localEasyEnough ? 1 : 2;
 
-  // РІвЂќР‚РІвЂќР‚ Local value score РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+  // ── Local value score ────────────────────────────────────────────────────────
   let localValueScore = 0;
   if (savePct >= 40) localValueScore += 4;
   else if (savePct >= 20) localValueScore += 3;
   else if (savePct >= 5) localValueScore += 1;
   else if (travelCheaper && !travelMarginTiny) localValueScore -= 2;  // travel meaningfully cheaper
-  else if (travelMarginTiny) localValueScore -= 1;                    // travel barely cheaper РІР‚вЂќ small penalty
+  else if (travelMarginTiny) localValueScore -= 1;                    // travel barely cheaper — small penalty
   if (wantsLong) localValueScore += 3;
   if (wantsRoaming && comparableLocal.plan.western_balkans_roaming) localValueScore += 2;
   if (localHasNumber) localValueScore += 1;
@@ -763,130 +881,242 @@ function buildTravelCmp(best: Scored, allScored: Scored[], snaps: Plan[], days: 
     verdict = "local_better"; travelWins = false;
   }
 
-  // РІвЂќР‚РІвЂќР‚ Verdict reason РІР‚вЂќ uses actual numbers, never generic РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+  // ── Verdict reason — uses actual numbers, never generic ──────────────────────
   let verdictReason: string;
   let verdictReasonRu: string;
 
   // Human-readable data strings for verdict text
-  const localDataLabel = localDataStr === "РІв‚¬С›" ? "unlimited data" : `${localDataStr} general data`;
-  const localDataLabelRu = localDataStr === "РІв‚¬С›" ? "Р В±Р ВµР В·Р В»Р С‘Р СР С‘РЎвЂљР Р…РЎвЂ№Р в„– РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С”" : `${localDataStr} Р С•Р В±РЎвЂ°Р ВµР С–Р С• РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С”Р В°`;
+  const localDataLabel = localDataStr === "∞" ? "unlimited data" : `${localDataStr} general data`;
+  const localDataLabelRu = localDataStr === "∞" ? "безлимитный трафик" : `${localDataStr} общего трафика`;
   const priceDiff = parseFloat(Math.abs(tEur - lEur).toFixed(2));
   const dataRatioStr = (localDataAdv >= 2 && snap.data_gb)
-    ? `${Math.round(localDataAdv)}Р“вЂ” more data (${localDataStr} vs ${snapDataStr})`
+    ? `${Math.round(localDataAdv)}× more data (${localDataStr} vs ${snapDataStr})`
     : null;
   const dataRatioStrRu = (localDataAdv >= 2 && snap.data_gb)
-    ? `Р Р† ${Math.round(localDataAdv)}Р“вЂ” Р В±Р С•Р В»РЎРЉРЎв‚¬Р Вµ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦ (${localDataStr} Р С—РЎР‚Р С•РЎвЂљР С‘Р Р† ${snapDataStr})`
+    ? `в ${Math.round(localDataAdv)}× больше данных (${localDataStr} против ${snapDataStr})`
     : null;
 
   if (verdict === "travel_wins") {
     if (travelCheaper && !travelMarginTiny) {
-      verdictReason = `Travel eSIM wins РІР‚вЂќ it's cheaper (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur}), instant, and requires no passport. Local SIM offers ${dataRatioStr || "more data"} but costs more.`;
-      verdictReasonRu = `Travel eSIM Р Р†РЎвЂ№Р С‘Р С–РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ РІР‚вЂќ Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur}), Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…РЎвЂ№Р в„– Р С‘ Р В±Р ВµР В· Р С—Р В°РЎРѓР С—Р С•РЎР‚РЎвЂљР В°. Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Т‘Р В°РЎвЂРЎвЂљ ${dataRatioStrRu || "Р В±Р С•Р В»РЎРЉРЎв‚¬Р Вµ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦"}, Р Р…Р С• РЎРѓРЎвЂљР С•Р С‘РЎвЂљ Р Т‘Р С•РЎР‚Р С•Р В¶Р Вµ.`;
+      verdictReason = `Travel eSIM wins — it's cheaper (€${tEur.toFixed(2)} vs €${lEur}), instant, and requires no passport. Local SIM offers ${dataRatioStr || "more data"} but costs more.`;
+      verdictReasonRu = `Travel eSIM выигрывает — дешевле (€${tEur.toFixed(2)} vs €${lEur}), мгновенный и без паспорта. Местная SIM даёт ${dataRatioStrRu || "больше данных"}, но стоит дороже.`;
     } else if (needsStore) {
-      verdictReason = `Travel eSIM wins for ${days} days РІР‚вЂќ it avoids the store visit and passport registration. The ${priceDiff > 0 ? `РІвЂљВ¬${priceDiff} extra` : "same"} cost is worth the convenience.`;
-      verdictReasonRu = `Travel eSIM Р Р†РЎвЂ№Р С‘Р С–РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р Р…Р В° ${days} Р Т‘Р Р…Р ВµР в„– РІР‚вЂќ Р В±Р ВµР В· Р СР В°Р С–Р В°Р В·Р С‘Р Р…Р В° Р С‘ РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘. ${priceDiff > 0 ? `Р СџР ВµРЎР‚Р ВµР С—Р В»Р В°РЎвЂљР В° РІвЂљВ¬${priceDiff}` : "Р С›Р Т‘Р С‘Р Р…Р В°Р С”Р С•Р Р†Р В°РЎРЏ РЎвЂ Р ВµР Р…Р В°"} Р С•Р С—РЎР‚Р В°Р Р†Р Т‘Р В°Р Р…Р В° РЎС“Р Т‘Р С•Р В±РЎРѓРЎвЂљР Р†Р С•Р С.`;
+      verdictReason = `Travel eSIM wins for ${days} days — it avoids the store visit and passport registration. The ${priceDiff > 0 ? `€${priceDiff} extra` : "same"} cost is worth the convenience.`;
+      verdictReasonRu = `Travel eSIM выигрывает на ${days} дней — без магазина и регистрации. ${priceDiff > 0 ? `Переплата €${priceDiff}` : "Одинаковая цена"} оправдана удобством.`;
     } else if (localFx >= 6) {
-      verdictReason = `Travel eSIM wins here. Local SIM requires KYC verification РІР‚вЂќ expect a 1РІР‚вЂњ2 day activation delay. Travel eSIM is instant and ${savePct > 0 ? `saves ${savePct}%` : `costs РІвЂљВ¬${priceDiff} more`}.`;
-      verdictReasonRu = `Travel eSIM Р Р†РЎвЂ№Р С‘Р С–РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ. Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM РЎвЂљРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљ KYC-Р Р†Р ВµРЎР‚Р С‘РЎвЂћР С‘Р С”Р В°РЎвЂ Р С‘РЎР‹ (1РІР‚вЂњ2 Р Т‘Р Р…РЎРЏ). Travel eSIM Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…РЎвЂ№Р в„– Р С‘ ${savePct > 0 ? `РЎРЊР С”Р С•Р Р…Р С•Р СР С‘РЎвЂљ ${savePct}%` : `РЎРѓРЎвЂљР С•Р С‘РЎвЂљ Р Р…Р В° РІвЂљВ¬${priceDiff} Р Т‘Р С•РЎР‚Р С•Р В¶Р Вµ`}.`;
+      verdictReason = `Travel eSIM wins here. Local SIM requires KYC verification — expect a 1–2 day activation delay. Travel eSIM is instant and ${savePct > 0 ? `saves ${savePct}%` : `costs €${priceDiff} more`}.`;
+      verdictReasonRu = `Travel eSIM выигрывает. Местная SIM требует KYC-верификацию (1–2 дня). Travel eSIM мгновенный и ${savePct > 0 ? `экономит ${savePct}%` : `стоит на €${priceDiff} дороже`}.`;
     } else {
       verdictReason = `Travel eSIM is the better pick: instant activation, no passport needed${travelMarginTiny ? ", and the cost difference is negligible" : ""}.`;
-      verdictReasonRu = `Travel eSIM РІР‚вЂќ Р В»РЎС“РЎвЂЎРЎв‚¬Р С‘Р в„– Р Р†РЎвЂ№Р В±Р С•РЎР‚: Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р В°РЎРЏ Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ, Р В±Р ВµР В· Р С—Р В°РЎРѓР С—Р С•РЎР‚РЎвЂљР В°${travelMarginTiny ? ", РЎР‚Р В°Р В·Р Р…Р С‘РЎвЂ Р В° Р Р† РЎвЂ Р ВµР Р…Р Вµ Р СР С‘Р Р…Р С‘Р СР В°Р В»РЎРЉР Р…Р В°" : ""}.`;
+      verdictReasonRu = `Travel eSIM — лучший выбор: мгновенная активация, без паспорта${travelMarginTiny ? ", разница в цене минимальна" : ""}.`;
     }
   } else if (verdict === "travel_better") {
     if (travelCheaper && !travelMarginTiny) {
-      verdictReason = `Travel eSIM is probably better РІР‚вЂќ cheaper (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur}), no registration needed. Local SIM gives ${dataRatioStr || "more data"} with a real phone number.`;
-      verdictReasonRu = `Travel eSIM, РЎРѓР С”Р С•РЎР‚Р ВµР Вµ Р Р†РЎРѓР ВµР С–Р С•, Р В»РЎС“РЎвЂЎРЎв‚¬Р Вµ РІР‚вЂќ Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur}), Р В±Р ВµР В· РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘. Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Т‘Р В°РЎвЂРЎвЂљ ${dataRatioStrRu || "Р В±Р С•Р В»РЎРЉРЎв‚¬Р Вµ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦"} Р С‘ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚.`;
+      verdictReason = `Travel eSIM is probably better — cheaper (€${tEur.toFixed(2)} vs €${lEur}), no registration needed. Local SIM gives ${dataRatioStr || "more data"} with a real phone number.`;
+      verdictReasonRu = `Travel eSIM, скорее всего, лучше — дешевле (€${tEur.toFixed(2)} vs €${lEur}), без регистрации. Местная SIM даёт ${dataRatioStrRu || "больше данных"} и реальный номер.`;
     } else if (localFx >= 6) {
-      verdictReason = `Travel eSIM is probably the better choice. Local SIM requires KYC РІР‚вЂќ plan for a 1РІР‚вЂњ2 day delay. Travel eSIM works immediately${savePct > 0 ? ` and saves ${savePct}%` : ""}.`;
-      verdictReasonRu = `Travel eSIM, РЎРѓР С”Р С•РЎР‚Р ВµР Вµ Р Р†РЎРѓР ВµР С–Р С•, Р В»РЎС“РЎвЂЎРЎв‚¬Р Вµ. Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM РЎвЂљРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљ KYC (1РІР‚вЂњ2 Р Т‘Р Р…РЎРЏ). Travel eSIM РЎР‚Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ РЎРѓРЎР‚Р В°Р В·РЎС“${savePct > 0 ? ` Р С‘ РЎРЊР С”Р С•Р Р…Р С•Р СР С‘РЎвЂљ ${savePct}%` : ""}.`;
+      verdictReason = `Travel eSIM is probably the better choice. Local SIM requires KYC — plan for a 1–2 day delay. Travel eSIM works immediately${savePct > 0 ? ` and saves ${savePct}%` : ""}.`;
+      verdictReasonRu = `Travel eSIM, скорее всего, лучше. Местная SIM требует KYC (1–2 дня). Travel eSIM работает сразу${savePct > 0 ? ` и экономит ${savePct}%` : ""}.`;
     } else if (travelMarginTiny) {
-      verdictReason = `Travel eSIM edges ahead: the price is nearly identical (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur}) but activation is instant with no registration.`;
-      verdictReasonRu = `Travel eSIM Р Р…Р ВµР СР Р…Р С•Р С–Р С• Р В»РЎС“РЎвЂЎРЎв‚¬Р Вµ: РЎвЂ Р ВµР Р…РЎвЂ№ Р С—Р С•РЎвЂЎРЎвЂљР С‘ Р С•Р Т‘Р С‘Р Р…Р В°Р С”Р С•Р Р†РЎвЂ№Р Вµ (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur}), Р Р…Р С• Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р В°РЎРЏ Р С‘ Р В±Р ВµР В· РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘.`;
+      verdictReason = `Travel eSIM edges ahead: the price is nearly identical (€${tEur.toFixed(2)} vs €${lEur}) but activation is instant with no registration.`;
+      verdictReasonRu = `Travel eSIM немного лучше: цены почти одинаковые (€${tEur.toFixed(2)} vs €${lEur}), но активация мгновенная и без регистрации.`;
     } else {
       verdictReason = `Travel eSIM is probably better for this trip: simpler activation, no passport, and the price gap${savePct > 0 ? ` (${savePct}% cheaper locally)` : ""} doesn't outweigh the convenience.`;
-      verdictReasonRu = `Travel eSIM, РЎРѓР С”Р С•РЎР‚Р ВµР Вµ Р Р†РЎРѓР ВµР С–Р С•, Р В»РЎС“РЎвЂЎРЎв‚¬Р Вµ Р Т‘Р В»РЎРЏ РЎРЊРЎвЂљР С•Р в„– Р С—Р С•Р ВµР В·Р Т‘Р С”Р С‘: Р С—РЎР‚Р С•РЎвЂ°Р Вµ Р В°Р С”РЎвЂљР С‘Р Р†Р С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉ, Р В±Р ВµР В· Р С—Р В°РЎРѓР С—Р С•РЎР‚РЎвЂљР В°${savePct > 0 ? `, РЎвЂ¦Р С•РЎвЂљРЎРЏ Р СР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ Р Р…Р В° ${savePct}% Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ` : ""}.`;
+      verdictReasonRu = `Travel eSIM, скорее всего, лучше для этой поездки: проще активировать, без паспорта${savePct > 0 ? `, хотя местная на ${savePct}% дешевле` : ""}.`;
     }
   } else if (verdict === "depends") {
-    const localPpgStr = lPpg !== null ? `РІвЂљВ¬${lPpg}/GB` : null;
-    const snapPpgStr  = sPpg !== null ? `РІвЂљВ¬${sPpg}/GB` : null;
+    const localPpgStr = lPpg !== null ? `€${lPpg}/GB` : null;
+    const snapPpgStr  = sPpg !== null ? `€${sPpg}/GB` : null;
     // ME-style: travel cheaper but local gives massive data advantage
     if (travelCheaper && localDataAdv >= 10) {
-      verdictReason = `Genuinely depends. Travel eSIM (РІвЂљВ¬${tEur.toFixed(2)}) is cheaper, but local SIM gives ${dataRatioStr || "far more data"} with a real phone number. Budget travellers РІвЂ вЂ™ travel. Heavy users РІвЂ вЂ™ local.`;
-      verdictReasonRu = `Р вЂќР ВµР в„–РЎРѓРЎвЂљР Р†Р С‘РЎвЂљР ВµР В»РЎРЉР Р…Р С• Р В·Р В°Р Р†Р С‘РЎРѓР С‘РЎвЂљ Р С•РЎвЂљ Р С—Р С•РЎвЂљРЎР‚Р ВµР В±Р Р…Р С•РЎРѓРЎвЂљР ВµР в„–. Travel eSIM (РІвЂљВ¬${tEur.toFixed(2)}) Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ, Р Р…Р С• Р СР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Т‘Р В°РЎвЂРЎвЂљ ${dataRatioStrRu || "Р Р…Р В°Р СР Р…Р С•Р С–Р С• Р В±Р С•Р В»РЎРЉРЎв‚¬Р Вµ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦"} РЎРѓ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р С Р Р…Р С•Р СР ВµРЎР‚Р С•Р С.`;
+      verdictReason = `Genuinely depends. Travel eSIM (€${tEur.toFixed(2)}) is cheaper, but local SIM gives ${dataRatioStr || "far more data"} with a real phone number. Budget travellers → travel. Heavy users → local.`;
+      verdictReasonRu = `Действительно зависит от потребностей. Travel eSIM (€${tEur.toFixed(2)}) дешевле, но местная SIM даёт ${dataRatioStrRu || "намного больше данных"} с реальным номером.`;
     } else if (localBetterPpg && localPpgStr && snapPpgStr) {
       verdictReason = `Close call. Local SIM: ${localDataLabel} at ${localPpgStr}${localHasNumber ? " + real number" : ""}. Travel eSIM: instant, no passport, ${snapDataStr} at ${snapPpgStr}.`;
-      verdictReasonRu = `Р СџРЎР‚Р С‘Р СР ВµРЎР‚Р Р…Р С• РЎР‚Р В°Р Р†Р Р…Р С•. Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM: ${localDataLabelRu} Р В·Р В° ${localPpgStr}${localHasNumber ? " + РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚" : ""}. Travel eSIM: Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р С•, Р В±Р ВµР В· Р С—Р В°РЎРѓР С—Р С•РЎР‚РЎвЂљР В°, ${snapDataStr} Р В·Р В° ${snapPpgStr}.`;
+      verdictReasonRu = `Примерно равно. Местная SIM: ${localDataLabelRu} за ${localPpgStr}${localHasNumber ? " + реальный номер" : ""}. Travel eSIM: мгновенно, без паспорта, ${snapDataStr} за ${snapPpgStr}.`;
     } else if (!localBetterPpg && snapPpgStr && localPpgStr) {
       verdictReason = `Close call. Travel eSIM is cheaper per GB (${snapPpgStr} vs ${localPpgStr})${localHasNumber ? ". Local SIM adds a real phone number" : ""}. Local gives ${localDataStr} vs ${snapDataStr}.`;
-      verdictReasonRu = `Р СџРЎР‚Р С‘Р СР ВµРЎР‚Р Р…Р С• РЎР‚Р В°Р Р†Р Р…Р С•. Travel eSIM Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ Р В·Р В° Р вЂњР вЂ (${snapPpgStr} Р С—РЎР‚Р С•РЎвЂљР С‘Р Р† ${localPpgStr})${localHasNumber ? ". Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Т‘Р В°РЎвЂРЎвЂљ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚" : ""}. Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ: ${localDataStr} Р С—РЎР‚Р С•РЎвЂљР С‘Р Р† ${snapDataStr}.`;
+      verdictReasonRu = `Примерно равно. Travel eSIM дешевле за ГБ (${snapPpgStr} против ${localPpgStr})${localHasNumber ? ". Местная SIM даёт реальный номер" : ""}. Местная: ${localDataStr} против ${snapDataStr}.`;
     } else {
-      verdictReason = `Depends on priorities. Local SIM: ${localDataLabel}${localHasNumber ? " + real number" : ""} for РІвЂљВ¬${lEur}. Travel eSIM: instant activation, no registration, for РІвЂљВ¬${tEur.toFixed(2)}.`;
-      verdictReasonRu = `Р вЂ”Р В°Р Р†Р С‘РЎРѓР С‘РЎвЂљ Р С•РЎвЂљ Р С—РЎР‚Р С‘Р С•РЎР‚Р С‘РЎвЂљР ВµРЎвЂљР С•Р Р†. Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ: ${localDataLabelRu}${localHasNumber ? " + РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚" : ""} Р В·Р В° РІвЂљВ¬${lEur}. Travel eSIM: Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р С•, Р В±Р ВµР В· РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘, Р В·Р В° РІвЂљВ¬${tEur.toFixed(2)}.`;
+      verdictReason = `Depends on priorities. Local SIM: ${localDataLabel}${localHasNumber ? " + real number" : ""} for €${lEur}. Travel eSIM: instant activation, no registration, for €${tEur.toFixed(2)}.`;
+      verdictReasonRu = `Зависит от приоритетов. Местная: ${localDataLabelRu}${localHasNumber ? " + реальный номер" : ""} за €${lEur}. Travel eSIM: мгновенно, без регистрации, за €${tEur.toFixed(2)}.`;
     }
   } else if (verdict === "local_wins") {
     if (savePct >= 40 && dataRatioStr) {
-      verdictReason = `Local SIM clearly wins: ${dataRatioStr} for ${savePct}% less (РІвЂљВ¬${lEur} vs РІвЂљВ¬${tEur.toFixed(2)})${localHasNumber ? " plus a real phone number" : ""}. Passport registration is a one-time 5-minute step.`;
-      verdictReasonRu = `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM РЎРЏР Р†Р Р…Р С• Р Р†РЎвЂ№Р С‘Р С–РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ: ${dataRatioStrRu} Р В·Р В° ${savePct}% Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ (РІвЂљВ¬${lEur} vs РІвЂљВ¬${tEur.toFixed(2)})${localHasNumber ? " Р С—Р В»РЎР‹РЎРѓ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚" : ""}. Р В Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘РЎРЏ РІР‚вЂќ 5 Р СР С‘Р Р…РЎС“РЎвЂљ.`;
+      verdictReason = `Local SIM clearly wins: ${dataRatioStr} for ${savePct}% less (€${lEur} vs €${tEur.toFixed(2)})${localHasNumber ? " plus a real phone number" : ""}. Passport registration is a one-time 5-minute step.`;
+      verdictReasonRu = `Местная SIM явно выигрывает: ${dataRatioStrRu} за ${savePct}% дешевле (€${lEur} vs €${tEur.toFixed(2)})${localHasNumber ? " плюс реальный номер" : ""}. Регистрация — 5 минут.`;
     } else if (savePct >= 20) {
-      verdictReason = `Local SIM wins: ${savePct}% cheaper (РІвЂљВ¬${lEur} vs РІвЂљВ¬${tEur.toFixed(2)})${lPpg && sPpg ? ` and ${Math.round(sPpg / lPpg)}Р“вЂ” better value per GB` : ""}${localHasNumber ? ", plus a real local number" : ""}.`;
-      verdictReasonRu = `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Р†РЎвЂ№Р С‘Р С–РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ: Р Р…Р В° ${savePct}% Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ (РІвЂљВ¬${lEur} vs РІвЂљВ¬${tEur.toFixed(2)})${lPpg && sPpg ? ` Р С‘ Р Р† ${Math.round(sPpg / lPpg)}Р“вЂ” Р Р†РЎвЂ№Р С–Р С•Р Т‘Р Р…Р ВµР Вµ Р В·Р В° Р вЂњР вЂ` : ""}${localHasNumber ? ", Р С—Р В»РЎР‹РЎРѓ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚" : ""}.`;
+      verdictReason = `Local SIM wins: ${savePct}% cheaper (€${lEur} vs €${tEur.toFixed(2)})${lPpg && sPpg ? ` and ${Math.round(sPpg / lPpg)}× better value per GB` : ""}${localHasNumber ? ", plus a real local number" : ""}.`;
+      verdictReasonRu = `Местная SIM выигрывает: на ${savePct}% дешевле (€${lEur} vs €${tEur.toFixed(2)})${lPpg && sPpg ? ` и в ${Math.round(sPpg / lPpg)}× выгоднее за ГБ` : ""}${localHasNumber ? ", плюс реальный номер" : ""}.`;
     } else if (wantsLong) {
-      verdictReason = `Local SIM wins for a ${days}-day stay: ${localDataLabel} for РІвЂљВ¬${lEur}${localHasNumber ? " with a real number" : ""}. Passport registration takes minutes and pays off over a longer trip.`;
-      verdictReasonRu = `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Р†РЎвЂ№Р С‘Р С–РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р Т‘Р В»РЎРЏ ${days}-Р Т‘Р Р…Р ВµР Р†Р Р…Р С•Р С–Р С• Р С—РЎР‚Р ВµР В±РЎвЂ№Р Р†Р В°Р Р…Р С‘РЎРЏ: ${localDataLabelRu} Р В·Р В° РІвЂљВ¬${lEur}${localHasNumber ? " РЎРѓ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р С Р Р…Р С•Р СР ВµРЎР‚Р С•Р С" : ""}. Р В Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘РЎРЏ Р В·Р В°Р в„–Р СРЎвЂРЎвЂљ Р Р…Р ВµРЎРѓР С”Р С•Р В»РЎРЉР С”Р С• Р СР С‘Р Р…РЎС“РЎвЂљ.`;
+      verdictReason = `Local SIM wins for a ${days}-day stay: ${localDataLabel} for €${lEur}${localHasNumber ? " with a real number" : ""}. Passport registration takes minutes and pays off over a longer trip.`;
+      verdictReasonRu = `Местная SIM выигрывает для ${days}-дневного пребывания: ${localDataLabelRu} за €${lEur}${localHasNumber ? " с реальным номером" : ""}. Регистрация займёт несколько минут.`;
     } else {
-      verdictReason = `Local SIM wins: ${localDataLabel} for РІвЂљВ¬${lEur}${localHasNumber ? " with a real local number" : ""}. Travel eSIM offers ${snapDataStr} for РІвЂљВ¬${tEur.toFixed(2)} with no registration needed.`;
-      verdictReasonRu = `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Р†РЎвЂ№Р С‘Р С–РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ: ${localDataLabelRu} Р В·Р В° РІвЂљВ¬${lEur}${localHasNumber ? " РЎРѓ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р С Р Р…Р С•Р СР ВµРЎР‚Р С•Р С" : ""}. Travel eSIM РІР‚вЂќ ${snapDataStr} Р В·Р В° РІвЂљВ¬${tEur.toFixed(2)} Р В±Р ВµР В· РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘.`;
+      verdictReason = `Local SIM wins: ${localDataLabel} for €${lEur}${localHasNumber ? " with a real local number" : ""}. Travel eSIM offers ${snapDataStr} for €${tEur.toFixed(2)} with no registration needed.`;
+      verdictReasonRu = `Местная SIM выигрывает: ${localDataLabelRu} за €${lEur}${localHasNumber ? " с реальным номером" : ""}. Travel eSIM — ${snapDataStr} за €${tEur.toFixed(2)} без регистрации.`;
     }
   } else {
     // local_better
     if (savePct >= 20 && localBetterPpg && lPpg && sPpg) {
-      verdictReason = `Local SIM is better value: ${savePct}% cheaper at РІвЂљВ¬${lPpg}/GB vs РІвЂљВ¬${sPpg}/GB. Travel eSIM is a valid alternative if instant, no-registration access is your priority.`;
-      verdictReasonRu = `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Р†РЎвЂ№Р С–Р С•Р Т‘Р Р…Р ВµР Вµ: Р Р…Р В° ${savePct}% Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ, РІвЂљВ¬${lPpg}/Р вЂњР вЂ Р С—РЎР‚Р С•РЎвЂљР С‘Р Р† РІвЂљВ¬${sPpg}/Р вЂњР вЂ. Travel eSIM РІР‚вЂќ РЎР‚Р В°Р В·РЎС“Р СР Р…Р В°РЎРЏ Р В°Р В»РЎРЉРЎвЂљР ВµРЎР‚Р Р…Р В°РЎвЂљР С‘Р Р†Р В° Р Т‘Р В»РЎРЏ Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р С•Р С–Р С• Р Т‘Р С•РЎРѓРЎвЂљРЎС“Р С—Р В° Р В±Р ВµР В· РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘.`;
+      verdictReason = `Local SIM is better value: ${savePct}% cheaper at €${lPpg}/GB vs €${sPpg}/GB. Travel eSIM is a valid alternative if instant, no-registration access is your priority.`;
+      verdictReasonRu = `Местная SIM выгоднее: на ${savePct}% дешевле, €${lPpg}/ГБ против €${sPpg}/ГБ. Travel eSIM — разумная альтернатива для мгновенного доступа без регистрации.`;
     } else if (savePct >= 5) {
-      verdictReason = `Local SIM is better value overall РІР‚вЂќ ${savePct}% cheaper with ${localDataStr} general data${localHasNumber ? " and a real phone number" : ""}. Travel eSIM is faster if you need instant activation.`;
-      verdictReasonRu = `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Р† РЎвЂ Р ВµР В»Р С•Р С Р Р†РЎвЂ№Р С–Р С•Р Т‘Р Р…Р ВµР Вµ РІР‚вЂќ Р Р…Р В° ${savePct}% Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ РЎРѓ ${localDataStr} РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С”Р В°${localHasNumber ? " Р С‘ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р С Р Р…Р С•Р СР ВµРЎР‚Р С•Р С" : ""}. Travel eSIM Р В±РЎвЂ№РЎРѓРЎвЂљРЎР‚Р ВµР Вµ Р Т‘Р В»РЎРЏ Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р С•Р в„– Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘Р С‘.`;
+      verdictReason = `Local SIM is better value overall — ${savePct}% cheaper with ${localDataStr} general data${localHasNumber ? " and a real phone number" : ""}. Travel eSIM is faster if you need instant activation.`;
+      verdictReasonRu = `Местная SIM в целом выгоднее — на ${savePct}% дешевле с ${localDataStr} трафика${localHasNumber ? " и реальным номером" : ""}. Travel eSIM быстрее для мгновенной активации.`;
     } else {
-      verdictReason = `Local SIM is the better value pick: ${localDataLabel} for РІвЂљВ¬${lEur}${localHasNumber ? " with a real number" : ""}. Travel eSIM (РІвЂљВ¬${tEur.toFixed(2)}) suits same-day-arrival or zero-hassle use.`;
-      verdictReasonRu = `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Р†РЎвЂ№Р С–Р С•Р Т‘Р Р…Р ВµР Вµ: ${localDataLabelRu} Р В·Р В° РІвЂљВ¬${lEur}${localHasNumber ? " РЎРѓ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р С Р Р…Р С•Р СР ВµРЎР‚Р С•Р С" : ""}. Travel eSIM (РІвЂљВ¬${tEur.toFixed(2)}) РІР‚вЂќ Р Т‘Р В»РЎРЏ Р С—РЎР‚Р С‘Р В»РЎвЂРЎвЂљР В° Р Р† РЎвЂљР С•РЎвЂљ Р В¶Р Вµ Р Т‘Р ВµР Р…РЎРЉ Р С‘Р В»Р С‘ Р В±Р ВµР В· Р В»Р С‘РЎв‚¬Р Р…Р С‘РЎвЂ¦ РЎС“РЎРѓР С‘Р В»Р С‘Р в„–.`;
+      verdictReason = `Local SIM is the better value pick: ${localDataLabel} for €${lEur}${localHasNumber ? " with a real number" : ""}. Travel eSIM (€${tEur.toFixed(2)}) suits same-day-arrival or zero-hassle use.`;
+      verdictReasonRu = `Местная SIM выгоднее: ${localDataLabelRu} за €${lEur}${localHasNumber ? " с реальным номером" : ""}. Travel eSIM (€${tEur.toFixed(2)}) — для прилёта в тот же день или без лишних усилий.`;
     }
   }
 
-  // РІвЂќР‚РІвЂќР‚ Why factors РІР‚вЂќ key signals shown as pill tags РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+  // ── Why factors — key signals shown as pill tags ─────────────────────────────
   const whyFactors: { label: string; labelRu: string; side: "travel" | "local" }[] = [];
-  // Price signal РІР‚вЂќ show whichever side is cheaper, with amount
+  // Price signal — show whichever side is cheaper, with amount
   if (travelCheaper && !travelMarginTiny) {
-    whyFactors.push({ label: `Travel eSIM cheaper (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur})`, labelRu: `Travel eSIM Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur})`, side: "travel" });
+    whyFactors.push({ label: `Travel eSIM cheaper (€${tEur.toFixed(2)} vs €${lEur})`, labelRu: `Travel eSIM дешевле (€${tEur.toFixed(2)} vs €${lEur})`, side: "travel" });
   } else if (travelMarginTiny) {
-    whyFactors.push({ label: `Similar price (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur})`, labelRu: `Р СџР С•РЎвЂ¦Р С•Р В¶Р В°РЎРЏ РЎвЂ Р ВµР Р…Р В° (РІвЂљВ¬${tEur.toFixed(2)} vs РІвЂљВ¬${lEur})`, side: "travel" });
+    whyFactors.push({ label: `Similar price (€${tEur.toFixed(2)} vs €${lEur})`, labelRu: `Похожая цена (€${tEur.toFixed(2)} vs €${lEur})`, side: "travel" });
   } else if (savePct >= 10) {
-    whyFactors.push({ label: `Local SIM ${savePct}% cheaper (РІвЂљВ¬${lEur} vs РІвЂљВ¬${tEur.toFixed(2)})`, labelRu: `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ Р Р…Р В° ${savePct}% Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ`, side: "local" });
+    whyFactors.push({ label: `Local SIM ${savePct}% cheaper (€${lEur} vs €${tEur.toFixed(2)})`, labelRu: `Местная на ${savePct}% дешевле`, side: "local" });
   }
   // Per-GB signal
   if (localBetterPpg && lPpg && sPpg) {
-    whyFactors.push({ label: `Better РІвЂљВ¬/GB locally (РІвЂљВ¬${lPpg} vs РІвЂљВ¬${sPpg})`, labelRu: `Р вЂ™РЎвЂ№Р С–Р С•Р Т‘Р Р…Р ВµР Вµ Р В·Р В° Р вЂњР вЂ (РІвЂљВ¬${lPpg} vs РІвЂљВ¬${sPpg})`, side: "local" });
+    whyFactors.push({ label: `Better €/GB locally (€${lPpg} vs €${sPpg})`, labelRu: `Выгоднее за ГБ (€${lPpg} vs €${sPpg})`, side: "local" });
   } else if (!localBetterPpg && sPpg && lPpg) {
-    whyFactors.push({ label: `Travel eSIM better РІвЂљВ¬/GB (РІвЂљВ¬${sPpg} vs РІвЂљВ¬${lPpg})`, labelRu: `Travel eSIM Р Р†РЎвЂ№Р С–Р С•Р Т‘Р Р…Р ВµР Вµ Р В·Р В° Р вЂњР вЂ (РІвЂљВ¬${sPpg} vs РІвЂљВ¬${lPpg})`, side: "travel" });
+    whyFactors.push({ label: `Travel eSIM better €/GB (€${sPpg} vs €${lPpg})`, labelRu: `Travel eSIM выгоднее за ГБ (€${sPpg} vs €${lPpg})`, side: "travel" });
   }
   // Registration / friction
   if (needsPassport && !localEasyEnough) {
-    whyFactors.push({ label: "Local SIM requires passport", labelRu: "Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM РЎвЂљРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљ Р С—Р В°РЎРѓР С—Р С•РЎР‚РЎвЂљ", side: "travel" });
+    whyFactors.push({ label: "Local SIM requires passport", labelRu: "Местная SIM требует паспорт", side: "travel" });
   } else if (!needsPassport) {
-    whyFactors.push({ label: "No registration needed", labelRu: "Р вЂР ВµР В· РЎР‚Р ВµР С–Р С‘РЎРѓРЎвЂљРЎР‚Р В°РЎвЂ Р С‘Р С‘", side: "travel" });
+    whyFactors.push({ label: "No registration needed", labelRu: "Без регистрации", side: "travel" });
   }
   if (localFx >= 6) {
-    whyFactors.push({ label: `Local SIM: KYC verification required РІР‚вЂќ activation may take 1РІР‚вЂњ2 days`, labelRu: `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM: РЎвЂљРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљРЎРѓРЎРЏ KYC-Р Р†Р ВµРЎР‚Р С‘РЎвЂћР С‘Р С”Р В°РЎвЂ Р С‘РЎРЏ РІР‚вЂќ Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ Р В·Р В°Р Р…Р С‘Р СР В°Р ВµРЎвЂљ 1РІР‚вЂњ2 Р Т‘Р Р…РЎРЏ`, side: "travel" });
+    whyFactors.push({ label: `Local SIM: KYC verification required — activation may take 1–2 days`, labelRu: `Местная SIM: требуется KYC-верификация — активация занимает 1–2 дня`, side: "travel" });
   }
   // Local advantages
-  if (localHasNumber) whyFactors.push({ label: "Includes real local number", labelRu: "Р В Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚", side: "local" });
-  if (comparableLocal.plan.western_balkans_roaming) whyFactors.push({ label: "Balkans roaming included", labelRu: "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р С—Р С• Р вЂР В°Р В»Р С”Р В°Р Р…Р В°Р С", side: "local" });
-  if (localDataAdv >= 3 && !travelCheaper) whyFactors.push({ label: `${Math.round(localDataAdv)}Р“вЂ” more data locally`, labelRu: `Р вЂ™ ${Math.round(localDataAdv)}Р“вЂ” Р В±Р С•Р В»РЎРЉРЎв‚¬Р Вµ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦`, side: "local" });
+  if (localHasNumber) whyFactors.push({ label: "Includes real local number", labelRu: "Реальный местный номер", side: "local" });
+  if (comparableLocal.plan.western_balkans_roaming) whyFactors.push({ label: "Balkans roaming included", labelRu: "Роуминг по Балканам", side: "local" });
+  if (localDataAdv >= 3 && !travelCheaper) whyFactors.push({ label: `${Math.round(localDataAdv)}× more data locally`, labelRu: `В ${Math.round(localDataAdv)}× больше данных`, side: "local" });
   // Trip context
-  if (isShortTrip && !localEasyEnough) whyFactors.push({ label: "Short trip РІР‚вЂќ convenience matters", labelRu: "Р С™Р С•РЎР‚Р С•РЎвЂљР С”Р В°РЎРЏ Р С—Р С•Р ВµР В·Р Т‘Р С”Р В° РІР‚вЂќ РЎС“Р Т‘Р С•Р В±РЎРѓРЎвЂљР Р†Р С• Р Р†Р В°Р В¶Р Р…Р С•", side: "travel" });
-  if (wantsLong) whyFactors.push({ label: "Long stay РІР‚вЂќ value matters more", labelRu: "Р вЂќР В»Р С‘РЎвЂљР ВµР В»РЎРЉР Р…Р С•Р Вµ Р С—РЎР‚Р ВµР В±РЎвЂ№Р Р†Р В°Р Р…Р С‘Р Вµ РІР‚вЂќ Р Р†РЎвЂ№Р С–Р С•Р Т‘Р В° Р Р†Р В°Р В¶Р Р…Р ВµР Вµ", side: "local" });
+  if (isShortTrip && !localEasyEnough) whyFactors.push({ label: "Short trip — convenience matters", labelRu: "Короткая поездка — удобство важно", side: "travel" });
+  if (wantsLong) whyFactors.push({ label: "Long stay — value matters more", labelRu: "Длительное пребывание — выгода важнее", side: "local" });
 
   return {
     localOpt: comparableLocal, snap, savePct, localDataStr, snapDataStr,
     localPpg: lPpg, snapPpg: sPpg, verdict, verdictReason, verdictReasonRu, travelWins, whyFactors,
+  };
+}
+
+// ─── Strategy recommendation types ───────────────────────────────────────────
+interface StackedStrategy {
+  label: string;
+  labelRu: string;
+  plans: { plan: Plan; purchases: number; costEur: number }[];
+  totalCost: number;
+  totalDays: number;
+  totalDataCore: number | null;   // null = unlimited in at least one plan
+  totalWbGb: number;              // total WB roaming GB across all plan purchases
+  activations: number;            // how many times user must manually activate/buy
+  renewals: number;               // activations - 1
+  esimAll: boolean;               // every plan in stack supports eSIM
+  localNumber: boolean;           // at least one plan provides a local number
+  wbContinuity: "full" | "partial" | "none" | "fair_use"; // WB after border crossing
+  fairUseRisk: boolean;           // any plan has fair_use_policy
+  hotspotOk: boolean;             // no hotspot-specific blockers
+  frictionMax: number;            // worst friction score in the stack
+  why: string;
+  whyRu: string;
+  tradeoffs: string;
+  tradeoffsRu: string;
+  whyDetails: string[];           // bullet-point "why this recommendation" list
+  whyDetailsRu: string[];
+  score: number;
+}
+
+interface ScenarioRec {
+  scenario: "cheapest" | "easiest" | "road_trip" | "remote_work" | "tourist" | "local_number";
+  label: string;
+  labelRu: string;
+  icon: string;
+  strategy: StackedStrategy;
+}
+
+// Build a stacked strategy from one or more plan+purchases
+function buildStack(
+  plans: { plan: Plan; purchases: number }[],
+  label: string, labelRu: string,
+  why: string, whyRu: string,
+  tradeoffs: string, tradeoffsRu: string,
+  whyDetails: string[], whyDetailsRu: string[],
+  days: number
+): StackedStrategy {
+  const costed = plans.map(({ plan, purchases }) => ({
+    plan, purchases,
+    costEur: parseFloat((getPriceEur(plan) * purchases).toFixed(2)),
+  }));
+  const totalCost = parseFloat(costed.reduce((s, c) => s + c.costEur, 0).toFixed(2));
+  const activations = costed.reduce((s, c) => s + c.purchases, 0);
+
+  // Total usable unrestricted GB (data_gb_core only, NOT app/social)
+  let totalDataCore: number | null = 0;
+  for (const { plan, purchases } of plans) {
+    if (plan.unlimited_data) { totalDataCore = null; break; }
+    const core = getDataCore(plan);
+    if (core === null) { totalDataCore = null; break; }
+    if (totalDataCore !== null) totalDataCore += core * purchases;
+  }
+
+  // Total WB roaming GB — only from confirmed quota types
+  let totalWbGb = 0;
+  for (const { plan, purchases } of plans) {
+    const wbType = plan.wb_roaming_type;
+    if (plan.western_balkans_roaming && plan.roaming_cap_gb &&
+        wbType && ["included_quota","dedicated_add_on","fair_use_quota_from_domestic"].includes(wbType)) {
+      totalWbGb += plan.roaming_cap_gb * purchases;
+    }
+  }
+  totalWbGb = parseFloat(totalWbGb.toFixed(2));
+
+  // WB continuity: what happens when crossing the border?
+  const wbTypes = plans.map(({ plan }) => plan.wb_roaming_type).filter(Boolean);
+  const hasExplicitQuota = wbTypes.some(t => t === "included_quota" || t === "dedicated_add_on" || t === "fair_use_quota_from_domestic");
+  const hasFairUse = wbTypes.some(t => t === "shared_home_quota_fair_use" || t === "roam_like_home_fair_use" || t === "shared_home_quota_fair_use_plus_bonus");
+  const hasNoWb = plans.some(({ plan }) => !plan.western_balkans_roaming);
+
+  let wbContinuity: StackedStrategy["wbContinuity"] = "none";
+  if (hasExplicitQuota && !hasNoWb) wbContinuity = "full";
+  else if (hasFairUse && !hasNoWb) wbContinuity = "fair_use";
+  else if (hasExplicitQuota || hasFairUse) wbContinuity = "partial";
+
+  const fairUseRisk = plans.some(({ plan }) =>
+    plan.fair_use_policy ||
+    (plan.wb_roaming_type && ["shared_home_quota_fair_use","roam_like_home_fair_use","shared_home_quota_fair_use_plus_bonus"].includes(plan.wb_roaming_type))
+  );
+
+  const esimAll = plans.every(({ plan }) => plan.esim_supported === true);
+  const localNumber = plans.some(({ plan }) => plan.local_number === true);
+  const hotspotOk = !plans.some(({ plan }) => plan.hotspot_blocked === true);
+  const frictionMax = Math.max(...plans.map(({ plan }) => plan.friction_score || 5));
+
+  // Internal score for ranking (scenario-agnostic baseline)
+  let score = 50;
+  if (esimAll) score += 15;
+  if (localNumber) score += 10;
+  if (wbContinuity === "full") score += 20;
+  else if (wbContinuity === "fair_use") score += 8;
+  if (fairUseRisk) score -= 8;
+  if (hotspotOk) score += 5;
+  score -= frictionMax * 4;
+  score -= totalCost * 0.3;
+  score -= (activations - 1) * 5; // renewal penalty
+  if (totalDataCore !== null && totalDataCore > days * 2) score += 8;
+
+  return {
+    label, labelRu, plans: costed, totalCost, totalDays: days,
+    totalDataCore, totalWbGb, activations, renewals: activations - 1,
+    esimAll, localNumber, wbContinuity, fairUseRisk, hotspotOk, frictionMax,
+    why, whyRu, tradeoffs, tradeoffsRu, whyDetails, whyDetailsRu, score,
   };
 }
 
@@ -898,7 +1128,7 @@ function useRec(country: CountryCode | null, days: number, prefs: Set<PrefId>) {
     const scored = locals.map(p => scorePlan(p, days, prefs)).sort((a, b) => b.score - a.score);
     if (!scored.length) return null;
 
-    // Category picks РІР‚вЂќ each from a different sort, never repeat a plan ID
+    // Category picks — each from a different sort, never repeat a plan ID
     const shown = new Set<string>();
     function pick(arr: Scored[]): Scored | null {
       const f = arr.find(s => !shown.has(s.plan.id));
@@ -926,10 +1156,7 @@ function useRec(country: CountryCode | null, days: number, prefs: Set<PrefId>) {
     // Multi-factor travel vs local comparison
     const travelCmp = buildTravelCmp(best, scored, snaps, days, prefs);
 
-    // РІвЂќР‚РІвЂќР‚ EU Nomad recommendation РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
-    // Orange Flex is a region-agnostic plan РІР‚вЂќ surface it when the trip profile
-    // makes it genuinely competitive (multi-week, EU country, value-seeking).
-    // We compare it against: cheapest travel snap and cheapest local plan.
+    // ── EU Nomad recommendation ──────────────────────────────────────────────
     const euNomadPlans = PLANS.filter(isEuNomad);
     let euNomadRec: {
       plan: Plan;
@@ -941,49 +1168,35 @@ function useRec(country: CountryCode | null, days: number, prefs: Set<PrefId>) {
     } | null = null;
 
     if (euNomadPlans.length > 0) {
-      const nomad = euNomadPlans[0]; // Orange Flex
+      const nomad = euNomadPlans[0];
       const nomadEur = getPriceEur(nomad);
-      const nomadData = getDataCore(nomad) || 0;
       const cheapestLocalCost = Math.min(...scored.map(s => s.total_cost));
-      const cheapestSnapEur = snaps.length > 0
-        ? Math.min(...snaps.map(getPriceEur))
-        : Infinity;
+      const cheapestSnapEur = snaps.length > 0 ? Math.min(...snaps.map(getPriceEur)) : Infinity;
       const vsSnapSavePct = cheapestSnapEur < Infinity
-        ? Math.round(((cheapestSnapEur - nomadEur) / cheapestSnapEur) * 100)
-        : 0;
-
-      // Relevant when: EU multi-week trip, value-seeker, or longterm pref
-      // NOT shown on Balkans pages РІР‚вЂќ EU nomad is an EU strategy, not a Balkans strategy
+        ? Math.round(((cheapestSnapEur - nomadEur) / cheapestSnapEur) * 100) : 0;
       const BALKANS_CC = ["RS", "BA", "ME", "AL", "MK"];
       const isBalkanCountry = BALKANS_CC.includes(country);
       const isRelevant = !isBalkanCountry &&
         (days >= 14 || prefs.has("longterm")) &&
-        // Only suggest if genuinely competitive vs travel eSIM (saves РІвЂ°Тђ10% or is cheaper)
         (vsSnapSavePct >= 0 || nomadEur <= cheapestSnapEur + 2);
-
-      // VS local: compare monthly cost
       const localMonthlyEst = cheapestLocalCost / days * 30;
       const nomadCheaperThanLocal = nomadEur < localMonthlyEst;
       const vsBestLocal = nomadCheaperThanLocal
-        ? `РІвЂљВ¬${nomadEur}/month is cheaper than the cheapest local option (РІвЂ°в‚¬РІвЂљВ¬${localMonthlyEst.toFixed(0)}/month equivalent). EU roaming only РІР‚вЂќ does not cover Balkans or non-EU countries.`
-        : `Local SIM is cheaper for single-country stays. Orange Flex is an alternative if you plan multi-country EU travel. EU roaming only РІР‚вЂќ not for Balkans or Switzerland.`;
+        ? `€${nomadEur}/month is cheaper than the cheapest local option (≈€${localMonthlyEst.toFixed(0)}/month equivalent). EU roaming only — does not cover Balkans or non-EU countries.`
+        : `Local SIM is cheaper for single-country stays. Orange Flex is an alternative if you plan multi-country EU travel. EU roaming only — not for Balkans or Switzerland.`;
       const vsBestLocalRu = nomadCheaperThanLocal
-        ? `РІвЂљВ¬${nomadEur}/Р СР ВµРЎРѓРЎРЏРЎвЂ  Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ Р СР ВµРЎРѓРЎвЂљР Р…Р С•Р С–Р С• Р Р†Р В°РЎР‚Р С‘Р В°Р Р…РЎвЂљР В° (РІвЂ°в‚¬РІвЂљВ¬${localMonthlyEst.toFixed(0)}/Р СР ВµРЎРѓРЎРЏРЎвЂ ). Р СћР С•Р В»РЎРЉР С”Р С• РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ РІР‚вЂќ Р Р…Р Вµ Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р вЂР В°Р В»Р С”Р В°Р Р…РЎвЂ№ Р С‘ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р Р†Р Р…Р Вµ Р вЂўР РЋ.`
-        : `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Т‘Р ВµРЎв‚¬Р ВµР Р†Р В»Р Вµ Р Т‘Р В»РЎРЏ Р С•Р Т‘Р Р…Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№. Orange Flex РІР‚вЂќ Р В°Р В»РЎРЉРЎвЂљР ВµРЎР‚Р Р…Р В°РЎвЂљР С‘Р Р†Р В° Р Т‘Р В»РЎРЏ Р С—Р С•Р ВµР В·Р Т‘Р С•Р С” Р С—Р С• Р Р…Р ВµРЎРѓР С”Р С•Р В»РЎРЉР С”Р С‘Р С РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р В°Р С Р вЂўР РЋ. Р СћР С•Р В»РЎРЉР С”Р С• РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ.`;
+        ? `€${nomadEur}/месяц дешевле местного варианта (≈€${localMonthlyEst.toFixed(0)}/месяц). Только роуминг ЕС — не покрывает Балканы и страны вне ЕС.`
+        : `Местная SIM дешевле для одной страны. Orange Flex — альтернатива для поездок по нескольким странам ЕС. Только роуминг ЕС.`;
       const vsTravel = vsSnapSavePct > 0
-        ? `Saves ${vsSnapSavePct}% vs cheapest travel eSIM (РІвЂљВ¬${cheapestSnapEur.toFixed(2)}) and includes a real phone number. EU roaming only РІР‚вЂќ does not cover non-EU countries.`
-        : `Similar price to travel eSIM, includes a real Polish number, and works monthly across EU countries. EU roaming only РІР‚вЂќ not for Balkans or Switzerland.`;
+        ? `Saves ${vsSnapSavePct}% vs cheapest travel eSIM (€${cheapestSnapEur.toFixed(2)}) and includes a real phone number. EU roaming only — does not cover non-EU countries.`
+        : `Similar price to travel eSIM, includes a real Polish number, and works monthly across EU countries. EU roaming only — not for Balkans or Switzerland.`;
       const vsTravelRu = vsSnapSavePct > 0
-        ? `Р В­Р С”Р С•Р Р…Р С•Р СР С‘РЎвЂљ ${vsSnapSavePct}% Р С—Р С• РЎРѓРЎР‚Р В°Р Р†Р Р…Р ВµР Р…Р С‘РЎР‹ РЎРѓ travel eSIM (РІвЂљВ¬${cheapestSnapEur.toFixed(2)}) Р С‘ Р Р†Р С”Р В»РЎР‹РЎвЂЎР В°Р ВµРЎвЂљ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚. Р СћР С•Р В»РЎРЉР С”Р С• РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ РІР‚вЂќ Р Р…Р Вµ Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р Р†Р Р…Р Вµ Р вЂўР РЋ.`
-        : `Р СџР С•РЎвЂ¦Р С•Р В¶Р В°РЎРЏ РЎвЂ Р ВµР Р…Р В° РЎРѓ travel eSIM, Р Р†Р С”Р В»РЎР‹РЎвЂЎР В°Р ВµРЎвЂљ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р С—Р С•Р В»РЎРЉРЎРѓР С”Р С‘Р в„– Р Р…Р С•Р СР ВµРЎР‚, РЎР‚Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ Р ВµР В¶Р ВµР СР ВµРЎРѓРЎРЏРЎвЂЎР Р…Р С• Р С—Р С• Р вЂўР РЋ. Р СћР С•Р В»РЎРЉР С”Р С• РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ РІР‚вЂќ Р Р…Р Вµ Р Т‘Р В»РЎРЏ Р вЂР В°Р В»Р С”Р В°Р Р… Р С‘ Р РЃР Р†Р ВµР в„–РЎвЂ Р В°РЎР‚Р С‘Р С‘.`;
-
+        ? `Экономит ${vsSnapSavePct}% по сравнению с travel eSIM (€${cheapestSnapEur.toFixed(2)}) и включает реальный номер. Только роуминг ЕС — не покрывает страны вне ЕС.`
+        : `Похожая цена с travel eSIM, включает реальный польский номер, работает ежемесячно по ЕС. Только роуминг ЕС — не для Балкан и Швейцарии.`;
       euNomadRec = { plan: nomad, isRelevant, vsBestLocal, vsTravel, vsBestLocalRu, vsTravelRu };
     }
 
-    // РІвЂќР‚РІвЂќР‚ Balkans arbitrage recommendation РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
-    // Detect when buying a SIM from a *different* Balkans country is smarter.
-    // Only surfaces if: (a) current country has no WB roaming plans, (b) user
-    // wants roaming pref, or (c) days >= 14 and we detect a multi-country need.
+    // ── Balkans arbitrage recommendation ────────────────────────────────────────
     let balkansArbitrageRec: {
       plan: Plan;
       fromCountry: "ME" | "MK";
@@ -999,92 +1212,430 @@ function useRec(country: CountryCode | null, days: number, prefs: Set<PrefId>) {
     const wantsRoamingSignal = prefs.has("roaming") || days >= 14;
 
     if (isBalkanCountry && hasNoWbRoaming && wantsRoamingSignal && country !== "ME") {
-      // Best arbitrage: Montenegro One Tourist 20 (РІвЂљВ¬20, 11 GB WB roaming, 30d)
-      // It covers RS, BA, MK via WB roaming and is a better deal than buying separately
       const mePlan = PLANS.find(p => p.id === "one_me_tourist_20");
       if (mePlan) {
         const meEur = getPriceEur(mePlan);
         const localCheapest = scored.length > 0 ? Math.min(...scored.map(s => s.total_cost)) : 0;
-        // Only show if ME plan isn't dramatically more expensive
         if (meEur <= localCheapest * 2.5 || prefs.has("roaming")) {
           const roamingGb = mePlan.roaming_cap_gb ?? 11;
           balkansArbitrageRec = {
-            plan: mePlan,
-            fromCountry: "ME",
-            message: `Consider buying a Montenegro SIM instead. One Tourist 20 (РІвЂљВ¬${meEur}, 30d) includes ${roamingGb} GB Western Balkans roaming usable in ${country === "RS" ? "Serbia" : country === "BA" ? "Bosnia" : "North Macedonia"} РІР‚вЂќ and covers the whole WB region.`,
-            messageRu: `Р В Р В°РЎРѓРЎРѓР СР С•РЎвЂљРЎР‚Р С‘РЎвЂљР Вµ РЎвЂЎР ВµРЎР‚Р Р…Р С•Р С–Р С•РЎР‚РЎРѓР С”РЎС“РЎР‹ SIM. One Tourist 20 (РІвЂљВ¬${meEur}, 30Р Т‘) Р Р†Р С”Р В»РЎР‹РЎвЂЎР В°Р ВµРЎвЂљ ${roamingGb} Р вЂњР вЂ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° Р С—Р С• Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№Р С Р вЂР В°Р В»Р С”Р В°Р Р…Р В°Р С, РЎР‚Р В°Р В±Р С•РЎвЂљР В°РЎР‹РЎвЂ°Р ВµР С–Р С• Р Р† ${country === "RS" ? "Р РЋР ВµРЎР‚Р В±Р С‘Р С‘" : country === "BA" ? "Р вЂР С•РЎРѓР Р…Р С‘Р С‘" : "Р РЋР ВµР Р†Р ВµРЎР‚Р Р…Р С•Р в„– Р СљР В°Р С”Р ВµР Т‘Р С•Р Р…Р С‘Р С‘"} РІР‚вЂќ Р С‘ Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р Р†Р ВµРЎРѓРЎРЉ РЎР‚Р ВµР С–Р С‘Р С•Р Р… WB.`,
+            plan: mePlan, fromCountry: "ME",
+            message: `Consider buying a Montenegro SIM instead. One Tourist 20 (€${meEur}, 30d) includes ${roamingGb} GB Western Balkans roaming usable in ${country === "RS" ? "Serbia" : country === "BA" ? "Bosnia" : "North Macedonia"} — and covers the whole WB region.`,
+            messageRu: `Рассмотрите черногорскую SIM. One Tourist 20 (€${meEur}, 30д) включает ${roamingGb} ГБ роуминга по Западным Балканам — и покрывает весь регион WB.`,
             roamingCoverage: "Serbia, Bosnia, Montenegro, North Macedonia",
             totalCost: meEur,
           };
         }
       }
     }
-
-    // A1 MK Roam Surf is the cheapest WB add-on РІР‚вЂќ show for Serbia if looking for roaming
     if (country === "RS" && prefs.has("roaming") && !balkansArbitrageRec) {
       const mkPlan = PLANS.find(p => p.id === "a1_mk_roam_balkan_l");
       if (mkPlan) {
         balkansArbitrageRec = {
-          plan: mkPlan,
-          fromCountry: "MK",
-          message: `A1 North Macedonia Roam Surf Balkan L (5 GB, РІвЂљВ¬${getPriceEur(mkPlan)}) is the cheapest WB roaming add-on in the region РІР‚вЂќ but requires buying an A1 MK base plan first.`,
-          messageRu: `A1 Р РЋР ВµР Р†Р ВµРЎР‚Р Р…Р В°РЎРЏ Р СљР В°Р С”Р ВµР Т‘Р С•Р Р…Р С‘РЎРЏ Roam Surf Balkan L (5 Р вЂњР вЂ, РІвЂљВ¬${getPriceEur(mkPlan)}) РІР‚вЂќ РЎРѓР В°Р СРЎвЂ№Р в„– Р Т‘Р ВµРЎв‚¬РЎвЂР Р†РЎвЂ№Р в„– WB РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р Р† РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р Вµ, Р Р…Р С• РЎвЂљРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљ РЎРѓР Р…Р В°РЎвЂЎР В°Р В»Р В° Р С”РЎС“Р С—Р С‘РЎвЂљРЎРЉ Р В±Р В°Р В·Р С•Р Р†РЎвЂ№Р в„– РЎвЂљР В°РЎР‚Р С‘РЎвЂћ A1 MK.`,
+          plan: mkPlan, fromCountry: "MK",
+          message: `A1 North Macedonia Roam Surf Balkan L (5 GB, €${getPriceEur(mkPlan)}) is the cheapest WB roaming add-on in the region — but requires buying an A1 MK base plan first.`,
+          messageRu: `A1 Северная Македония Roam Surf Balkan L (5 ГБ, €${getPriceEur(mkPlan)}) — самый дешёвый WB роуминг в регионе, но требует базовый тариф A1 MK.`,
           roamingCoverage: "Serbia, Bosnia, Montenegro, North Macedonia",
           totalCost: getPriceEur(mkPlan),
         };
       }
     }
-    // РІвЂќР‚РІвЂќР‚ Optimizer message РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
-    // Declared here, after scored/best are established, inside useMemo.
+
+    // ── Optimizer message ────────────────────────────────────────────────────────
     let optimizerMsg = "";
     if (travelCmp?.travelWins && days <= 7) {
       const snap = travelCmp.snap;
-      optimizerMsg = `For a ${days}-day trip, travel eSIM (${snap.provider_name}, РІвЂљВ¬${getPriceEur(snap).toFixed(2)}) is worth considering РІР‚вЂќ instant activation, no passport required. Local SIM (${best.plan.title}, РІвЂљВ¬${best.total_cost}) gives more data if you're willing to register.`;
+      optimizerMsg = `For a ${days}-day trip, travel eSIM (${snap.provider_name}, €${getPriceEur(snap).toFixed(2)}) is worth considering — instant activation, no passport required. Local SIM (${best.plan.title}, €${best.total_cost}) gives more data if you're willing to register.`;
     } else if (country === "ME") {
       const p15 = scored.find(s => s.plan.id === "one_me_tourist_15");
       const p20 = scored.find(s => s.plan.id === "one_me_tourist_20");
       if (p15 && p20 && days > 15 && days <= 30) {
-        optimizerMsg = `One Tourist 20 (РІвЂљВ¬20/30d) beats 2Р“вЂ” One Tourist 15 (РІвЂљВ¬${p15.plan.price_eur! * 2}) for ${days} days РІР‚вЂќ saves РІвЂљВ¬${(p15.plan.price_eur! * 2) - p20.plan.price_eur!} with more roaming.`;
+        optimizerMsg = `One Tourist 20 (€20/30d) beats 2× One Tourist 15 (€${p15.plan.price_eur! * 2}) for ${days} days — saves €${(p15.plan.price_eur! * 2) - p20.plan.price_eur!} with more roaming.`;
       } else if (days > 30) {
-        optimizerMsg = `For ${days} days in Montenegro, m:tel Super Tourist (РІвЂљВ¬30/45d) covers your full stay in one purchase.`;
+        optimizerMsg = `For ${days} days in Montenegro, m:tel Super Tourist (€30/45d) covers your full stay in one purchase.`;
       } else if (days <= 7 && travelCmp) {
-        optimizerMsg = `Short Montenegro trip: travel eSIM (${travelCmp.snap.provider_name}, РІвЂљВ¬${getPriceEur(travelCmp.snap).toFixed(2)}) is viable for instant setup. One Tourist 15 (РІвЂљВ¬15) gives 500 GB + local number if you register.`;
+        optimizerMsg = `Short Montenegro trip: travel eSIM (${travelCmp.snap.provider_name}, €${getPriceEur(travelCmp.snap).toFixed(2)}) is viable for instant setup. One Tourist 15 (€15) gives 500 GB + local number if you register.`;
       }
     } else if (country === "RS") {
       if (days <= 7) {
-        optimizerMsg = `A1 Welcome SIM (200 GB real data, РІвЂљВ¬8.27) is best for heavy users. Yettel Pripejd (РІвЂљВ¬5.13) for moderate use. Travel eSIM from РІвЂљВ¬5.50 if you need zero-hassle instant setup. Note: Yettel's "25 GB" = 5 GB general + 20 GB app-specific.`;
+        optimizerMsg = `A1 Welcome SIM (200 GB real data, €8.27) is best for heavy users. Yettel Pripejd (€5.13) for moderate use. Travel eSIM from €5.50 if you need zero-hassle instant setup. Note: Yettel's "25 GB" = 5 GB general + 20 GB app-specific.`;
       } else if (days <= 15) {
-        optimizerMsg = `Yettel Pripejd (РІвЂљВ¬5.13/15d, 5 GB real data) or Yettel Transit (РІвЂљВ¬10.26, 100 GB real data) for medium stays. Travel eSIM is not better value here. Displayed totals include app-specific GB.`;
+        optimizerMsg = `Yettel Pripejd (€5.13/15d, 5 GB real data) or Yettel Transit (€10.26, 100 GB real data) for medium stays. Travel eSIM is not better value here. Displayed totals include app-specific GB.`;
       } else if (days <= 30) {
-        optimizerMsg = `Yettel Pripejd Plus (РІвЂљВ¬8.12/30d, 10 GB real data) for budget month-long stays. A1 Mega auto-renews but eSIM unconfirmed. Travel eSIM is significantly worse value for 30-day stays.`;
+        optimizerMsg = `Yettel Pripejd Plus (€8.12/30d, 10 GB real data) for budget month-long stays. A1 Mega auto-renews but eSIM unconfirmed. Travel eSIM is significantly worse value for 30-day stays.`;
       } else {
-        optimizerMsg = `45+ days: A1 Mega (РІвЂљВ¬8.55/month, auto-renew) or monthly Yettel Pripejd Plus (РІвЂљВ¬8.12). App-specific GB does not count toward general browsing.`;
+        optimizerMsg = `45+ days: A1 Mega (€8.55/month, auto-renew) or monthly Yettel Pripejd Plus (€8.12). App-specific GB does not count toward general browsing.`;
       }
     } else if (country === "DE") {
       if (days <= 7) {
-        optimizerMsg = `Short Germany trip: travel eSIM (e.g. Airalo ~РІвЂљВ¬19, 10 GB) gives instant connectivity with no identity check. Local SIM (Vodafone CallYa M, РІвЂљВ¬14.99, 50 GB) offers far better РІвЂљВ¬/GB with online verification РІР‚вЂќ takes 1РІР‚вЂњ2 hours, hotel address accepted.`;
+        optimizerMsg = `Short Germany trip: travel eSIM (e.g. Airalo ~€19, 10 GB) gives instant connectivity with no identity check. Local SIM (Vodafone CallYa M, €14.99, 50 GB) offers far better €/GB with online verification — takes 1–2 hours, hotel address accepted.`;
       } else if (days <= 14) {
-        optimizerMsg = `For ${days} days: Vodafone CallYa M (РІвЂљВ¬14.99, 50 GB) or O2 Prepaid M (РІвЂљВ¬9.99, 20 GB) are solid choices РІР‚вЂќ both support online eSIM with identity verification using a hotel address. Activation is typically same-day.`;
+        optimizerMsg = `For ${days} days: Vodafone CallYa M (€14.99, 50 GB) or O2 Prepaid M (€9.99, 20 GB) are solid choices — both support online eSIM with identity verification using a hotel address. Activation is typically same-day.`;
       } else {
-        optimizerMsg = `Germany: Vodafone CallYa (50РІР‚вЂњ100 GB, from РІвЂљВ¬14.99) or O2 (20РІР‚вЂњ40 GB, from РІвЂљВ¬9.99) offer excellent long-stay value with full EU roaming. Identity verification is fully online РІР‚вЂќ hotel address accepted. Telekom has the best network but requires a German address.`;
+        optimizerMsg = `Germany: Vodafone CallYa (50–100 GB, from €14.99) or O2 (20–40 GB, from €9.99) offer excellent long-stay value with full EU roaming. Identity verification is fully online — hotel address accepted. Telekom has the best network but requires a German address.`;
       }
     } else if (country === "AL") {
       if (days <= 3) {
         optimizerMsg = `Very short Albania trip: travel eSIM is worth considering to avoid the airport SIM queue. For longer stays, Vodafone Albania at TIA (~5 min with passport) gives far better value.`;
       } else {
-        optimizerMsg = `Airport purchase at TIA is most reliable in Albania РІР‚вЂќ remote online purchase often fails. Buy Vodafone Albania on arrival: ~5 min with passport.`;
+        optimizerMsg = `Airport purchase at TIA is most reliable in Albania — remote online purchase often fails. Buy Vodafone Albania on arrival: ~5 min with passport.`;
       }
     } else if (best.purchases === 1) {
-      optimizerMsg = `${best.plan.title} covers your full ${days}-day trip in one purchase at РІвЂљВ¬${best.total_cost}.`;
+      optimizerMsg = `${best.plan.title} covers your full ${days}-day trip in one purchase at €${best.total_cost}.`;
     } else {
-      optimizerMsg = `${best.plan.title} (${best.plan.duration_days}d) needs ${best.purchases} renewals totalling РІвЂљВ¬${best.total_cost} for ${days} days.`;
+      optimizerMsg = `${best.plan.title} (${best.plan.duration_days}d) needs ${best.purchases} renewals totalling €${best.total_cost} for ${days} days.`;
     }
 
-    return { best, cheapest, easiest, bestEsim, bestUnlim, bestLong, bestRoaming, all: scored, snaps, travelCmp, euNomadRec, balkansArbitrageRec, optimizerMsg };
+    // ══════════════════════════════════════════════════════════════════════════
+    // SCENARIO RECOMMENDATIONS — traveler-language, with "Why this?" sections
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // Helper: stacking analysis — compare N×short vs 1×long
+    function stackingAnalysis(shortPlan: Scored, longPlan: Scored | null, targetDays: number): {
+      stackCost: number; stackActivations: number; singleCost: number;
+      savings: number; savingsStr: string; recommendation: "stack" | "single" | "same";
+    } {
+      const purchases = Math.ceil(targetDays / shortPlan.plan.duration_days);
+      const stackCost = parseFloat((getPriceEur(shortPlan.plan) * purchases).toFixed(2));
+      const stackActivations = purchases;
+      const singleCost = longPlan ? getPriceEur(longPlan.plan) * Math.ceil(targetDays / longPlan.plan.duration_days) : Infinity;
+      const savings = parseFloat((singleCost - stackCost).toFixed(2));
+      const savingsStr = savings > 0
+        ? `saves €${savings} vs single plan`
+        : savings < 0
+          ? `costs €${Math.abs(savings)} more than single plan`
+          : "same cost";
+      const recommendation = savings > 2 ? "stack" : savings < -2 ? "single" : "same";
+      return { stackCost, stackActivations, singleCost, savings, savingsStr, recommendation };
+    }
+
+    // ── Scenario: CHEAPEST ───────────────────────────────────────────────────
+    const cheapestScored = cheapest ?? best;
+    const cheapestPurchases = Math.ceil(days / cheapestScored.plan.duration_days);
+    const cheapestStrategy = buildStack(
+      [{ plan: cheapestScored.plan, purchases: cheapestPurchases }],
+      `${cheapestScored.plan.title}`,
+      `${cheapestScored.plan.title}`,
+      `Lowest cost for your ${days}-day stay.`,
+      `Наименьшие расходы для поездки на ${days} дней.`,
+      cheapestPurchases > 1
+        ? `Needs ${cheapestPurchases - 1} manual renewal${cheapestPurchases > 2 ? "s" : ""} during your trip.`
+        : "Single purchase — no renewals needed.",
+      cheapestPurchases > 1
+        ? `Требует ${cheapestPurchases - 1} ручн${cheapestPurchases > 2 ? "ых" : "ого"} продлени${cheapestPurchases > 2 ? "й" : "я"} во время поездки.`
+        : "Одна покупка — продление не нужно.",
+      [
+        `€${cheapestScored.total_cost} total for ${days} days`,
+        cheapestPurchases > 1 ? `Buy ${cheapestPurchases}× — renew every ${cheapestScored.plan.duration_days} days` : "One purchase covers the full trip",
+        cheapestScored.plan.esim_supported === true ? "eSIM — activate before you leave" : "Requires SIM purchase on arrival",
+        cheapestScored.plan.local_number === true ? "Includes a real local number" : "Data-only — no phone number",
+        cheapestScored.plan.western_balkans_roaming ? "Works across Western Balkans borders" : "Works in this country only",
+      ].filter(Boolean),
+      [
+        `€${cheapestScored.total_cost} суммарно за ${days} дней`,
+        cheapestPurchases > 1 ? `Купите ${cheapestPurchases}× — продлевайте каждые ${cheapestScored.plan.duration_days} дней` : "Одна покупка на всю поездку",
+        cheapestScored.plan.esim_supported === true ? "eSIM — активируйте до отъезда" : "Нужно купить SIM по прилёту",
+        cheapestScored.plan.local_number === true ? "Включает местный номер" : "Только интернет — без номера",
+        cheapestScored.plan.western_balkans_roaming ? "Работает по всему региону Западных Балкан" : "Работает только в этой стране",
+      ].filter(Boolean),
+      days
+    );
+
+    // ── Scenario: EASIEST (lowest friction, eSIM preferred) ──────────────────
+    const easiestPlan = easiest ?? best;
+    const easiestPurchases = Math.ceil(days / easiestPlan.plan.duration_days);
+    const easiestStrategy = buildStack(
+      [{ plan: easiestPlan.plan, purchases: easiestPurchases }],
+      `${easiestPlan.plan.title}`,
+      `${easiestPlan.plan.title}`,
+      `Easiest activation for your ${days}-day trip.`,
+      `Самая простая активация для поездки на ${days} дней.`,
+      easiestPlan.plan.esim_supported === true
+        ? "eSIM — buy and activate before you leave home, no store visit needed."
+        : "Low friction — available at airport or major stores.",
+      easiestPlan.plan.esim_supported === true
+        ? "eSIM — купите и активируйте до отъезда, визит в магазин не нужен."
+        : "Минимальные сложности — доступна в аэропорту или крупных магазинах.",
+      [
+        easiestPlan.plan.activation_before_arrival ? "Activate from home before your trip starts" : "Activate on arrival",
+        easiestPlan.plan.esim_supported === true ? "No physical SIM — instant digital delivery" : "Physical SIM card",
+        easiestPlan.plan.store_visit_required ? "⚠ Store visit required — plan for time at airport" : "No store visit needed",
+        `Friction score: ${easiestPlan.plan.friction_score ?? 5}/10 — lower is easier`,
+        easiestPlan.plan.online_purchase === true ? "Buy online — no registration office needed" : "Register at local store or airport",
+      ].filter(Boolean),
+      [
+        easiestPlan.plan.activation_before_arrival ? "Активируйте дома до начала поездки" : "Активация по прилёту",
+        easiestPlan.plan.esim_supported === true ? "Без физической SIM — мгновенная цифровая доставка" : "Физическая SIM-карта",
+        easiestPlan.plan.store_visit_required ? "⚠ Нужен визит в магазин — учтите время в аэропорту" : "Визит в магазин не нужен",
+        easiestPlan.plan.online_purchase === true ? "Купите онлайн — без похода в офис" : "Регистрация в магазине или аэропорту",
+      ].filter(Boolean),
+      days
+    );
+
+    // ── Scenario: ROAD TRIP (WB roaming continuity) ──────────────────────────
+    // Best plan that keeps internet working across Balkans borders
+    const wbCandidates = scored.filter(s =>
+      s.plan.western_balkans_roaming &&
+      (s.plan.wb_roaming_type === "included_quota" || s.plan.wb_roaming_type === "dedicated_add_on" || s.plan.wb_roaming_type === "fair_use_quota_from_domestic")
+    ).sort((a, b) => (b.plan.roaming_cap_gb ?? 0) - (a.plan.roaming_cap_gb ?? 0));
+
+    const roadTripPlan = wbCandidates[0] ?? bestRoaming ?? best;
+    const roadTripPurchases = Math.ceil(days / roadTripPlan.plan.duration_days);
+    const wbGbAvail = roadTripPlan.plan.roaming_cap_gb
+      ? roadTripPlan.plan.roaming_cap_gb * roadTripPurchases
+      : null;
+    const wbType = roadTripPlan.plan.wb_roaming_type;
+
+    const wbContinuityExplain = !roadTripPlan.plan.western_balkans_roaming
+      ? "Internet will stop working when you cross into another Balkans country — you'll need a new SIM."
+      : wbType === "included_quota" || wbType === "fair_use_quota_from_domestic"
+        ? `Your internet keeps working across borders — ${wbGbAvail ? `${wbGbAvail} GB available for roaming` : "WB roaming included"}.`
+        : wbType && (wbType === "shared_home_quota_fair_use" || wbType === "roam_like_home_fair_use" || wbType === "shared_home_quota_fair_use_plus_bonus")
+          ? "Internet keeps working across borders — but no fixed roaming GB limit is published. Heavy streaming may be throttled."
+          : "Limited roaming — verify coverage for your exact route.";
+
+    const wbContinuityExplainRu = !roadTripPlan.plan.western_balkans_roaming
+      ? "При пересечении границы интернет отключится — нужна новая SIM."
+      : wbType === "included_quota" || wbType === "fair_use_quota_from_domestic"
+        ? `Интернет работает при пересечении границ — ${wbGbAvail ? `${wbGbAvail} ГБ доступно для роуминга` : "включён WB роуминг"}.`
+        : wbType && (wbType === "shared_home_quota_fair_use" || wbType === "roam_like_home_fair_use" || wbType === "shared_home_quota_fair_use_plus_bonus")
+          ? "Интернет работает на границах, но точный лимит WB не опубликован. Стриминг может быть ограничен."
+          : "Ограниченный роуминг — проверьте покрытие для вашего маршрута.";
+
+    const roadTripStrategy = buildStack(
+      [{ plan: roadTripPlan.plan, purchases: roadTripPurchases }],
+      `${roadTripPlan.plan.title} — best for road trips`,
+      `${roadTripPlan.plan.title} — лучшее для роад-трипа`,
+      `Recommended because your trip may involve crossing ${country} borders — WB roaming keeps internet working continuously.`,
+      `Рекомендуется, так как ваша поездка может включать пересечение границ — WB роуминг обеспечивает непрерывный интернет.`,
+      roadTripPlan.plan.fair_use_policy
+        ? "Roaming may be subject to fair-use speed limits — streaming at full speed cannot be guaranteed."
+        : `${wbGbAvail ? `${wbGbAvail} GB` : "Roaming GB"} included for cross-border use.`,
+      roadTripPlan.plan.fair_use_policy
+        ? "Роуминг может ограничивать скорость — потоковое воспроизведение на полной скорости не гарантируется."
+        : `${wbGbAvail ? `${wbGbAvail} ГБ` : "Роуминг ГБ"} включён для использования за границей.`,
+      [
+        wbContinuityExplain,
+        wbGbAvail ? `${wbGbAvail} GB total WB roaming across ${roadTripPurchases} purchase${roadTripPurchases > 1 ? "s" : ""}` : "WB roaming included (fair-use)",
+        roadTripPlan.plan.fair_use_policy ? "⚠ Fair-use policy — speed may drop at high usage" : "No fair-use throttling on WB data",
+        roadTripPlan.plan.local_number ? "Includes local number for calls/SMS on the road" : "Data-only — no local phone number",
+        roadTripPlan.plan.esim_supported === true ? "eSIM — no SIM swap needed at borders" : "Physical SIM — works at all crossings",
+      ].filter(Boolean),
+      [
+        wbContinuityExplainRu,
+        wbGbAvail ? `${wbGbAvail} ГБ WB роуминга суммарно` : "WB роуминг включён (fair-use)",
+        roadTripPlan.plan.fair_use_policy ? "⚠ Fair-use — скорость может падать при большом объёме" : "Без ограничений скорости на WB данных",
+        roadTripPlan.plan.local_number ? "Включает местный номер для звонков в дороге" : "Только интернет — без номера",
+        roadTripPlan.plan.esim_supported === true ? "eSIM — не нужно менять SIM на границах" : "Физическая SIM — работает на всех КПП",
+      ].filter(Boolean),
+      days
+    );
+
+    // ── Scenario: REMOTE WORK (high data, hotspot, reliability) ─────────────
+    // Prioritise: unlimited or large unrestricted data, no app-data tricks, hotspot OK
+    const remoteWorkCandidates = scored
+      .filter(s => {
+        const core = getDataCore(s.plan);
+        return s.plan.unlimited_data || (core !== null && core * Math.ceil(days / s.plan.duration_days) >= days * 3);
+      })
+      .sort((a, b) => {
+        // Prefer unlimited, then large core GB, then low friction
+        const aUnlim = a.plan.unlimited_data ? 1000 : (getDataCore(a.plan) ?? 0) * Math.ceil(days / a.plan.duration_days);
+        const bUnlim = b.plan.unlimited_data ? 1000 : (getDataCore(b.plan) ?? 0) * Math.ceil(days / b.plan.duration_days);
+        if (bUnlim !== aUnlim) return bUnlim - aUnlim;
+        return (a.plan.friction_score ?? 5) - (b.plan.friction_score ?? 5);
+      });
+
+    const rwPlan = remoteWorkCandidates[0] ?? best;
+    const rwPurchases = Math.ceil(days / rwPlan.plan.duration_days);
+    const rwDataCore = rwPlan.plan.unlimited_data ? null : (getDataCore(rwPlan.plan) ?? 0) * rwPurchases;
+    const rwDataDisplay = rwPlan.plan.unlimited_data ? "Unlimited" : `${rwDataCore ?? 0} GB unrestricted`;
+    const rwHasAppData = hasAppData(rwPlan.plan);
+
+    const remoteWorkStrategy = buildStack(
+      [{ plan: rwPlan.plan, purchases: rwPurchases }],
+      `${rwPlan.plan.title} — best for remote work`,
+      `${rwPlan.plan.title} — лучшее для удалённой работы`,
+      `Best for working remotely — ${rwDataDisplay} of unrestricted data${rwPlan.plan.unlimited_data ? " (fair-use policy applies at very high usage)" : ""}.`,
+      `Лучший для удалённой работы — ${rwPlan.plan.unlimited_data ? "безлимит" : `${rwDataCore ?? 0} ГБ нелимитированного трафика`}${rwPlan.plan.unlimited_data ? " (fair-use при очень большом объёме)" : ""}.`,
+      [
+        rwHasAppData ? "⚠ Some GB are app-specific (social/messaging) — not general internet for your laptop." : "",
+        rwPlan.plan.fair_use_policy ? "Fair-use: sustained high usage (e.g. 8h hotspot daily) may trigger speed throttling." : "",
+        rwPlan.plan.hotspot_blocked === true ? "⚠ Hotspot/tethering may be blocked — verify before relying on this for laptop work." : "",
+      ].filter(Boolean).join(" ") || "No significant tradeoffs for remote work.",
+      [
+        rwHasAppData ? "⚠ Часть ГБ только для приложений — не для работы с ноутбука." : "",
+        rwPlan.plan.fair_use_policy ? "Fair-use: при длительном интенсивном использовании скорость может упасть." : "",
+      ].filter(Boolean).join(" ") || "Без существенных ограничений для удалённой работы.",
+      [
+        `${rwDataDisplay} of unrestricted data — counts for laptop, video calls, everything`,
+        rwPlan.plan.unlimited_data ? "Unlimited plan — no data refill needed" : `${rwDataCore ?? 0} GB total — enough for ~${Math.floor((rwDataCore ?? 0) / 5)} days of heavy remote work`,
+        rwPlan.plan.fair_use_policy ? "⚠ Fair-use policy — sustained hotspot all day may trigger speed reduction after threshold" : "No fair-use throttling — hotspot is reliable",
+        rwHasAppData ? `⚠ App/social data (${rwPlan.plan.data_gb_apps ?? "?"}GB) does NOT count for laptop internet` : "All data is unrestricted general internet",
+        rwPlan.plan.esim_supported === true ? "eSIM — activate before your work trip starts" : "Physical SIM required",
+        rwPlan.plan.auto_renew ? "Auto-renews — no manual top-up needed during long stays" : rwPurchases > 1 ? `Manual renewal every ${rwPlan.plan.duration_days} days` : "One purchase covers your stay",
+      ].filter(Boolean),
+      [
+        `${rwPlan.plan.unlimited_data ? "Безлимит" : `${rwDataCore ?? 0} ГБ`} нелимитированного трафика — для ноутбука, видеозвонков, всего`,
+        rwPlan.plan.unlimited_data ? "Безлимитный тариф — пополнение не нужно" : `${rwDataCore ?? 0} ГБ суммарно`,
+        rwPlan.plan.fair_use_policy ? "⚠ Fair-use — длительный тетеринг весь день может снизить скорость" : "Без fair-use — тетеринг надёжен",
+        rwHasAppData ? `⚠ Трафик приложений (${rwPlan.plan.data_gb_apps ?? "?"}ГБ) НЕ идёт для интернета с ноутбука` : "Весь трафик — нелимитированный",
+        rwPlan.plan.esim_supported === true ? "eSIM — активируйте до начала рабочей поездки" : "Требуется физическая SIM",
+        rwPlan.plan.auto_renew ? "Автопродление — ручное пополнение не нужно" : rwPurchases > 1 ? `Ручное продление каждые ${rwPlan.plan.duration_days} дней` : "Одна покупка покрывает всё",
+      ].filter(Boolean),
+      days
+    );
+
+    // ── Scenario: TOURIST (easy activation, eSIM preferred, good experience) ──
+    const touristCandidates = scored.filter(s =>
+      s.plan.esim_supported === true &&
+      s.plan.online_purchase === true &&
+      s.plan.activation_before_arrival === true
+    ).sort((a, b) => (a.plan.friction_score ?? 5) - (b.plan.friction_score ?? 5));
+
+    const touristPlan = touristCandidates[0] ?? easiest ?? best;
+    const touristPurchases = Math.ceil(days / touristPlan.plan.duration_days);
+    const touristDataCore = touristPlan.plan.unlimited_data ? null : (getDataCore(touristPlan.plan) ?? 0) * touristPurchases;
+
+    const touristStrategy = buildStack(
+      [{ plan: touristPlan.plan, purchases: touristPurchases }],
+      `${touristPlan.plan.title} — best for tourists`,
+      `${touristPlan.plan.title} — лучшее для туристов`,
+      `Best first-timer experience — activate before you land, internet works immediately on arrival.`,
+      `Лучший опыт для первого посещения — активируйте до посадки, интернет работает сразу по прилёту.`,
+      touristPurchases > 1
+        ? `Needs ${touristPurchases - 1} renewal${touristPurchases > 2 ? "s" : ""} — set a reminder in your calendar.`
+        : "Covers full trip — nothing to manage.",
+      touristPurchases > 1
+        ? `Требует ${touristPurchases - 1} продлени${touristPurchases > 2 ? "й" : "я"} — поставьте напоминание.`
+        : "Покрывает всю поездку — ничего дополнительного.",
+      [
+        "eSIM — install now, activate when you board",
+        "No queue at the airport — internet works when you land",
+        "No passport registration at a store",
+        touristDataCore !== null ? `${touristDataCore} GB for ${days} days — maps, WhatsApp, social media` : "Unlimited data — no counting needed",
+        touristPlan.plan.fair_use_policy ? "⚠ Unlimited plan has fair-use policy — streaming all day may slow down" : "Data is reliable for normal tourist use",
+        touristPlan.plan.local_number ? "Includes a local number — useful for booking restaurants, taxis" : "Data-only — use WhatsApp for calls",
+      ].filter(Boolean),
+      [
+        "eSIM — установите сейчас, активируйте при посадке",
+        "Никаких очередей в аэропорту — интернет работает сразу",
+        "Без регистрации паспорта в магазине",
+        touristDataCore !== null ? `${touristDataCore} ГБ на ${days} дней — карты, WhatsApp, соцсети` : "Безлимитный трафик — нечего считать",
+        touristPlan.plan.fair_use_policy ? "⚠ Безлимит с fair-use — стриминг целый день может замедлиться" : "Трафик надёжен для обычного туриста",
+        touristPlan.plan.local_number ? "Включает местный номер — удобно для бронирования, такси" : "Только интернет — звоните через WhatsApp",
+      ].filter(Boolean),
+      days
+    );
+
+    // ── Scenario: LOCAL NUMBER ───────────────────────────────────────────────
+    const localNumCandidates = scored
+      .filter(s => s.plan.local_number === true)
+      .sort((a, b) => {
+        const aScore = (a.plan.calls_included ? 20 : 0) + (a.plan.sms_included ? 10 : 0) + (a.plan.esim_supported === true ? 8 : 0) - (a.plan.friction_score ?? 5) * 3;
+        const bScore = (b.plan.calls_included ? 20 : 0) + (b.plan.sms_included ? 10 : 0) + (b.plan.esim_supported === true ? 8 : 0) - (b.plan.friction_score ?? 5) * 3;
+        return bScore - aScore;
+      });
+
+    const numPlan = localNumCandidates[0] ?? best;
+    const numPurchases = Math.ceil(days / numPlan.plan.duration_days);
+    const hasCalls = !!numPlan.plan.calls_included;
+    const hasSms = !!numPlan.plan.sms_included;
+
+    const localNumStrategy = buildStack(
+      [{ plan: numPlan.plan, purchases: numPurchases }],
+      `${numPlan.plan.title} — includes local number`,
+      `${numPlan.plan.title} — с местным номером`,
+      `Includes a real local number${hasCalls ? " + voice calls" : ""}${hasSms ? " + SMS" : ""} — essential for booking services, receiving 2FA codes, or being reachable by locals.`,
+      `Включает настоящий местный номер${hasCalls ? " + голосовые звонки" : ""}${hasSms ? " + SMS" : ""} — необходим для бронирований, кодов 2FA и связи с местными.`,
+      numPlan.plan.store_visit_required
+        ? "Requires store or airport visit for registration — budget 20–30 minutes."
+        : "Online registration accepted — no store visit needed.",
+      numPlan.plan.store_visit_required
+        ? "Требует визита в магазин или аэропорт — заложите 20–30 минут."
+        : "Принимается онлайн-регистрация — визит в магазин не нужен.",
+      [
+        `Local ${country} number included — works for incoming and outgoing calls`,
+        hasCalls ? `Voice calls included${typeof numPlan.plan.calls_included === "object" ? " — see plan details for minutes" : ""}` : "Data only — no voice calls included",
+        hasSms ? "SMS included — useful for 2FA codes from banks, booking services" : "No SMS included — use WhatsApp for messaging",
+        numPlan.plan.esim_supported === true ? "eSIM — install before your trip" : "Physical SIM — purchase at airport or store",
+        `${getDataCore(numPlan.plan) !== null ? `${(getDataCore(numPlan.plan) ?? 0) * numPurchases} GB` : "Unlimited"} data included`,
+      ].filter(Boolean),
+      [
+        `Местный номер ${country} — работает для входящих и исходящих звонков`,
+        hasCalls ? "Включены голосовые звонки" : "Только интернет — голосовые звонки не включены",
+        hasSms ? "SMS включены — для кодов 2FA, бронирований" : "SMS не включены — используйте WhatsApp",
+        numPlan.plan.esim_supported === true ? "eSIM — установите до поездки" : "Физическая SIM — купите в аэропорту или магазине",
+        `${getDataCore(numPlan.plan) !== null ? `${(getDataCore(numPlan.plan) ?? 0) * numPurchases} ГБ` : "Безлимит"} трафика включено`,
+      ].filter(Boolean),
+      days
+    );
+
+    // ── Stacking comparison (convenience vs savings) ─────────────────────────
+    // For Serbia: compare 3×Yettel 15d vs 1×Yettel 30d / A1 Mega
+    let stackComparison: {
+      convenientPlan: Plan;
+      cheaperStack: Plan | null;
+      convenientCost: number;
+      cheaperCost: number;
+      savings: number;
+      renewalsNeeded: number;
+      explanation: string;
+      explanationRu: string;
+    } | null = null;
+
+    const convPlan = scored.find(s => s.plan.duration_days >= Math.min(days, 30))
+      ?? scored.find(s => s.plan.duration_days >= 14)
+      ?? best;
+    const stackPlan = scored.filter(s =>
+      s.plan.duration_days < convPlan.plan.duration_days && s.plan.renewable
+    ).sort((a, b) => a.total_cost - b.total_cost)[0] ?? null;
+
+    if (convPlan && stackPlan) {
+      const convPurchases = Math.ceil(days / convPlan.plan.duration_days);
+      const stackPurchases = Math.ceil(days / stackPlan.plan.duration_days);
+      const convCost = parseFloat((getPriceEur(convPlan.plan) * convPurchases).toFixed(2));
+      const stackCost = parseFloat((getPriceEur(stackPlan.plan) * stackPurchases).toFixed(2));
+      const savings = parseFloat((convCost - stackCost).toFixed(2));
+
+      if (Math.abs(savings) >= 1.5) {
+        stackComparison = {
+          convenientPlan: convPlan.plan,
+          cheaperStack: stackPlan.plan,
+          convenientCost: convCost,
+          cheaperCost: stackCost,
+          savings: Math.abs(savings),
+          renewalsNeeded: stackPurchases - 1,
+          explanation: savings > 0
+            ? `${stackPurchases}× ${stackPlan.plan.title} (€${stackCost}) saves €${savings} vs 1× ${convPlan.plan.title} (€${convCost}) — but requires ${stackPurchases - 1} manual renewal${stackPurchases > 2 ? "s" : ""}.`
+            : `${convPlan.plan.title} (€${convCost}) costs €${Math.abs(savings)} more than stacking, but covers ${days} days in one purchase — no renewals needed.`,
+          explanationRu: savings > 0
+            ? `${stackPurchases}× ${stackPlan.plan.title} (€${stackCost}) экономит €${savings} по сравнению с 1× ${convPlan.plan.title} (€${convCost}) — но требует ${stackPurchases - 1} ручн${stackPurchases > 2 ? "ых" : "ого"} продлени${stackPurchases > 2 ? "й" : "я"}.`
+            : `${convPlan.plan.title} (€${convCost}) дороже на €${Math.abs(savings)}, но покрывает ${days} дней в одной покупке — продление не нужно.`,
+        };
+      }
+    }
+
+    // ── Scenario array (for tab-style rendering) ─────────────────────────────
+    const scenarioRecs: ScenarioRec[] = [
+      { scenario: "cheapest",     label: "Cheapest",     labelRu: "Дешевле всего", icon: "💰", strategy: cheapestStrategy   },
+      { scenario: "easiest",      label: "Easiest",      labelRu: "Проще всего",   icon: "⚡", strategy: easiestStrategy    },
+      { scenario: "road_trip",    label: "Road trip",    labelRu: "Роад-трип",     icon: "🗺️", strategy: roadTripStrategy   },
+      { scenario: "remote_work",  label: "Remote work",  labelRu: "Удалённая работа",icon:"💻", strategy: remoteWorkStrategy },
+      { scenario: "tourist",      label: "Tourist",      labelRu: "Турист",        icon: "🧳", strategy: touristStrategy    },
+      { scenario: "local_number", label: "Need a number",labelRu: "Нужен номер",   icon: "📞", strategy: localNumStrategy   },
+    ];
+
+    return {
+      best, cheapest, easiest, bestEsim, bestUnlim, bestLong, bestRoaming,
+      all: scored, snaps, travelCmp, euNomadRec, balkansArbitrageRec, optimizerMsg,
+      // New strategy engine output
+      scenarioRecs, stackComparison,
+    };
   }, [country, days, prefs]);
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Small UI components РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Small UI components ──────────────────────────────────────────────────────
 function Badges({ bs, max = 99 }: { bs: { t: string; c: BC }[]; max?: number }) {
   return (
     <div className="badge-row">
@@ -1101,7 +1652,7 @@ function FBar({ plan, lang }: { plan: Plan; lang: Lang }) {
     <div className="friction-wrap">
       <span className="friction-label">{t.friction_setup}</span>
       <div className="friction-track"><div className="friction-fill" style={{ width: `${fx * 10}%`, background: fc(fx) }} /></div>
-      <span className="friction-val" style={{ color: fc(fx) }}>{fx}/10 РІР‚вЂќ <strong>{lbl}</strong></span>
+      <span className="friction-val" style={{ color: fc(fx) }}>{fx}/10 — <strong>{lbl}</strong></span>
     </div>
   );
 }
@@ -1115,7 +1666,7 @@ function Alrt({ type, children }: { type: "warn" | "info" | "ok" | "purple"; chi
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Source button РІР‚вЂќ confidence-aware РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Source button — confidence-aware ────────────────────────────────────────
 // Renders a trust signal based on data_confidence, not operator_type.
 // This separates "how trustworthy is this data" from "what kind of plan is it".
 function SourceBtn({ plan, lang }: { plan: Plan; lang: Lang }) {
@@ -1128,9 +1679,9 @@ function SourceBtn({ plan, lang }: { plan: Plan; lang: Lang }) {
 
   let trustBadge: ReactNode = null;
   if (conf === "verified_official") {
-    trustBadge = <span className="verified-badge"><Ic d={IC.verified} size={12} /> {t.confidence_official} Р’В· {plan.last_verified}</span>;
+    trustBadge = <span className="verified-badge"><Ic d={IC.verified} size={12} /> {t.confidence_official} · {plan.last_verified}</span>;
   } else if (conf === "verified_manual") {
-    trustBadge = <span className="verified-badge"><Ic d={IC.check} size={12} /> {t.confidence_manual} Р’В· {plan.last_verified}</span>;
+    trustBadge = <span className="verified-badge"><Ic d={IC.check} size={12} /> {t.confidence_manual} · {plan.last_verified}</span>;
   } else if (conf === "provider_listed") {
     trustBadge = <span className="verified-badge" style={{ background: "#eff6ff", borderColor: "#93c5fd", color: "#1d4ed8" }}><Ic d={IC.info} size={11} /> {t.confidence_provider}</span>;
   } else if (conf === "price_snapshot") {
@@ -1149,7 +1700,7 @@ function SourceBtn({ plan, lang }: { plan: Plan; lang: Lang }) {
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ App-data note block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── App-data note block ──────────────────────────────────────────────────────
 function AppDataNote({ plan }: { plan: Plan }) {
   if (!hasAppData(plan)) return null;
   return (
@@ -1164,7 +1715,7 @@ function AppDataNote({ plan }: { plan: Plan }) {
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Plan modal РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Plan modal ───────────────────────────────────────────────────────────────
 function Modal({ plan, days, lang, onClose }: { plan: Plan; days: number; lang: Lang; onClose: () => void }) {
   const t = T[lang];
   const op = OPERATORS[plan.operator_id];
@@ -1175,21 +1726,21 @@ function Modal({ plan, days, lang, onClose }: { plan: Plan; days: number; lang: 
   const total = parseFloat((eur * purchases).toFixed(2));
   const why = lang === "ru" ? plan.why_ru || plan.why : plan.why;
   const priceDisp = (plan.price_rub && !plan.price_eur)
-    ? `РІвЂљР…${plan.price_rub} (РІвЂ°в‚¬РІвЂљВ¬${eur})`
-    : `РІвЂљВ¬${eur}`;
+    ? `₽${plan.price_rub} (≈€${eur})`
+    : `€${eur}`;
 
   const cells: [string, string][] = isSnap(plan) ? [
     ["Provider", op?.name || plan.provider_name],
     ["Data", plan.data_gb ? `${plan.data_gb} GB` : "?"],
     ["Duration", `${plan.duration_days} days`],
     ["Price", priceDisp],
-    ["РІвЂ°в‚¬ Cost per GB", plan.data_gb ? `РІвЂљВ¬${(eur / plan.data_gb).toFixed(2)}${t.per_gb}` : "РІР‚вЂќ"],
-    ["Local number", "No РІР‚вЂќ data-only"],
+    ["≈ Cost per GB", plan.data_gb ? `€${(eur / plan.data_gb).toFixed(2)}${t.per_gb}` : "—"],
+    ["Local number", "No — data-only"],
     ["KYC", "None required"],
-    ["Activation", "Instant РІР‚вЂќ QR scan"],
+    ["Activation", "Instant — QR scan"],
     ["Source", plan.source_name || "Provider listing"],
   ] : [
-    [t.for_trip(days), `РІвЂљВ¬${total} Р’В· ${t.purchases(purchases)}`],
+    [t.for_trip(days), `€${total} · ${t.purchases(purchases)}`],
     ["Price / period", priceDisp + (plan.price_local ? ` (${plan.price_local} ${plan.currency})` : "")],
     ["Duration", `${plan.duration_days} days`],
     [t.general_data, plan.unlimited_data ? "Unlimited" : `${plan.data_gb_core !== undefined ? plan.data_gb_core : (plan.data_gb || "?")} GB`],
@@ -1216,7 +1767,7 @@ function Modal({ plan, days, lang, onClose }: { plan: Plan; days: number; lang: 
           <div>
             <div className="modal-title">{plan.title}</div>
             <div className="modal-subtitle">
-              {op?.name || plan.provider_name} Р’В· {countryDisplay}
+              {op?.name || plan.provider_name} · {countryDisplay}
               {plan.data_confidence === "price_snapshot" && <span className="badge badge-snapshot" style={{ marginLeft: 8 }}>{t.confidence_snapshot}</span>}
               {plan.data_confidence === "needs_review" && <span className="badge badge-muted" style={{ marginLeft: 8 }}>{t.confidence_review}</span>}
               {isEuNomad(plan) && <span className="badge badge-eu-nomad" style={{ marginLeft: 8 }}>EU Nomad</span>}
@@ -1241,7 +1792,7 @@ function Modal({ plan, days, lang, onClose }: { plan: Plan; days: number; lang: 
         {plan.data_confidence === "needs_review" && (
           <div className="confidence-note confidence-note-grey">
             <Ic d={IC.info} size={12} />
-            <span>{lang === "ru" ? "Р В­РЎвЂљР С‘ Р Т‘Р В°Р Р…Р Р…РЎвЂ№Р Вµ РЎвЂљРЎР‚Р ВµР В±РЎС“РЎР‹РЎвЂљ Р С—Р С•Р Р†РЎвЂљР С•РЎР‚Р Р…Р С•Р в„– Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚Р С”Р С‘." : "This data is pending re-verification."}</span>
+            <span>{lang === "ru" ? "Эти данные требуют повторной проверки." : "This data is pending re-verification."}</span>
           </div>
         )}
 
@@ -1266,7 +1817,7 @@ function Modal({ plan, days, lang, onClose }: { plan: Plan; days: number; lang: 
             {plan.extension_options.map((e, i) => (
               <div key={i} className="ext-row">
                 <span>Top-up {e.topup_local} {plan.currency}</span>
-                <span>РІвЂ вЂ™ {e.total_validity_days} days total{e.note ? ` Р’В· ${e.note}` : ""}</span>
+                <span>→ {e.total_validity_days} days total{e.note ? ` · ${e.note}` : ""}</span>
               </div>
             ))}
           </div>
@@ -1279,7 +1830,7 @@ function Modal({ plan, days, lang, onClose }: { plan: Plan; days: number; lang: 
           </div>
         )}
 
-        {/* Warnings РІР‚вЂќ deduplicated, max 2 shown (rest behind scroll) */}
+        {/* Warnings — deduplicated, max 2 shown (rest behind scroll) */}
         {(plan.warnings || [])
           .filter((w, i, arr) => arr.indexOf(w) === i)   // deduplicate
           .filter(w => w && w.length > 0)
@@ -1307,7 +1858,7 @@ function Modal({ plan, days, lang, onClose }: { plan: Plan; days: number; lang: 
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Top featured card РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Top featured card ────────────────────────────────────────────────────────
 function TopCard({ s, tag, featured, lang, country, days, onOpen }: {
   s: Scored; tag: string; featured?: boolean; lang: Lang;
   country: CountryCode; days: number; onOpen: () => void;
@@ -1315,37 +1866,37 @@ function TopCard({ s, tag, featured, lang, country, days, onOpen }: {
   const { plan: p, total_cost, purchases, total_data_core } = s;
   const op = OPERATORS[p.operator_id];
   const isRu = lang === "ru";
-  const dataDisp = p.unlimited_data ? "РІв‚¬С›" : (total_data_core !== null ? `${total_data_core} GB` : "?");
+  const dataDisp = p.unlimited_data ? "∞" : (total_data_core !== null ? `${total_data_core} GB` : "?");
 
-  // Activation signal РІР‚вЂќ one word, most important fact for tourists
+  // Activation signal — one word, most important fact for tourists
   const activationLabel = p.esim_supported === true && p.activation_before_arrival
     ? (isRu ? "eSIM" : "eSIM")
     : p.esim_supported === false
-      ? (isRu ? "Р В¤Р С‘Р В·Р С‘РЎвЂЎР ВµРЎРѓР С”Р В°РЎРЏ SIM" : "Physical SIM")
+      ? (isRu ? "Физическая SIM" : "Physical SIM")
       : null;
 
   // Number signal
   const numberLabel = p.local_number
-    ? (isRu ? "Р СљР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚" : "Local number")
+    ? (isRu ? "Местный номер" : "Local number")
     : null;
 
-  // One caveat РІР‚вЂќ the most important restriction
+  // One caveat — the most important restriction
   let caveat: string | null = null;
   if (hasAppData(p)) {
     caveat = isRu
-      ? `${p.data_gb_core} Р вЂњР вЂ Р С•Р В±РЎвЂ°Р ВµР С–Р С• РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С”Р В° Р’В· ${p.data_gb_apps} Р вЂњР вЂ РЎвЂљР С•Р В»РЎРЉР С”Р С• Р Т‘Р В»РЎРЏ Р С—РЎР‚Р С‘Р В»Р С•Р В¶Р ВµР Р…Р С‘Р в„–`
-      : `${p.data_gb_core} GB general Р’В· ${p.data_gb_apps} GB apps only`;
+      ? `${p.data_gb_core} ГБ общего трафика · ${p.data_gb_apps} ГБ только для приложений`
+      : `${p.data_gb_core} GB general · ${p.data_gb_apps} GB apps only`;
   } else if (p.store_visit_required) {
-    caveat = isRu ? "Р СњРЎС“Р В¶Р ВµР Р… Р Р†Р С‘Р В·Р С‘РЎвЂљ Р Р† Р СР В°Р С–Р В°Р В·Р С‘Р Р… Р С‘Р В»Р С‘ Р В°РЎРЊРЎР‚Р С•Р С—Р С•РЎР‚РЎвЂљ" : "Store or airport visit required";
+    caveat = isRu ? "Нужен визит в магазин или аэропорт" : "Store or airport visit required";
   } else if (p.fair_use_policy) {
-    caveat = isRu ? "Р вЂќР ВµР в„–РЎРѓРЎвЂљР Р†РЎС“Р ВµРЎвЂљ Р В»Р С‘Р СР С‘РЎвЂљ РЎРѓР С—РЎР‚Р В°Р Р†Р ВµР Т‘Р В»Р С‘Р Р†Р С•Р С–Р С• Р С‘РЎРѓР С—Р С•Р В»РЎРЉР В·Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ" : "Fair use policy applies";
+    caveat = isRu ? "Действует лимит справедливого использования" : "Fair use policy applies";
   } else if (!p.renewable && purchases > 1) {
-    caveat = isRu ? "Р СњР Вµ Р С—РЎР‚Р С•Р Т‘Р В»Р ВµР Р†Р В°Р ВµРЎвЂљРЎРѓРЎРЏ РІР‚вЂќ Р Р…РЎС“Р В¶Р Р…Р В° Р С—Р С•Р Р†РЎвЂљР С•РЎР‚Р Р…Р В°РЎРЏ Р С—Р С•Р С”РЎС“Р С—Р С”Р В°" : "Non-renewable РІР‚вЂќ requires repurchase";
+    caveat = isRu ? "Не продлевается — нужна повторная покупка" : "Non-renewable — requires repurchase";
   } else if (p.esim_supported === "unknown") {
-    caveat = isRu ? "eSIM Р Р…Р Вµ Р С—Р С•Р Т‘РЎвЂљР Р†Р ВµРЎР‚Р В¶Р Т‘РЎвЂР Р… РІР‚вЂќ РЎС“РЎвЂљР С•РЎвЂЎР Р…Р С‘РЎвЂљР Вµ Р С—Р ВµРЎР‚Р ВµР Т‘ Р С—Р С•Р С”РЎС“Р С—Р С”Р С•Р в„–" : "eSIM availability unconfirmed";
+    caveat = isRu ? "eSIM не подтверждён — уточните перед покупкой" : "eSIM availability unconfirmed";
   }
 
-  // Roaming signal РІР‚вЂќ only if meaningful
+  // Roaming signal — only if meaningful
   const roamingLabel = p.western_balkans_roaming && p.roaming_cap_gb
     ? `${p.roaming_cap_gb} GB Balkans roaming`
     : p.eu_roaming && p.roaming_cap_gb
@@ -1365,86 +1916,86 @@ function TopCard({ s, tag, featured, lang, country, days, onOpen }: {
       {/* Plan title */}
       <div style={{ fontSize: 16, fontWeight: 700, color: "#0f1117", letterSpacing: "-0.02em", marginBottom: 10 }}>{p.title}</div>
 
-      {/* Core stats: price Р’В· data Р’В· duration */}
+      {/* Core stats: price · data · duration */}
       <div style={{ display: "flex", gap: 16, marginBottom: 8 }}>
         <div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#0f1117", letterSpacing: "-0.03em" }}>РІвЂљВ¬{total_cost}</div>
-          <div style={{ fontSize: 10, color: "#9ca3af" }}>{isRu ? "Р В·Р В° Р С—Р С•Р ВµР В·Р Т‘Р С”РЎС“" : "for trip"}</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#0f1117", letterSpacing: "-0.03em" }}>€{total_cost}</div>
+          <div style={{ fontSize: 10, color: "#9ca3af" }}>{isRu ? "за поездку" : "for trip"}</div>
         </div>
         <div>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#0f1117", letterSpacing: "-0.03em" }}>{dataDisp}</div>
-          <div style={{ fontSize: 10, color: "#9ca3af" }}>{isRu ? "РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С”" : hasAppData(p) ? "general" : "data"}</div>
+          <div style={{ fontSize: 10, color: "#9ca3af" }}>{isRu ? "трафик" : hasAppData(p) ? "general" : "data"}</div>
         </div>
         <div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#0f1117", letterSpacing: "-0.03em" }}>{p.duration_days}{isRu ? "Р Т‘" : "d"}</div>
-          <div style={{ fontSize: 10, color: "#9ca3af" }}>{isRu ? "РЎРѓРЎР‚Р С•Р С”" : "validity"}</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#0f1117", letterSpacing: "-0.03em" }}>{p.duration_days}{isRu ? "д" : "d"}</div>
+          <div style={{ fontSize: 10, color: "#9ca3af" }}>{isRu ? "срок" : "validity"}</div>
         </div>
       </div>
 
-      {/* 2РІР‚вЂњ3 inline signals РІР‚вЂќ no badge spam */}
+      {/* 2–3 inline signals — no badge spam */}
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: caveat ? 6 : 10, fontSize: 11, color: "#4b5563" }}>
-        {activationLabel && <span>РІСљвЂњ {activationLabel}</span>}
-        {numberLabel && <span>РІСљвЂњ {numberLabel}</span>}
-        {roamingLabel && <span>РІСљвЂњ {roamingLabel}</span>}
+        {activationLabel && <span>✓ {activationLabel}</span>}
+        {numberLabel && <span>✓ {numberLabel}</span>}
+        {roamingLabel && <span>✓ {roamingLabel}</span>}
       </div>
 
-      {/* One caveat line РІР‚вЂќ amber, compact */}
+      {/* One caveat line — amber, compact */}
       {caveat && (
-        <div style={{ fontSize: 11, color: "#b45309", marginBottom: 10, lineHeight: 1.4 }}>РІС™В  {caveat}</div>
+        <div style={{ fontSize: 11, color: "#b45309", marginBottom: 10, lineHeight: 1.4 }}>⚠ {caveat}</div>
       )}
 
       <SourceBtn plan={p} lang={lang} />
-      <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 6 }}>{isRu ? "Р СџР С•Р Т‘РЎР‚Р С•Р В±Р Р…Р ВµР Вµ РІвЂ вЂ™" : "More details РІвЂ вЂ™"}</div>
+      <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 6 }}>{isRu ? "Подробнее →" : "More details →"}</div>
     </div>
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Alt card (compact list row) РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Alt card (compact list row) ─────────────────────────────────────────────
 function AltCard({ s, tag, lang, onOpen }: { s: Scored; tag: string; lang: Lang; onOpen: () => void }) {
   const { plan: p, total_cost, purchases, total_data_core } = s;
   const op = OPERATORS[p.operator_id];
   const isRu = lang === "ru";
-  const dataStr = p.unlimited_data ? "РІв‚¬С›" : (total_data_core !== null ? `${total_data_core} GB` : "?");
-  // One caveat РІР‚вЂќ only if the data isn't what it seems
+  const dataStr = p.unlimited_data ? "∞" : (total_data_core !== null ? `${total_data_core} GB` : "?");
+  // One caveat — only if the data isn't what it seems
   const caveat = hasAppData(p)
-    ? (isRu ? `${p.data_gb_core} Р вЂњР вЂ Р С•Р В±РЎвЂ°Р ВµР С–Р С• + ${p.data_gb_apps} Р вЂњР вЂ Р С—РЎР‚Р С‘Р В»Р С•Р В¶Р ВµР Р…Р С‘Р в„–` : `${p.data_gb_core} GB general + ${p.data_gb_apps} GB apps`)
+    ? (isRu ? `${p.data_gb_core} ГБ общего + ${p.data_gb_apps} ГБ приложений` : `${p.data_gb_core} GB general + ${p.data_gb_apps} GB apps`)
     : p.store_visit_required
-      ? (isRu ? "Р СњРЎС“Р В¶Р ВµР Р… Р С•РЎвЂћР С‘РЎРѓ Р С•Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚Р В°" : "Store required")
+      ? (isRu ? "Нужен офис оператора" : "Store required")
       : null;
   return (
     <div className="alt-card" onClick={onOpen}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#0f1117" }}>{p.title}</div>
         <div style={{ fontSize: 11, color: "#9ca3af", margin: "2px 0 0" }}>
-          {op?.name || p.provider_name} Р’В· {p.duration_days}{isRu ? "Р Т‘" : "d"}
-          {purchases > 1 ? ` Р’В· ${purchases}Р“вЂ”` : ""}
-          {tag ? ` Р’В· ${tag}` : ""}
+          {op?.name || p.provider_name} · {p.duration_days}{isRu ? "д" : "d"}
+          {purchases > 1 ? ` · ${purchases}×` : ""}
+          {tag ? ` · ${tag}` : ""}
         </div>
         {caveat && <div style={{ fontSize: 10, color: "#b45309", marginTop: 3 }}>{caveat}</div>}
       </div>
       <div style={{ textAlign: "right", flexShrink: 0 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: "#0f1117" }}>РІвЂљВ¬{total_cost}</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: "#0f1117" }}>€{total_cost}</div>
         <div style={{ fontSize: 10, color: "#9ca3af" }}>{dataStr}</div>
       </div>
     </div>
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Snapshot row (travel eSIM list item) РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Snapshot row (travel eSIM list item) ─────────────────────────────────────
 function SnapCard({ plan, lang, country, days, onOpen }: {
   plan: Plan; lang: Lang; country: CountryCode; days: number; onOpen: () => void;
 }) {
   const t = T[lang];
   const op = OPERATORS[plan.operator_id];
   const eur = getPriceEur(plan);
-  const ppg = plan.data_gb ? `РІвЂљВ¬${(eur / plan.data_gb).toFixed(2)}${t.per_gb}` : null;
-  const priceDisp = (plan.price_rub && !plan.price_eur) ? `РІвЂљР…${plan.price_rub}` : `РІвЂљВ¬${eur.toFixed(2)}`;
+  const ppg = plan.data_gb ? `€${(eur / plan.data_gb).toFixed(2)}${t.per_gb}` : null;
+  const priceDisp = (plan.price_rub && !plan.price_eur) ? `₽${plan.price_rub}` : `€${eur.toFixed(2)}`;
   return (
     <div className="alt-card snapshot-card" onClick={onOpen}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#0f1117" }}>{op?.name || plan.provider_name}</div>
         <div style={{ fontSize: 11, color: "#9ca3af", margin: "1px 0 5px" }}>
-          {plan.data_gb} GB Р’В· {plan.duration_days} days Р’В· data only
+          {plan.data_gb} GB · {plan.duration_days} days · data only
         </div>
         <div style={{ fontSize: 10, color: "#92400e" }}>{t.verify_price}</div>
       </div>
@@ -1456,7 +2007,7 @@ function SnapCard({ plan, lang, country, days, onOpen }: {
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ EU Nomad card РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── EU Nomad card ────────────────────────────────────────────────────────────
 function EuNomadCard({ euNomadRec, lang, days, onOpen }: {
   euNomadRec: NonNullable<ReturnType<typeof useRec>>["euNomadRec"];
   lang: Lang;
@@ -1472,7 +2023,7 @@ function EuNomadCard({ euNomadRec, lang, days, onOpen }: {
   return (
     <div className="eu-nomad-card" onClick={() => onOpen(plan)}>
       <div className="eu-nomad-header">
-        <div className="eu-nomad-icon">СЂСџРЉРЊ</div>
+        <div className="eu-nomad-icon">🌍</div>
         <div>
           <div className="eu-nomad-label">
             {isRu ? "EU Nomad" : "EU Nomad Setup"}
@@ -1486,24 +2037,24 @@ function EuNomadCard({ euNomadRec, lang, days, onOpen }: {
 
       <div className="eu-nomad-stats">
         <div className="eu-nomad-stat">
-          <div className="eu-nomad-stat-val">РІвЂљВ¬{eur}/mo</div>
-          <div className="eu-nomad-stat-lbl">{isRu ? "Р Р† Р СР ВµРЎРѓРЎРЏРЎвЂ " : "per month"}</div>
+          <div className="eu-nomad-stat-val">€{eur}/mo</div>
+          <div className="eu-nomad-stat-lbl">{isRu ? "в месяц" : "per month"}</div>
         </div>
         <div className="eu-nomad-stat">
           <div className="eu-nomad-stat-val">{plan.roaming_cap_gb != null ? plan.roaming_cap_gb : plan.data_gb_core} GB</div>
-          <div className="eu-nomad-stat-lbl">{isRu ? "РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ" : "EU roaming"}</div>
+          <div className="eu-nomad-stat-lbl">{isRu ? "роуминг ЕС" : "EU roaming"}</div>
         </div>
         <div className="eu-nomad-stat">
-          <div className="eu-nomad-stat-val">СЂСџвЂЎВµСЂСџвЂЎВ±</div>
-          <div className="eu-nomad-stat-lbl">{isRu ? "РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚" : "real number"}</div>
+          <div className="eu-nomad-stat-val">🇵🇱</div>
+          <div className="eu-nomad-stat-lbl">{isRu ? "реальный номер" : "real number"}</div>
         </div>
       </div>
 
       <div className="eu-nomad-feats">
-        <div className="eu-nomad-feat"><Ic d={IC.check} size={11} color="#4f46e5" /> {isRu ? "Р В Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ Р С—Р С• Р Р†РЎРѓР ВµР СРЎС“ Р вЂўР РЋ" : "Works across all EU countries"}</div>
-        <div className="eu-nomad-feat"><Ic d={IC.check} size={11} color="#4f46e5" /> {isRu ? "Р ВР Р…Р С•РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Р…РЎвЂ№Р в„– Р С—Р В°РЎРѓР С—Р С•РЎР‚РЎвЂљ" : "Foreign passport accepted"}</div>
-        <div className="eu-nomad-feat"><Ic d={IC.check} size={11} color="#4f46e5" /> {isRu ? "Р С’Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ РЎвЂЎР ВµРЎР‚Р ВµР В· Р С—РЎР‚Р С‘Р В»Р С•Р В¶Р ВµР Р…Р С‘Р Вµ" : "App-based activation"}</div>
-        <div className="eu-nomad-feat"><Ic d={IC.check} size={11} color="#4f46e5" /> {isRu ? "Р вЂР ВµР В· РЎР‚Р ВµР В·Р С‘Р Т‘Р ВµР Р…РЎвЂљРЎРѓРЎвЂљР Р†Р В° Р вЂўР РЋ" : "No EU residency required"}</div>
+        <div className="eu-nomad-feat"><Ic d={IC.check} size={11} color="#4f46e5" /> {isRu ? "Работает по всему ЕС" : "Works across all EU countries"}</div>
+        <div className="eu-nomad-feat"><Ic d={IC.check} size={11} color="#4f46e5" /> {isRu ? "Иностранный паспорт" : "Foreign passport accepted"}</div>
+        <div className="eu-nomad-feat"><Ic d={IC.check} size={11} color="#4f46e5" /> {isRu ? "Активация через приложение" : "App-based activation"}</div>
+        <div className="eu-nomad-feat"><Ic d={IC.check} size={11} color="#4f46e5" /> {isRu ? "Без резидентства ЕС" : "No EU residency required"}</div>
       </div>
 
       <div className="eu-nomad-vs">
@@ -1518,10 +2069,10 @@ function EuNomadCard({ euNomadRec, lang, days, onOpen }: {
       </div>
 
       <div className="eu-nomad-caveats">
-        <span style={{ color: "#6366f1", fontWeight: 600 }}>РІС™В  </span>
+        <span style={{ color: "#6366f1", fontWeight: 600 }}>⚠ </span>
         {isRu
-          ? "Р СџР С•Р В»РЎРЉРЎРѓР С”Р С‘Р в„– Р Р…Р С•Р СР ВµРЎР‚ РІР‚вЂќ Р Р…Р Вµ Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Т‘Р В»РЎРЏ Р С”Р В°Р В¶Р Т‘Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№. Р В Р С•РЎС“Р СР С‘Р Р…Р С–: ~12 Р вЂњР вЂ/Р СР ВµРЎРѓ, РЎвЂљР С•Р В»РЎРЉР С”Р С• РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р вЂўР РЋ. Р СњР Вµ РЎР‚Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ Р Р† Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№РЎвЂ¦ Р вЂР В°Р В»Р С”Р В°Р Р…Р В°РЎвЂ¦ Р С‘ Р РЃР Р†Р ВµР в„–РЎвЂ Р В°РЎР‚Р С‘Р С‘."
-          : "Polish number РІР‚вЂќ not local. EU roaming capped (~12 GB/mo). EU countries only РІР‚вЂќ does NOT work in Western Balkans (Serbia, Montenegro etc.) or Switzerland."}
+          ? "Польский номер — не местный для каждой страны. Роуминг: ~12 ГБ/мес, только страны ЕС. Не работает в Западных Балканах и Швейцарии."
+          : "Polish number — not local. EU roaming capped (~12 GB/mo). EU countries only — does NOT work in Western Balkans (Serbia, Montenegro etc.) or Switzerland."}
       </div>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
@@ -1535,13 +2086,13 @@ function EuNomadCard({ euNomadRec, lang, days, onOpen }: {
         >
           <Ic d={IC.link} size={11} /> {isRu ? "Orange Flex" : "Orange Flex"}
         </a>
-        <div style={{ fontSize: 11, color: "#6366f1" }}>{isRu ? "Р СџР С•Р Т‘РЎР‚Р С•Р В±Р Р…Р ВµР Вµ РІвЂ вЂ™" : "Full details РІвЂ вЂ™"}</div>
+        <div style={{ fontSize: 11, color: "#6366f1" }}>{isRu ? "Подробнее →" : "Full details →"}</div>
       </div>
     </div>
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Travel eSIM tab РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Travel eSIM tab ──────────────────────────────────────────────────────────
 function TravelTab({ snaps, travelCmp, lang, country, days, onOpen }: {
   snaps: Plan[];
   travelCmp: TravelCmp | null;
@@ -1564,16 +2115,16 @@ function TravelTab({ snaps, travelCmp, lang, country, days, onOpen }: {
         {t.travel_esim_intro}
       </div>
 
-      {/* РІвЂќР‚РІвЂќР‚ Local vs Travel comparison card РІвЂќР‚РІвЂќР‚ */}
+      {/* ── Local vs Travel comparison card ── */}
       {travelCmp && (
         <div className={cmpCardClass}>
           {/* Verdict label */}
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4, color: travelCmp.travelWins ? "#92400e" : travelCmp.verdict === "depends" ? "#374151" : "#15803d" }}>
-            {travelCmp.verdict === "travel_wins"   && "РІСљв‚¬ Travel eSIM recommended for this trip"}
-            {travelCmp.verdict === "travel_better" && "РІСљв‚¬ Travel eSIM probably better here"}
-            {travelCmp.verdict === "depends"       && "РІС™вЂ“ Depends on your priorities"}
-            {travelCmp.verdict === "local_better"  && "СЂСџвЂњВ¶ Local SIM better value"}
-            {travelCmp.verdict === "local_wins"    && "СЂСџвЂњВ¶ Local SIM clearly wins"}
+            {travelCmp.verdict === "travel_wins"   && "✈ Travel eSIM recommended for this trip"}
+            {travelCmp.verdict === "travel_better" && "✈ Travel eSIM probably better here"}
+            {travelCmp.verdict === "depends"       && "⚖ Depends on your priorities"}
+            {travelCmp.verdict === "local_better"  && "📶 Local SIM better value"}
+            {travelCmp.verdict === "local_wins"    && "📶 Local SIM clearly wins"}
           </div>
           <div className="vs-verdict" style={{ color: travelCmp.travelWins ? "#92400e" : travelCmp.verdict === "depends" ? "#374151" : "#15803d" }}>
             {lang === "ru" ? travelCmp.verdictReasonRu : travelCmp.verdictReason}
@@ -1595,13 +2146,13 @@ function TravelTab({ snaps, travelCmp, lang, country, days, onOpen }: {
             {/* Local SIM side */}
             <div className={`vs-option${!travelCmp.travelWins && travelCmp.verdict !== "depends" ? " highlight" : ""}`}>
               <div className="vs-provider">Local SIM</div>
-              <div className="vs-price" style={{ color: travelCmp.travelWins ? "#374151" : "#0f1117" }}>РІвЂљВ¬{travelCmp.localOpt.total_cost}</div>
+              <div className="vs-price" style={{ color: travelCmp.travelWins ? "#374151" : "#0f1117" }}>€{travelCmp.localOpt.total_cost}</div>
               <div className="vs-price-sub">{travelCmp.localOpt.plan.title}</div>
               {travelCmp.localOpt.plan.local_number
                 ? <div className="vs-feat ok"><Ic d={IC.check} size={11} /> Local phone number</div>
                 : <div className="vs-feat no"><Ic d={IC.x} size={11} /> No local number</div>}
               <div className="vs-feat ok"><Ic d={IC.check} size={11} /> {travelCmp.localDataStr} general data</div>
-              {travelCmp.localPpg !== null && <div className="vs-feat ok"><Ic d={IC.check} size={11} /> РІвЂљВ¬{travelCmp.localPpg}/GB</div>}
+              {travelCmp.localPpg !== null && <div className="vs-feat ok"><Ic d={IC.check} size={11} /> €{travelCmp.localPpg}/GB</div>}
               {travelCmp.localOpt.plan.western_balkans_roaming && (
                 <div className="vs-feat ok"><Ic d={IC.check} size={11} /> Balkans roaming included</div>
               )}
@@ -1621,12 +2172,12 @@ function TravelTab({ snaps, travelCmp, lang, country, days, onOpen }: {
             {/* Travel eSIM side */}
             <div className={`vs-option${travelCmp.travelWins ? " highlight highlight-travel" : ""}`}>
               <div className="vs-provider">{travelCmp.snap.provider_name}</div>
-              <div className="vs-price" style={{ color: travelCmp.travelWins ? "#92400e" : "#374151" }}>РІвЂљВ¬{getPriceEur(travelCmp.snap).toFixed(2)}</div>
-              <div className="vs-price-sub">{travelCmp.snapDataStr} Р’В· {travelCmp.snap.duration_days} days</div>
+              <div className="vs-price" style={{ color: travelCmp.travelWins ? "#92400e" : "#374151" }}>€{getPriceEur(travelCmp.snap).toFixed(2)}</div>
+              <div className="vs-price-sub">{travelCmp.snapDataStr} · {travelCmp.snap.duration_days} days</div>
               <div className="vs-feat ok"><Ic d={IC.check} size={11} /> {t.instant} activation</div>
               <div className="vs-feat ok"><Ic d={IC.check} size={11} /> No KYC or passport</div>
               <div className="vs-feat ok"><Ic d={IC.check} size={11} /> Works before landing</div>
-              {travelCmp.snapPpg !== null && <div className={`vs-feat ${travelCmp.localPpg !== null && travelCmp.snapPpg < travelCmp.localPpg ? "ok" : "no"}`}><Ic d={travelCmp.localPpg !== null && travelCmp.snapPpg < travelCmp.localPpg ? IC.check : IC.x} size={11} /> РІвЂљВ¬{travelCmp.snapPpg}/GB</div>}
+              {travelCmp.snapPpg !== null && <div className={`vs-feat ${travelCmp.localPpg !== null && travelCmp.snapPpg < travelCmp.localPpg ? "ok" : "no"}`}><Ic d={travelCmp.localPpg !== null && travelCmp.snapPpg < travelCmp.localPpg ? IC.check : IC.x} size={11} /> €{travelCmp.snapPpg}/GB</div>}
               <div className="vs-feat no"><Ic d={IC.x} size={11} /> {t.no_local_num}</div>
               <div className="vs-feat no"><Ic d={IC.x} size={11} /> {t.data_only}</div>
               <div className="vs-feat warn"><Ic d={IC.alert} size={11} /> {t.verify_price}</div>
@@ -1635,7 +2186,7 @@ function TravelTab({ snaps, travelCmp, lang, country, days, onOpen }: {
         </div>
       )}
 
-      {/* РІвЂќР‚РІвЂќР‚ Snapshot list РІвЂќР‚РІвЂќР‚ */}
+      {/* ── Snapshot list ── */}
       <div className="sec-title">{t.all_travel_esims}</div>
       <div className="confidence-note">
         <Ic d={IC.alert} size={12} />
@@ -1649,7 +2200,7 @@ function TravelTab({ snaps, travelCmp, lang, country, days, onOpen }: {
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Setup difficulty tab РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Setup difficulty tab ─────────────────────────────────────────────────────
 function SetupTab({ all, lang, onOpen }: { all: Scored[]; lang: Lang; onOpen: (p: Plan) => void }) {
   const t = T[lang];
   const sorted = [...all].sort((a, b) => (a.plan.friction_score || 5) - (b.plan.friction_score || 5));
@@ -1685,7 +2236,7 @@ function SetupTab({ all, lang, onOpen }: { all: Scored[]; lang: Lang; onOpen: (p
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Roaming matrix tab РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Roaming matrix tab ───────────────────────────────────────────────────────
 function RoamingMatrix({ country, lang, countries_data }: { country: CountryCode; lang: Lang; countries_data: typeof COUNTRIES }) {
   const t = T[lang];
   const isRu = lang === "ru";
@@ -1695,7 +2246,7 @@ function RoamingMatrix({ country, lang, countries_data }: { country: CountryCode
   const cell = (from: CountryCode, to: CountryCode) => {
     const v: RoamVal = ROAMING_MATRIX[from]?.[to] || "no";
     const note = ROAMING_NOTES[from]?.[to];
-    const icon = v === "yes" ? "РІСљвЂ¦" : v === "limited" ? "РІС™В РїС‘РЏ" : "РІСњРЉ";
+    const icon = v === "yes" ? "✅" : v === "limited" ? "⚠️" : "❌";
     const cls = v === "yes" ? "matrix-cell-ok" : v === "limited" ? "matrix-cell-warn" : "matrix-cell-no";
     return (
       <span className={cls} style={{ cursor: note ? "help" : "default" }}
@@ -1732,7 +2283,7 @@ function RoamingMatrix({ country, lang, countries_data }: { country: CountryCode
                 <tr key={from} style={{ background: from === country ? "#eff6ff" : undefined }}>
                   <td style={{ fontWeight: from === country ? 700 : 500, color: from === country ? "#1d4ed8" : undefined }}>
                     {COUNTRIES[from].flag} {isRu ? COUNTRIES[from].name_ru : COUNTRIES[from].name}
-                    {from === country && <span className="badge badge-info" style={{ marginLeft: 6, fontSize: 9 }}>{isRu ? "Р Р†РЎвЂ№Р В±РЎР‚Р В°Р Р…Р С•" : "selected"}</span>}
+                    {from === country && <span className="badge badge-info" style={{ marginLeft: 6, fontSize: 9 }}>{isRu ? "выбрано" : "selected"}</span>}
                   </td>
                   {MATRIX_CC.map(to => <td key={to}>{cell(from, to)}</td>)}
                 </tr>
@@ -1749,41 +2300,41 @@ function RoamingMatrix({ country, lang, countries_data }: { country: CountryCode
         <>
           <Alrt type="warn">
             {isRu
-              ? "Yettel Р С‘ A1 Р Р…Р Вµ Р Р†Р С”Р В»РЎР‹РЎвЂЎР В°РЎР‹РЎвЂљ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р С—Р С• Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№Р С Р вЂР В°Р В»Р С”Р В°Р Р…Р В°Р С. Р вЂќР В»РЎРЏ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В° Р С—Р С• Р Р…Р ВµРЎРѓР С”Р С•Р В»РЎРЉР С”Р С‘Р С РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р В°Р С РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р В° РЎР‚Р В°РЎРѓРЎРѓР СР С•РЎвЂљРЎР‚Р С‘РЎвЂљР Вµ РЎвЂЎР ВµРЎР‚Р Р…Р С•Р С–Р С•РЎР‚РЎРѓР С”РЎС“РЎР‹ SIM."
+              ? "Yettel и A1 не включают роуминг по Западным Балканам. Для маршрута по нескольким странам региона рассмотрите черногорскую SIM."
               : "Serbian tourist plans (Yettel, A1) do not include Western Balkans roaming. For multi-country Balkans travel, consider a Montenegro SIM below."}
           </Alrt>
           <Alrt type="info">
             {isRu
-              ? "Yettel Transit: 500 Р СљР вЂ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° Р вЂўР РЋ. Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№РЎвЂ¦ Р вЂР В°Р В»Р С”Р В°Р Р… Р Р…Р Вµ Р Р†Р С”Р В»РЎР‹РЎвЂЎРЎвЂР Р…."
-              : "Yettel Transit includes 500 MB EU roaming only РІР‚вЂќ not Western Balkans."}
+              ? "Yettel Transit: 500 МБ роуминга ЕС. Роуминг Западных Балкан не включён."
+              : "Yettel Transit includes 500 MB EU roaming only — not Western Balkans."}
           </Alrt>
         </>
       )}
       {country === "ME" && (
         <Alrt type="info">
           {isRu
-            ? "One Tourist 15: 8.5 Р вЂњР вЂ WB Р’В· One Tourist 20: 11 Р вЂњР вЂ WB Р’В· One Tourist 25: 13.5 Р вЂњР вЂ WB РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° РІР‚вЂќ Р С‘РЎРѓР С—Р С•Р В»РЎРЉР В·РЎС“Р ВµРЎвЂљРЎРѓРЎРЏ Р Р† Р РЋР ВµРЎР‚Р В±Р С‘Р С‘, Р вЂР С•РЎРѓР Р…Р С‘Р С‘, Р РЋР ВµР Р†Р ВµРЎР‚Р Р…Р С•Р в„– Р СљР В°Р С”Р ВµР Т‘Р С•Р Р…Р С‘Р С‘."
-            : "One Tourist 15: 8.5 GB WB Р’В· One Tourist 20: 11 GB WB Р’В· One Tourist 25: 13.5 GB WB roaming РІР‚вЂќ usable in Serbia, Bosnia, North Macedonia."}
+            ? "One Tourist 15: 8.5 ГБ WB · One Tourist 20: 11 ГБ WB · One Tourist 25: 13.5 ГБ WB роуминга — используется в Сербии, Боснии, Северной Македонии."
+            : "One Tourist 15: 8.5 GB WB · One Tourist 20: 11 GB WB · One Tourist 25: 13.5 GB WB roaming — usable in Serbia, Bosnia, North Macedonia."}
         </Alrt>
       )}
       {country === "MK" && (
         <Alrt type="info">
           {isRu
-            ? "A1 Roam Surf Balkan S (2 Р вЂњР вЂ, ~РІвЂљВ¬4.82) Р С‘ L (5 Р вЂњР вЂ, ~РІвЂљВ¬8.05) РІР‚вЂќ Р Р…Р В°Р С‘Р В±Р С•Р В»Р ВµР Вµ Р Т‘Р С•РЎРѓРЎвЂљРЎС“Р С—Р Р…РЎвЂ№Р Вµ Р С—Р В°Р С”Р ВµРЎвЂљРЎвЂ№ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° Р С—Р С• Р вЂР В°Р В»Р С”Р В°Р Р…Р В°Р С Р Р† РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р Вµ."
-            : "A1 Roam Surf Balkan S (2 GB, ~РІвЂљВ¬4.82) and L (5 GB, ~РІвЂљВ¬8.05) are the cheapest WB roaming add-ons in the region."}
+            ? "A1 Roam Surf Balkan S (2 ГБ, ~€4.82) и L (5 ГБ, ~€8.05) — наиболее доступные пакеты роуминга по Балканам в регионе."
+            : "A1 Roam Surf Balkan S (2 GB, ~€4.82) and L (5 GB, ~€8.05) are the cheapest WB roaming add-ons in the region."}
         </Alrt>
       )}
       {country === "AL" && (
         <Alrt type="warn">
           {isRu
-            ? "Р С›Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚РЎвЂ№ Р С’Р В»Р В±Р В°Р Р…Р С‘Р С‘ Р Р…Р Вµ Р С—Р С•Р Т‘Р Т‘Р ВµРЎР‚Р В¶Р С‘Р Р†Р В°РЎР‹РЎвЂљ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р С—Р С• Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№Р С Р вЂР В°Р В»Р С”Р В°Р Р…Р В°Р С. Р вЂќР В»РЎРЏ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В° Р С—Р С• Р Р…Р ВµРЎРѓР С”Р С•Р В»РЎРЉР С”Р С‘Р С РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р В°Р С Р Р…РЎС“Р В¶Р Р…Р В° Р С•РЎвЂљР Т‘Р ВµР В»РЎРЉР Р…Р В°РЎРЏ SIM."
+            ? "Операторы Албании не поддерживают роуминг по Западным Балканам. Для маршрута по нескольким странам нужна отдельная SIM."
             : "Most Albanian operators do not include Western Balkans roaming. For multi-country Balkans routes, a separate SIM is needed."}
         </Alrt>
       )}
       {country === "BA" && (
         <Alrt type="info">
           {isRu
-            ? "BH Telecom Р Р†Р С”Р В»РЎР‹РЎвЂЎР В°Р ВµРЎвЂљ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р С—Р С• Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№Р С Р вЂР В°Р В»Р С”Р В°Р Р…Р В°Р С. Р ТђР С•РЎР‚Р С•РЎв‚¬Р С‘Р в„– Р Р†Р В°РЎР‚Р С‘Р В°Р Р…РЎвЂљ Р Т‘Р В»РЎРЏ РЎвЂљРЎР‚Р В°Р Р…Р В·Р С‘РЎвЂљР В° РЎвЂЎР ВµРЎР‚Р ВµР В· Р РЋР В°РЎР‚Р В°Р ВµР Р†Р С•."
+            ? "BH Telecom включает роуминг по Западным Балканам. Хороший вариант для транзита через Сараево."
             : "BH Telecom tourist eSIM includes WB roaming. Convenient for routes transiting through Sarajevo."}
         </Alrt>
       )}
@@ -1792,7 +2343,7 @@ function RoamingMatrix({ country, lang, countries_data }: { country: CountryCode
       {arbitrageNote && (
         <div style={{ marginTop: 10, background: "#fffbeb", border: "1px solid #fcd34d", borderRadius: 8, padding: "10px 12px", fontSize: 12, color: "#92400e", lineHeight: 1.6 }}>
           <div style={{ fontWeight: 700, marginBottom: 3, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            {isRu ? "СЂСџвЂ”С” Р вЂР В°Р В»Р С”Р В°Р Р…РЎРѓР С”Р В°РЎРЏ РЎРѓРЎвЂљРЎР‚Р В°РЎвЂљР ВµР С–Р С‘РЎРЏ" : "СЂСџвЂ”С” Balkans arbitrage"}
+            {isRu ? "🗺 Балканская стратегия" : "🗺 Balkans arbitrage"}
           </div>
           {arbitrageNote}
         </div>
@@ -1801,7 +2352,7 @@ function RoamingMatrix({ country, lang, countries_data }: { country: CountryCode
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ All Plans Tab РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── All Plans Tab ────────────────────────────────────────────────────────────
 type SortKey = "score" | "price" | "data" | "ppg" | "duration" | "operator";
 type FilterKey = "esim" | "number" | "balkans" | "instant" | "eu_roaming";
 
@@ -1850,16 +2401,16 @@ function AllPlansTab({ locals, snaps, days, lang, country, onModal }: {
     }
   });
 
-  // Minimal plan row РІР‚вЂќ price, data, duration, operator, one caveat
+  // Minimal plan row — price, data, duration, operator, one caveat
   function PlanRow({ scored }: { scored: Scored }) {
     const { plan: p, total_cost, purchases, total_data_core } = scored;
     const op = OPERATORS[p.operator_id];
-    const dataStr = p.unlimited_data ? "РІв‚¬С›" : (total_data_core !== null ? `${total_data_core} GB` : "?");
-    const ppg = total_data_core && !p.unlimited_data ? `РІвЂљВ¬${(total_cost / total_data_core).toFixed(2)}/GB` : null;
+    const dataStr = p.unlimited_data ? "∞" : (total_data_core !== null ? `${total_data_core} GB` : "?");
+    const ppg = total_data_core && !p.unlimited_data ? `€${(total_cost / total_data_core).toFixed(2)}/GB` : null;
     const caveat = hasAppData(p)
-      ? (isRu ? `${p.data_gb_core} Р вЂњР вЂ Р С•Р В±РЎвЂ°Р ВµР С–Р С• + ${p.data_gb_apps} Р вЂњР вЂ Р С—РЎР‚Р С‘Р В»Р С•Р В¶Р ВµР Р…Р С‘Р в„–` : `${p.data_gb_core} GB general + ${p.data_gb_apps} GB apps`)
-      : p.store_visit_required ? (isRu ? "Р СњРЎС“Р В¶Р ВµР Р… Р С•РЎвЂћР С‘РЎРѓ Р С•Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚Р В°" : "Store required")
-      : p.western_balkans_roaming && p.roaming_cap_gb ? `${p.roaming_cap_gb} GB ${isRu ? "WB РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–" : "WB roaming"}`
+      ? (isRu ? `${p.data_gb_core} ГБ общего + ${p.data_gb_apps} ГБ приложений` : `${p.data_gb_core} GB general + ${p.data_gb_apps} GB apps`)
+      : p.store_visit_required ? (isRu ? "Нужен офис оператора" : "Store required")
+      : p.western_balkans_roaming && p.roaming_cap_gb ? `${p.roaming_cap_gb} GB ${isRu ? "WB роуминг" : "WB roaming"}`
       : p.eu_roaming && p.roaming_cap_gb ? `EU roaming`
       : null;
 
@@ -1868,13 +2419,13 @@ function AllPlansTab({ locals, snaps, days, lang, country, onModal }: {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#0f1117" }}>{p.title}</div>
           <div style={{ fontSize: 11, color: "#9ca3af", margin: "2px 0 0" }}>
-            {op?.name || p.provider_name} Р’В· {p.duration_days}{isRu ? "Р Т‘" : "d"}
-            {purchases > 1 ? ` Р’В· ${purchases}Р“вЂ”` : ""}
+            {op?.name || p.provider_name} · {p.duration_days}{isRu ? "д" : "d"}
+            {purchases > 1 ? ` · ${purchases}×` : ""}
           </div>
           {caveat && <div style={{ fontSize: 10, color: "#b45309", marginTop: 3 }}>{caveat}</div>}
         </div>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
-          <div style={{ fontSize: 15, fontWeight: 700 }}>РІвЂљВ¬{total_cost}</div>
+          <div style={{ fontSize: 15, fontWeight: 700 }}>€{total_cost}</div>
           <div style={{ fontSize: 10, color: "#9ca3af" }}>{dataStr}</div>
           {ppg && <div style={{ fontSize: 10, color: "#9ca3af" }}>{ppg}</div>}
         </div>
@@ -1901,20 +2452,20 @@ function AllPlansTab({ locals, snaps, days, lang, country, onModal }: {
   }
 
   const SORT_OPTS: { key: SortKey; label: string; labelRu: string }[] = [
-    { key: "score",    label: "Best match",  labelRu: "Р СџР С• РЎР‚Р ВµР в„–РЎвЂљР С‘Р Р…Р С–РЎС“" },
-    { key: "price",    label: "Price РІвЂ вЂ",     labelRu: "Р В¦Р ВµР Р…Р В° РІвЂ вЂ" },
-    { key: "data",     label: "Data РІвЂ вЂњ",      labelRu: "Р вЂќР В°Р Р…Р Р…РЎвЂ№Р Вµ РІвЂ вЂњ" },
-    { key: "ppg",      label: "РІвЂљВ¬/GB",        labelRu: "РІвЂљВ¬/Р вЂњР вЂ" },
-    { key: "duration", label: "Duration РІвЂ вЂ",  labelRu: "Р РЋРЎР‚Р С•Р С” РІвЂ вЂ" },
-    { key: "operator", label: "Operator AРІР‚вЂњZ",labelRu: "Р С›Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚ Р С’РІР‚вЂњР Р‡" },
+    { key: "score",    label: "Best match",  labelRu: "По рейтингу" },
+    { key: "price",    label: "Price ↑",     labelRu: "Цена ↑" },
+    { key: "data",     label: "Data ↓",      labelRu: "Данные ↓" },
+    { key: "ppg",      label: "€/GB",        labelRu: "€/ГБ" },
+    { key: "duration", label: "Duration ↑",  labelRu: "Срок ↑" },
+    { key: "operator", label: "Operator A–Z",labelRu: "Оператор А–Я" },
   ];
 
   const FILTER_OPTS: { key: FilterKey; label: string; labelRu: string }[] = [
     { key: "esim",      label: "eSIM",           labelRu: "eSIM" },
-    { key: "instant",   label: "Before arrival", labelRu: "Р вЂќР С• Р С—РЎР‚Р С‘Р В»РЎвЂРЎвЂљР В°" },
-    { key: "number",    label: "Local number",   labelRu: "Р СљР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚" },
-    { key: "balkans",   label: "Balkans roaming",labelRu: "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂР В°Р В»Р С”Р В°Р Р…РЎвЂ№" },
-    { key: "eu_roaming",label: "EU roaming",     labelRu: "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ" },
+    { key: "instant",   label: "Before arrival", labelRu: "До прилёта" },
+    { key: "number",    label: "Local number",   labelRu: "Местный номер" },
+    { key: "balkans",   label: "Balkans roaming",labelRu: "Роуминг Балканы" },
+    { key: "eu_roaming",label: "EU roaming",     labelRu: "Роуминг ЕС" },
   ];
 
   const hasFilters = filters.size > 0;
@@ -1924,7 +2475,7 @@ function AllPlansTab({ locals, snaps, days, lang, country, onModal }: {
       {/* Sort controls */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
         <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#9ca3af", flexShrink: 0 }}>
-          {isRu ? "Р РЋР С•РЎР‚РЎвЂљР С‘РЎР‚Р С•Р Р†Р С”Р В°" : "Sort"}
+          {isRu ? "Сортировка" : "Sort"}
         </span>
         {SORT_OPTS.map(o => (
           <button
@@ -1948,7 +2499,7 @@ function AllPlansTab({ locals, snaps, days, lang, country, onModal }: {
             color: grouped ? "#1d4ed8" : "#4b5563",
             borderColor: grouped ? "#93c5fd" : "#e0e3ea",
           }}
-        >{isRu ? "Р СџР С• Р С•Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚Р В°Р С" : "By operator"}</button>
+        >{isRu ? "По операторам" : "By operator"}</button>
       </div>
 
       {/* Filter chips */}
@@ -1970,26 +2521,26 @@ function AllPlansTab({ locals, snaps, days, lang, country, onModal }: {
           <button
             onClick={() => setFilters(new Set())}
             style={{ padding: "3px 9px", borderRadius: 20, border: "1px solid #fca5a5", background: "#fef2f2", color: "#b91c1c", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}
-          >{isRu ? "РІСљвЂў Р С›РЎвЂЎР С‘РЎРѓРЎвЂљР С‘РЎвЂљРЎРЉ" : "РІСљвЂў Clear"}</button>
+          >{isRu ? "✕ Очистить" : "✕ Clear"}</button>
         )}
       </div>
 
       {/* Count */}
       <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 10 }}>
-        {sortedLocals.length} {isRu ? "РЎвЂљР В°РЎР‚Р С‘РЎвЂћ" + (sortedLocals.length === 1 ? "" : sortedLocals.length < 5 ? "Р В°" : "Р С•Р Р†") : `plan${sortedLocals.length !== 1 ? "s" : ""}`}
-        {hasFilters && <span style={{ color: "#b45309" }}> РІР‚вЂќ filtered</span>}
+        {sortedLocals.length} {isRu ? "тариф" + (sortedLocals.length === 1 ? "" : sortedLocals.length < 5 ? "а" : "ов") : `plan${sortedLocals.length !== 1 ? "s" : ""}`}
+        {hasFilters && <span style={{ color: "#b45309" }}> — filtered</span>}
       </div>
 
       {sortedLocals.length === 0 && (
         <div style={{ padding: "2rem 0", textAlign: "center", color: "#9ca3af", fontSize: 13 }}>
-          {isRu ? "Р СњР ВµРЎвЂљ РЎвЂљР В°РЎР‚Р С‘РЎвЂћР С•Р Р† Р Т‘Р В»РЎРЏ Р Р†РЎвЂ№Р В±РЎР‚Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦ РЎвЂћР С‘Р В»РЎРЉРЎвЂљРЎР‚Р С•Р Р†" : "No plans match the selected filters"}
+          {isRu ? "Нет тарифов для выбранных фильтров" : "No plans match the selected filters"}
         </div>
       )}
 
       {/* Plans */}
       {grouped ? renderGrouped() : sortedLocals.map(s => <PlanRow key={s.plan.id} scored={s} />)}
 
-      {/* Snapshots РІР‚вЂќ always below, unaffected by local sort/filter */}
+      {/* Snapshots — always below, unaffected by local sort/filter */}
       {snaps.length > 0 && (
         <>
           <div className="sec-divider" style={{ marginTop: 16 }}>
@@ -2008,7 +2559,195 @@ function AllPlansTab({ locals, snaps, days, lang, country, onModal }: {
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Results page РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Results page ─────────────────────────────────────────────────────────────
+// ─── Scenario recommendations panel ──────────────────────────────────────────
+function ScenarioRecsPanel({ rec, lang, days, country, onGoSingle }: {
+  rec: NonNullable<ReturnType<typeof useRec>>;
+  lang: Lang;
+  days: number;
+  country: CountryCode;
+  onGoSingle: (p: Plan) => void;
+}) {
+  const isRu = lang === "ru";
+  const [activeScenario, setActiveScenario] = useState<ScenarioRec["scenario"]>("cheapest");
+
+  const { scenarioRecs, stackComparison } = rec;
+  if (!scenarioRecs?.length) return null;
+
+  const active = scenarioRecs.find(r => r.scenario === activeScenario) ?? scenarioRecs[0];
+  const s = active.strategy;
+
+  // WB continuity badge
+  const wbBadge = s.wbContinuity === "full"
+    ? { text: isRu ? "✅ Интернет на границах" : "✅ Works across borders", color: "#15803d", bg: "#f0fdf4" }
+    : s.wbContinuity === "fair_use"
+      ? { text: isRu ? "⚠ Роуминг (fair-use)" : "⚠ Roaming (fair-use)", color: "#a16207", bg: "#fefce8" }
+      : s.wbContinuity === "partial"
+        ? { text: isRu ? "⚠ Частичный роуминг" : "⚠ Partial roaming", color: "#a16207", bg: "#fefce8" }
+        : { text: isRu ? "❌ Только в этой стране" : "❌ This country only", color: "#be123c", bg: "#fff1f2" };
+
+  return (
+    <div className="srp-wrap">
+      <div className="srp-title">
+        {isRu ? "Что вам подходит лучше всего?" : "Which option fits your trip?"}
+      </div>
+
+      {/* Scenario tabs */}
+      <div className="srp-tabs">
+        {scenarioRecs.map(r => (
+          <button
+            key={r.scenario}
+            className={`srp-tab${activeScenario === r.scenario ? " srp-tab-active" : ""}`}
+            onClick={() => setActiveScenario(r.scenario)}
+          >
+            <span className="srp-tab-icon">{r.icon}</span>
+            <span className="srp-tab-label">{isRu ? r.labelRu : r.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Active strategy card */}
+      <div className="srp-card">
+        {/* Header row */}
+        <div className="srp-card-head">
+          <div>
+            <div className="srp-card-title">
+              {s.plans[0]?.plan.title}
+            </div>
+            <div className="srp-card-meta">
+              €{s.totalCost}
+              {s.activations > 1 && (
+                <span className="srp-card-renewals">
+                  {" · "}{isRu
+                    ? `${s.activations}× покупки — ${s.renewals} продлени${s.renewals === 1 ? "е" : s.renewals < 5 ? "я" : "й"}`
+                    : `${s.activations}× purchases — ${s.renewals} renewal${s.renewals !== 1 ? "s" : ""}`}
+                </span>
+              )}
+              {s.activations === 1 && (
+                <span className="srp-card-renewals srp-card-renewals-ok">
+                  {" · "}{isRu ? "одна покупка" : "one purchase"}
+                </span>
+              )}
+            </div>
+          </div>
+          {/* WB continuity badge */}
+          <span className="srp-wb-badge" style={{ background: wbBadge.bg, color: wbBadge.color }}>
+            {wbBadge.text}
+          </span>
+        </div>
+
+        {/* Why section */}
+        <div className="srp-why-section">
+          <div className="srp-why-label">{isRu ? "Почему этот вариант?" : "Why this recommendation?"}</div>
+          <ul className="srp-why-list">
+            {(isRu ? s.whyDetailsRu : s.whyDetails).map((detail, i) => (
+              <li key={i} className="srp-why-item">{detail}</li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Data breakdown */}
+        <div className="srp-data-row">
+          <div className="srp-data-cell">
+            <span className="srp-data-label">{isRu ? "Интернет" : "Internet"}</span>
+            <span className="srp-data-val">
+              {s.totalDataCore === null ? (isRu ? "∞ безлимит" : "∞ unlimited") : `${s.totalDataCore} GB`}
+            </span>
+          </div>
+          {s.totalWbGb > 0 && (
+            <div className="srp-data-cell">
+              <span className="srp-data-label">{isRu ? "Роуминг WB" : "WB roaming"}</span>
+              <span className="srp-data-val srp-data-wb">{s.totalWbGb} GB</span>
+            </div>
+          )}
+          <div className="srp-data-cell">
+            <span className="srp-data-label">{isRu ? "Активация" : "Setup"}</span>
+            <span className={`srp-data-val srp-setup-${s.esimAll ? "easy" : s.frictionMax <= 4 ? "moderate" : "complex"}`}>
+              {s.esimAll
+                ? (isRu ? "eSIM ⚡" : "eSIM ⚡")
+                : s.frictionMax <= 4
+                  ? (isRu ? "Умеренно" : "Moderate")
+                  : (isRu ? "Нужен магазин" : "Store visit")}
+            </span>
+          </div>
+          <div className="srp-data-cell">
+            <span className="srp-data-label">{isRu ? "Номер" : "Number"}</span>
+            <span className="srp-data-val">
+              {s.localNumber ? (isRu ? "✓ Включён" : "✓ Included") : (isRu ? "Нет" : "None")}
+            </span>
+          </div>
+        </div>
+
+        {/* Fair-use risk warning */}
+        {s.fairUseRisk && (
+          <div className="srp-fairuse-warn">
+            <strong>{isRu ? "⚠ Важно:" : "⚠ Note:"}</strong>{" "}
+            {isRu
+              ? "Этот тариф имеет политику fair-use. Интенсивный стриминг или раздача интернета весь день может снизить скорость — но интернет не отключится."
+              : "This plan has a fair-use policy. Heavy streaming or all-day hotspot may reduce your speed — but your internet won't cut out."}
+          </div>
+        )}
+
+        {/* Tradeoffs */}
+        {(isRu ? s.tradeoffsRu : s.tradeoffs) && (
+          <div className="srp-tradeoff">
+            {isRu ? s.tradeoffsRu : s.tradeoffs}
+          </div>
+        )}
+
+        {/* Deep dive CTA */}
+        {s.plans[0] && (
+          <button className="srp-cta" onClick={() => onGoSingle(s.plans[0].plan)}>
+            {isRu
+              ? `Подробнее о ${s.plans[0].plan.title} →`
+              : `Full details for ${s.plans[0].plan.title} →`}
+          </button>
+        )}
+      </div>
+
+      {/* Stacking comparison card */}
+      {stackComparison && (
+        <div className="srp-stack-card">
+          <div className="srp-stack-title">
+            {isRu ? "💡 Сэкономить с продлениями?" : "💡 Save with renewals?"}
+          </div>
+          <p className="srp-stack-body">
+            {isRu ? stackComparison.explanationRu : stackComparison.explanation}
+          </p>
+          <div className="srp-stack-compare">
+            <div className="srp-stack-opt">
+              <span className="srp-stack-opt-label">{isRu ? "Удобно" : "Convenient"}</span>
+              <span className="srp-stack-opt-plan">{stackComparison.convenientPlan.title}</span>
+              <span className="srp-stack-opt-cost">€{stackComparison.convenientCost}</span>
+              <span className="srp-stack-opt-note">{isRu ? "одна покупка" : "one purchase"}</span>
+            </div>
+            <span className="srp-stack-vs">{isRu ? "или" : "or"}</span>
+            {stackComparison.cheaperStack && (
+              <div className="srp-stack-opt">
+                <span className="srp-stack-opt-label">{isRu ? "Дешевле" : "Cheaper"}</span>
+                <span className="srp-stack-opt-plan">{stackComparison.cheaperStack.title} ×{stackComparison.renewalsNeeded + 1}</span>
+                <span className="srp-stack-opt-cost srp-stack-cheaper">€{stackComparison.cheaperCost}</span>
+                <span className="srp-stack-opt-note">
+                  {stackComparison.renewalsNeeded > 0
+                    ? isRu
+                      ? `${stackComparison.renewalsNeeded} ручн${stackComparison.renewalsNeeded === 1 ? "ое" : "ых"} продлени${stackComparison.renewalsNeeded === 1 ? "е" : stackComparison.renewalsNeeded < 5 ? "я" : "й"}`
+                      : `${stackComparison.renewalsNeeded} manual renewal${stackComparison.renewalsNeeded !== 1 ? "s" : ""}`
+                    : isRu ? "без продлений" : "no renewals"}
+                </span>
+              </div>
+            )}
+          </div>
+          {stackComparison.savings > 0 && (
+            <div className="srp-stack-savings">
+              {isRu ? `Экономия: €${stackComparison.savings}` : `Saves €${stackComparison.savings}`}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
   country: CountryCode; days: number; prefs: Set<PrefId>; lang: Lang;
   onBack: () => void; onModal: (p: Plan) => void;
@@ -2018,7 +2757,7 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
   const ctx = COUNTRIES[country];
   const rec = useRec(country, days, prefs);
 
-  // No local plans found for this country РІР‚вЂќ show empty state instead of blank screen
+  // No local plans found for this country — show empty state instead of blank screen
   if (!rec) {
     const ctx2 = COUNTRIES[country];
     const t2 = T[lang];
@@ -2028,7 +2767,7 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
           <button className="btn-ghost" onClick={onBack}><Ic d={IC.back} size={13} /> {t2.back}</button>
         </div>
         <div className="card" style={{ textAlign: "center", padding: "2.5rem 1.5rem" }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>{ctx2?.flag ?? "СЂСџвЂњРЋ"}</div>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>{ctx2?.flag ?? "📡"}</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: "#0f1117", marginBottom: 8 }}>
             No plans found for {lang === "ru" ? ctx2?.name_ru : ctx2?.name} yet
           </div>
@@ -2079,7 +2818,7 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
 
       <div className="chip-row">
         <span className="chip">{ctx.flag} {lang === "ru" ? ctx.name_ru : ctx.name}</span>
-        <span className="chip">{days} {lang === "ru" ? "Р Т‘Р Р…." : "days"}</span>
+        <span className="chip">{days} {lang === "ru" ? "дн." : "days"}</span>
         {[...prefs].map(p => <span key={p} className="chip">{p}</span>)}
       </div>
 
@@ -2088,21 +2827,21 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
         <div className="reality-text">{lang === "ru" ? ctx.reality_check_ru : ctx.reality_check}</div>
         {(ctx as any).cross_border_note && (
           <div style={{ fontSize: 11, color: "#92400e", marginTop: 6, paddingTop: 6, borderTop: "1px solid #fde68a", lineHeight: 1.5 }}>
-            СЂСџвЂ”С” {lang === "ru" ? (ctx as any).cross_border_note_ru : (ctx as any).cross_border_note}
+            🗺 {lang === "ru" ? (ctx as any).cross_border_note_ru : (ctx as any).cross_border_note}
           </div>
         )}
       </div>
 
       {ctx.weak_english && (
         <Alrt type="purple">
-          <Ic d={IC.language} size={13} /> All {ctx.name} operator websites are in Montenegrin РІР‚вЂќ use Google Translate.
+          <Ic d={IC.language} size={13} /> All {ctx.name} operator websites are in Montenegrin — use Google Translate.
         </Alrt>
       )}
       {country === "DE" && (
-        <Alrt type="info">Germany: identity verification required for all SIMs РІР‚вЂќ fully online, hotel address accepted. Activation typically same day. Telekom requires a German address.</Alrt>
+        <Alrt type="info">Germany: identity verification required for all SIMs — fully online, hotel address accepted. Activation typically same day. Telekom requires a German address.</Alrt>
       )}
       {country === "AL" && (
-        <Alrt type="info"><Ic d={IC.plane} size={13} /> Airport purchase at TIA is most reliable РІР‚вЂќ remote online purchase often fails.</Alrt>
+        <Alrt type="info"><Ic d={IC.plane} size={13} /> Airport purchase at TIA is most reliable — remote online purchase often fails.</Alrt>
       )}
 
       <div className="tab-bar" style={{ marginTop: "1rem" }}>
@@ -2113,11 +2852,11 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
 
       <div style={{ paddingTop: "1.25rem" }}>
 
-        {/* РІвЂќР‚РІвЂќР‚ Recommendation tab РІвЂќР‚РІвЂќР‚ */}
+        {/* ── Recommendation tab ── */}
         {tab === "rec" && (
           <>
             <div className="top-label">
-              {t.best_overall} РІР‚вЂќ {days} {lang === "ru" ? "Р Т‘Р Р…." : "days"} in {lang === "ru" ? ctx.name_ru : ctx.name}
+              {t.best_overall} — {days} {lang === "ru" ? "дн." : "days"} in {lang === "ru" ? ctx.name_ru : ctx.name}
             </div>
             <TopCard s={rec.best} tag={t.best_overall} featured lang={lang} country={country} days={days} onOpen={() => onModal(rec.best.plan)} />
 
@@ -2126,16 +2865,27 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
               <div className="optimizer-text">{rec.optimizerMsg}</div>
             </div>
 
+            {/* Scenario recommendations panel — "Which option fits your trip?" */}
+            {rec.scenarioRecs && rec.scenarioRecs.length > 0 && (
+              <ScenarioRecsPanel
+                rec={rec}
+                lang={lang}
+                days={days}
+                country={country}
+                onGoSingle={p => onModal(p)}
+              />
+            )}
+
             {/* vs Travel eSIM summary */}
             {rec.travelCmp && (
               <div className={`card${rec.travelCmp.travelWins ? " card-amber" : rec.travelCmp.verdict === "depends" ? "" : " card-green"}`} style={{ marginTop: 10 }}>
                 <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4, display: "flex", alignItems: "center", gap: 5, color: rec.travelCmp.travelWins ? "#92400e" : rec.travelCmp.verdict === "depends" ? "#4b5563" : "#15803d" }}>
                   <Ic d={IC.compare} size={12} color={rec.travelCmp.travelWins ? "#92400e" : rec.travelCmp.verdict === "depends" ? "#4b5563" : "#15803d"} />
-                  {rec.travelCmp.verdict === "travel_wins"   && "РІСљв‚¬ Travel eSIM recommended for this trip"}
-                  {rec.travelCmp.verdict === "travel_better" && "РІСљв‚¬ Travel eSIM probably better here"}
-                  {rec.travelCmp.verdict === "depends"       && "РІС™вЂ“ Depends on your priorities"}
-                  {rec.travelCmp.verdict === "local_better"  && "СЂСџвЂњВ¶ Local SIM better value"}
-                  {rec.travelCmp.verdict === "local_wins"    && "СЂСџвЂњВ¶ Local SIM clearly wins"}
+                  {rec.travelCmp.verdict === "travel_wins"   && "✈ Travel eSIM recommended for this trip"}
+                  {rec.travelCmp.verdict === "travel_better" && "✈ Travel eSIM probably better here"}
+                  {rec.travelCmp.verdict === "depends"       && "⚖ Depends on your priorities"}
+                  {rec.travelCmp.verdict === "local_better"  && "📶 Local SIM better value"}
+                  {rec.travelCmp.verdict === "local_wins"    && "📶 Local SIM clearly wins"}
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: rec.travelCmp.travelWins ? "#92400e" : rec.travelCmp.verdict === "depends" ? "#374151" : "#15803d" }}>
                   {lang === "ru" ? rec.travelCmp.verdictReasonRu : rec.travelCmp.verdictReason}
@@ -2150,29 +2900,29 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
                   </div>
                 )}
                 <div style={{ fontSize: 11, color: rec.travelCmp.travelWins ? "#92400e" : "#4b5563", marginTop: 8 }}>
-                  vs {rec.travelCmp.snap.provider_name} at РІвЂљВ¬{getPriceEur(rec.travelCmp.snap).toFixed(2)} РІР‚вЂќ see "{t.tab_travel}" tab for full comparison
+                  vs {rec.travelCmp.snap.provider_name} at €{getPriceEur(rec.travelCmp.snap).toFixed(2)} — see "{t.tab_travel}" tab for full comparison
                 </div>
               </div>
             )}
 
-            {/* Balkans arbitrage РІР‚вЂќ cross-border SIM suggestion */}
+            {/* Balkans arbitrage — cross-border SIM suggestion */}
             {rec.balkansArbitrageRec && (
               <div
                 style={{ background: "#fffbeb", border: "1px solid #fcd34d", borderRadius: 10, padding: "0.875rem 1rem", marginTop: 10, cursor: "pointer" }}
                 onClick={() => rec.balkansArbitrageRec && onModal(rec.balkansArbitrageRec.plan)}
               >
                 <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "#92400e", marginBottom: 4 }}>
-                  СЂСџвЂ”С” {lang === "ru" ? "Р вЂР В°Р В»Р С”Р В°Р Р…РЎРѓР С”Р С‘Р в„– Р В°РЎР‚Р В±Р С‘РЎвЂљРЎР‚Р В°Р В¶" : "Balkans arbitrage"}
+                  🗺 {lang === "ru" ? "Балканский арбитраж" : "Balkans arbitrage"}
                 </div>
                 <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6, marginBottom: 6 }}>
                   {lang === "ru" ? rec.balkansArbitrageRec.messageRu : rec.balkansArbitrageRec.message}
                 </div>
                 <div style={{ fontSize: 11, color: "#9ca3af" }}>
-                  {lang === "ru" ? "Р СџР С•Р С”РЎР‚РЎвЂ№РЎвЂљР С‘Р Вµ WB РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В°: " : "WB roaming coverage: "}
-                  {rec.balkansArbitrageRec.roamingCoverage} Р’В· РІвЂљВ¬{rec.balkansArbitrageRec.totalCost}
+                  {lang === "ru" ? "Покрытие WB роуминга: " : "WB roaming coverage: "}
+                  {rec.balkansArbitrageRec.roamingCoverage} · €{rec.balkansArbitrageRec.totalCost}
                 </div>
                 <div style={{ fontSize: 10, color: "#b45309", marginTop: 4 }}>
-                  {lang === "ru" ? "Р СњР В°Р В¶Р СР С‘РЎвЂљР Вµ Р Т‘Р В»РЎРЏ Р Т‘Р ВµРЎвЂљР В°Р В»Р ВµР в„– РІвЂ вЂ™" : "Tap for plan details РІвЂ вЂ™"}
+                  {lang === "ru" ? "Нажмите для деталей →" : "Tap for plan details →"}
                 </div>
               </div>
             )}
@@ -2186,7 +2936,7 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
               </>
             )}
 
-            {/* EU Nomad recommendation РІР‚вЂќ shown when relevant for multi-week EU travel */}
+            {/* EU Nomad recommendation — shown when relevant for multi-week EU travel */}
             {rec.euNomadRec?.isRelevant && (
               <EuNomadCard
                 euNomadRec={rec.euNomadRec}
@@ -2198,7 +2948,7 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
           </>
         )}
 
-        {/* РІвЂќР‚РІвЂќР‚ All plans tab РІвЂќР‚РІвЂќР‚ */}
+        {/* ── All plans tab ── */}
         {tab === "all" && (
           <AllPlansTab
             locals={rec.all}
@@ -2227,7 +2977,7 @@ function ResultsPage({ country, days, prefs, lang, onBack, onModal }: {
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Country detail page РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Country detail page ──────────────────────────────────────────────────────
 function CountryPage({ code, lang, onBack, onModal }: {
   code: CountryCode; lang: Lang; onBack: () => void; onModal: (p: Plan) => void;
 }) {
@@ -2268,7 +3018,7 @@ function CountryPage({ code, lang, onBack, onModal }: {
       </div>
 
       {ctx.weak_english && (
-        <Alrt type="purple"><Ic d={IC.language} size={13} /> Websites in Montenegrin only РІР‚вЂќ use Google Translate.</Alrt>
+        <Alrt type="purple"><Ic d={IC.language} size={13} /> Websites in Montenegrin only — use Google Translate.</Alrt>
       )}
 
       <div className="insight-grid" style={{ marginTop: "1rem" }}>
@@ -2286,9 +3036,9 @@ function CountryPage({ code, lang, onBack, onModal }: {
           <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2 }}>{op.name}</div>
           <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 6 }}>
             {op.network}
-            {op.tourist_score ? ` Р’В· Tourist score ${op.tourist_score}/10` : ""}
+            {op.tourist_score ? ` · Tourist score ${op.tourist_score}/10` : ""}
             {(op as any).research_status === "seed" && (
-              <span style={{ marginLeft: 6, color: "#b45309" }}>Р’В· {lang === "ru" ? "Р С•Р В¶Р С‘Р Т‘Р В°Р ВµРЎвЂљ Р Р†Р ВµРЎР‚Р С‘РЎвЂћР С‘Р С”Р В°РЎвЂ Р С‘Р С‘" : "pending verification"}</span>
+              <span style={{ marginLeft: 6, color: "#b45309" }}>· {lang === "ru" ? "ожидает верификации" : "pending verification"}</span>
             )}
           </div>
           <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.55, marginBottom: 8 }}>{op.notes}</div>
@@ -2297,10 +3047,10 @@ function CountryPage({ code, lang, onBack, onModal }: {
           </div>
           {(op.url || (op as any).source_url) ? (
             <a className="btn-source" href={(op as any).source_url || op.url} target="_blank" rel="noopener noreferrer">
-              <Ic d={IC.link} size={11} /> {lang === "ru" ? "Р РЋР В°Р в„–РЎвЂљ Р С•Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚Р В°" : "Official website"}
+              <Ic d={IC.link} size={11} /> {lang === "ru" ? "Сайт оператора" : "Official website"}
             </a>
           ) : (
-            <span style={{ fontSize: 11, color: "#9ca3af" }}>{lang === "ru" ? "Р ВРЎРѓРЎвЂљР С•РЎвЂЎР Р…Р С‘Р С” Р С•Р В¶Р С‘Р Т‘Р В°Р ВµРЎвЂљ Р Р†Р ВµРЎР‚Р С‘РЎвЂћР С‘Р С”Р В°РЎвЂ Р С‘Р С‘" : "Source pending verification"}</span>
+            <span style={{ fontSize: 11, color: "#9ca3af" }}>{lang === "ru" ? "Источник ожидает верификации" : "Source pending verification"}</span>
           )}
         </div>
       ))}
@@ -2309,48 +3059,48 @@ function CountryPage({ code, lang, onBack, onModal }: {
       {localPlans.length > 0 ? (
         localPlans.map(p => {
           const op = OPERATORS[p.operator_id];
-          const dataStr = p.unlimited_data ? "РІв‚¬С›"
+          const dataStr = p.unlimited_data ? "∞"
             : (p.data_gb_total_display || (p.data_gb_core !== undefined ? `${p.data_gb_core} GB` : (p.data_gb ? `${p.data_gb} GB` : "?")));
           return (
             <div key={p.id} className="alt-card" onClick={() => onModal(p)}>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 13, fontWeight: 700 }}>{p.title}</div>
-                <div style={{ fontSize: 11, color: "#9ca3af", margin: "1px 0 6px" }}>{op?.name || p.provider_name} Р’В· {p.duration_days}d</div>
+                <div style={{ fontSize: 11, color: "#9ca3af", margin: "1px 0 6px" }}>{op?.name || p.provider_name} · {p.duration_days}d</div>
                 <div className="badge-row" style={{ marginBottom: 0 }}>
                   {mkBadges(p).map((b, i) => <span key={i} className={`badge ${b.c}`}>{b.t}</span>)}
                 </div>
                 {hasAppData(p) && (
                   <div style={{ fontSize: 10, color: "#b45309", marginTop: 3 }}>
-                    РІС™В  {p.data_gb_core} GB general + {p.data_gb_apps} GB app-specific
+                    ⚠ {p.data_gb_core} GB general + {p.data_gb_apps} GB app-specific
                   </div>
                 )}
               </div>
               <div style={{ textAlign: "right", flexShrink: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700 }}>РІвЂљВ¬{getPriceEur(p)}</div>
-                <div style={{ fontSize: 10, color: "#9ca3af" }}>{p.duration_days}d Р’В· {dataStr}</div>
+                <div style={{ fontSize: 15, fontWeight: 700 }}>€{getPriceEur(p)}</div>
+                <div style={{ fontSize: 10, color: "#9ca3af" }}>{p.duration_days}d · {dataStr}</div>
               </div>
             </div>
           );
         })
       ) : (
-        /* Empty state for seed countries РІР‚вЂќ show as research status, not failure */
+        /* Empty state for seed countries — show as research status, not failure */
         <div style={{ background: "#f9fafb", border: "1px solid #e8eaef", borderRadius: 10, padding: "1.25rem", marginBottom: 10 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
             {lang === "ru"
-              ? "Р СћР В°РЎР‚Р С‘РЎвЂћРЎвЂ№ Р С•Р В¶Р С‘Р Т‘Р В°РЎР‹РЎвЂљ Р Р†Р ВµРЎР‚Р С‘РЎвЂћР С‘Р С”Р В°РЎвЂ Р С‘Р С‘"
+              ? "Тарифы ожидают верификации"
               : "Verified plans pending"}
           </div>
           <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.65, marginBottom: 10 }}>
             {lang === "ru"
-              ? `Р С›Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚РЎвЂ№ ${lang === "ru" ? ctx.name_ru : ctx.name} Р Т‘Р С•Р В±Р В°Р Р†Р В»Р ВµР Р…РЎвЂ№ Р С”Р В°Р С” Р С”Р В°Р Р…Р Т‘Р С‘Р Т‘Р В°РЎвЂљРЎвЂ№. Р вЂ™Р ВµРЎР‚Р С‘РЎвЂћР С‘РЎвЂ Р С‘РЎР‚Р С•Р Р†Р В°Р Р…Р Р…РЎвЂ№Р Вµ РЎвЂљР В°РЎР‚Р С‘РЎвЂћР Р…РЎвЂ№Р Вµ Р Т‘Р В°Р Р…Р Р…РЎвЂ№Р Вµ Р С—Р С•РЎРЏР Р†РЎРЏРЎвЂљРЎРѓРЎРЏ Р С—Р С•РЎРѓР В»Р Вµ РЎР‚РЎС“РЎвЂЎР Р…Р С•Р в„– Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚Р С”Р С‘.`
+              ? `Операторы ${lang === "ru" ? ctx.name_ru : ctx.name} добавлены как кандидаты. Верифицированные тарифные данные появятся после ручной проверки.`
               : `Operator candidates for ${ctx.name} have been added. Verified tariff data will appear once manually confirmed from official sources.`}
           </div>
           <div style={{ fontSize: 11, color: "#9ca3af" }}>
-            {lang === "ru" ? "Р РЋРЎвЂљР В°РЎвЂљРЎС“РЎРѓ: " : "Research status: "}
+            {lang === "ru" ? "Статус: " : "Research status: "}
             <span style={{ fontWeight: 600, color: "#b45309" }}>
-              {ctx.research_status === "seed" ? (lang === "ru" ? "Р СњР В°РЎвЂЎР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– РЎРЊРЎвЂљР В°Р С—" : "Seed РІР‚вЂќ operators listed") :
-               ctx.research_status === "needs_verification" ? (lang === "ru" ? "Р СћРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљ Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚Р С”Р С‘" : "Needs verification") :
-               (lang === "ru" ? "Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚Р ВµР Р…Р С•" : "Verified")}
+              {ctx.research_status === "seed" ? (lang === "ru" ? "Начальный этап" : "Seed — operators listed") :
+               ctx.research_status === "needs_verification" ? (lang === "ru" ? "Требует проверки" : "Needs verification") :
+               (lang === "ru" ? "Проверено" : "Verified")}
             </span>
           </div>
         </div>
@@ -2359,39 +3109,39 @@ function CountryPage({ code, lang, onBack, onModal }: {
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Homepage country picker РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Homepage country picker ──────────────────────────────────────────────────
 // Used only on the homepage. Shows Popular by default, with Balkans/EU/All tabs.
 // Selected country is passed to parent; "Browse all" navigates to CountriesPage.
 
 type HomeTab = "popular" | "balkans" | "eu" | "all";
 
 const HOME_TABS: { id: HomeTab; en: string; ru: string }[] = [
-  { id: "popular", en: "Popular",  ru: "Р СџР С•Р С—РЎС“Р В»РЎРЏРЎР‚Р Р…РЎвЂ№Р Вµ" },
-  { id: "balkans", en: "Balkans",  ru: "Р вЂР В°Р В»Р С”Р В°Р Р…РЎвЂ№"     },
-  { id: "eu",      en: "EU",       ru: "Р вЂўР РЋ"          },
-  { id: "all",     en: "All",      ru: "Р вЂ™РЎРѓР Вµ"          },
+  { id: "popular", en: "Popular",  ru: "Популярные" },
+  { id: "balkans", en: "Balkans",  ru: "Балканы"     },
+  { id: "eu",      en: "EU",       ru: "ЕС"          },
+  { id: "all",     en: "All",      ru: "Все"          },
 ];
 
 const HOME_LABELS: Record<HomeTab, { en: string; ru: string }> = {
-  popular: { en: "Popular destinations",  ru: "Р СџР С•Р С—РЎС“Р В»РЎРЏРЎР‚Р Р…РЎвЂ№Р Вµ Р Р…Р В°Р С—РЎР‚Р В°Р Р†Р В»Р ВµР Р…Р С‘РЎРЏ" },
-  balkans: { en: "Western Balkans",        ru: "Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№Р Вµ Р вЂР В°Р В»Р С”Р В°Р Р…РЎвЂ№"       },
-  eu:      { en: "EU countries",           ru: "Р РЋРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р вЂўР РЋ"              },
-  all:     { en: "All countries",          ru: "Р вЂ™РЎРѓР Вµ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№"             },
+  popular: { en: "Popular destinations",  ru: "Популярные направления" },
+  balkans: { en: "Western Balkans",        ru: "Западные Балканы"       },
+  eu:      { en: "EU countries",           ru: "Страны ЕС"              },
+  all:     { en: "All countries",          ru: "Все страны"             },
 };
 
 // Derive a short badge for a country card
 function countryBadge(c: CountryMeta, isRu: boolean): { text: string; cls: string } | null {
   if (c.research_status === "seed" || c.research_status === "needs_verification") {
-    return { text: isRu ? "Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚Р С”Р В° РЎвЂљР В°РЎР‚Р С‘РЎвЂћР С•Р Р†" : "Research pending", cls: "hbadge-pending" };
+    return { text: isRu ? "Проверка тарифов" : "Research pending", cls: "hbadge-pending" };
   }
   if (c.eu_member && (c.tourist_ease ?? 0) >= 8) {
-    return { text: isRu ? "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ" : "Best EU roaming", cls: "hbadge-eu" };
+    return { text: isRu ? "Роуминг ЕС" : "Best EU roaming", cls: "hbadge-eu" };
   }
   if (!c.eu_member && (c.tourist_ease ?? 0) >= 9) {
-    return { text: isRu ? "Р вЂєРЎР‹Р В±Р С‘Р СРЎвЂ№Р в„– РЎвЂљРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР В°Р СР С‘" : "Tourist favorite", cls: "hbadge-fav" };
+    return { text: isRu ? "Любимый туристами" : "Tourist favorite", cls: "hbadge-fav" };
   }
   if (c.research_status === "verified" || c.research_status === "verified_official") {
-    return { text: isRu ? "Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚Р ВµР Р…Р С•" : "Verified", cls: "hbadge-ok" };
+    return { text: isRu ? "Проверено" : "Verified", cls: "hbadge-ok" };
   }
   return null;
 }
@@ -2407,10 +3157,14 @@ function HomePicker({ lang, selected, onSelect, onConfirm, onBrowseAll }: {
   const all = Object.entries(COUNTRIES) as [CountryCode, CountryMeta][];
   const [tab, setTab] = useState<HomeTab>("popular");
   const [showAll, setShowAll] = useState(false);
+  // Code of a pending/seed card that was clicked — show inline message instead of navigating
   const [pendingMsg, setPendingMsg] = useState<CountryCode | null>(null);
 
+  // A country is "ready" if it has at least one scorable local plan OR a travel eSIM snapshot
   function hasPlans(code: CountryCode): boolean {
-    return PLANS.some(p => p.country_code === code && (isScorable(p) || isSnap(p)));
+    return PLANS.some(p =>
+      p.country_code === code && (isScorable(p) || isSnap(p))
+    );
   }
 
   const tabCountries = useMemo((): [CountryCode, CountryMeta][] => {
@@ -2425,14 +3179,15 @@ function HomePicker({ lang, selected, onSelect, onConfirm, onBrowseAll }: {
   const isPopular = tab === "popular";
 
   function Card([code, c]: [CountryCode, CountryMeta], large: boolean) {
-    const isSel      = selected === code;
-    const isSeed     = c.research_status === "seed" || c.research_status === "needs_verification" || !hasPlans(code);
+    const isSel  = selected === code;
+    const isSeed = c.research_status === "seed" || c.research_status === "needs_verification" || !hasPlans(code);
     const showingMsg = pendingMsg === code;
-    const badge      = countryBadge(c, isRu);
-    const tagline    = isRu ? c.tagline_ru : c.tagline;
+    const badge  = countryBadge(c, isRu);
+    const tagline = isRu ? c.tagline_ru : c.tagline;
 
     function handleClick() {
       if (isSeed) {
+        // Toggle the inline message; never navigate
         setPendingMsg(showingMsg ? null : code);
       } else {
         setPendingMsg(null);
@@ -2451,13 +3206,16 @@ function HomePicker({ lang, selected, onSelect, onConfirm, onBrowseAll }: {
           {badge && <span className={`hbadge ${badge.cls}`}>{badge.text}</span>}
           <span className="hcard-flag">{c.flag}</span>
           <span className="hcard-name">{isRu ? c.name_ru : c.name}</span>
-          {tagline && !isSeed && <span className="hcard-insight">{tagline}</span>}
+          {tagline && !isSeed && (
+            <span className="hcard-insight">{tagline}</span>
+          )}
         </button>
 
+        {/* Inline "coming soon" message — only for seed/no-plan countries */}
         {isSeed && showingMsg && (
           <div className="hcard-pending-msg">
             {isRu
-              ? "Р СћР В°РЎР‚Р С‘РЎвЂћРЎвЂ№ Р Т‘Р В»РЎРЏ РЎРЊРЎвЂљР С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ РЎРѓР ВµР в„–РЎвЂЎР В°РЎРѓ Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚РЎРЏРЎР‹РЎвЂљРЎРѓРЎРЏ. Р РЋР С”Р С•РЎР‚Р С• Р Т‘Р С•Р В±Р В°Р Р†Р С‘Р С."
+              ? "Тарифы для этой страны сейчас проверяются. Скоро добавим."
               : "Tariffs for this country are being researched. Check back soon."}
           </div>
         )}
@@ -2468,7 +3226,9 @@ function HomePicker({ lang, selected, onSelect, onConfirm, onBrowseAll }: {
   return (
     <div className="hpicker">
       <div className="hpicker-head">
-        <span className="field-label">{isRu ? "Р С™РЎС“Р Т‘Р В° Р ВµР Т‘Р ВµРЎвЂљР Вµ?" : "Where are you going?"}</span>
+        <span className="field-label">{isRu ? "Куда едете?" : "Where are you going?"}</span>
+
+        {/* Region tabs */}
         <div className="htabs">
           {HOME_TABS.map(t => (
             <button
@@ -2482,17 +3242,20 @@ function HomePicker({ lang, selected, onSelect, onConfirm, onBrowseAll }: {
         </div>
       </div>
 
+      {/* Section label */}
       <div className="hpicker-label">
         {isRu ? HOME_LABELS[tab].ru : HOME_LABELS[tab].en}
       </div>
 
+      {/* Country grid */}
       <div className={`hgrid${isPopular ? " hgrid-pop" : ""}`}>
         {tabCountries.map(entry => Card(entry, isPopular))}
       </div>
 
+      {/* Browse all link */}
       <button className="hbrowse-all" onClick={onBrowseAll}>
         <Ic d={IC.globe} size={12} />
-        {isRu ? "Р вЂ™РЎРѓР Вµ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ РЎРѓ Р С—Р С•Р С‘РЎРѓР С”Р С•Р С РІвЂ вЂ™" : "Browse all countries РІвЂ вЂ™"}
+        {isRu ? "Все страны с поиском →" : "Browse all countries →"}
       </button>
     </div>
   );
@@ -2533,22 +3296,22 @@ function CountriesPage({ lang, onSelect }: { lang: Lang; onSelect: (c: CountryCo
   }, [filter, query, all]);
 
   const FILTER_OPTS: { id: RegionFilter; en: string; ru: string }[] = [
-    { id: "popular", en: "Popular",  ru: "Р СџР С•Р С—РЎС“Р В»РЎРЏРЎР‚Р Р…РЎвЂ№Р Вµ" },
-    { id: "eu",      en: "EU",       ru: "Р вЂўР РЋ"         },
-    { id: "balkans", en: "Balkans",  ru: "Р вЂР В°Р В»Р С”Р В°Р Р…РЎвЂ№"     },
-    { id: "all",     en: "All",      ru: "Р вЂ™РЎРѓР Вµ"         },
+    { id: "popular", en: "Popular",  ru: "Популярные" },
+    { id: "eu",      en: "EU",       ru: "ЕС"         },
+    { id: "balkans", en: "Balkans",  ru: "Балканы"     },
+    { id: "all",     en: "All",      ru: "Все"         },
   ];
 
   const SECTION_TITLE: Record<RegionFilter, { en: string; ru: string }> = {
-    popular: { en: "Popular destinations",    ru: "Р СџР С•Р С—РЎС“Р В»РЎРЏРЎР‚Р Р…РЎвЂ№Р Вµ Р Р…Р В°Р С—РЎР‚Р В°Р Р†Р В»Р ВµР Р…Р С‘РЎРЏ" },
-    eu:      { en: "EU countries",            ru: "Р РЋРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р вЂўР РЋ"              },
-    balkans: { en: "Western Balkans",          ru: "Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№Р Вµ Р вЂР В°Р В»Р С”Р В°Р Р…РЎвЂ№"       },
-    all:     { en: "All countries",            ru: "Р вЂ™РЎРѓР Вµ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№"             },
+    popular: { en: "Popular destinations",    ru: "Популярные направления" },
+    eu:      { en: "EU countries",            ru: "Страны ЕС"              },
+    balkans: { en: "Western Balkans",          ru: "Западные Балканы"       },
+    all:     { en: "All countries",            ru: "Все страны"             },
   };
 
   const sectionLabel = query
     ? (isRu
-        ? `${filtered.length} ${filtered.length === 1 ? "РЎР‚Р ВµР В·РЎС“Р В»РЎРЉРЎвЂљР В°РЎвЂљ" : filtered.length < 5 ? "РЎР‚Р ВµР В·РЎС“Р В»РЎРЉРЎвЂљР В°РЎвЂљР В°" : "РЎР‚Р ВµР В·РЎС“Р В»РЎРЉРЎвЂљР В°РЎвЂљР С•Р Р†"}`
+        ? `${filtered.length} ${filtered.length === 1 ? "результат" : filtered.length < 5 ? "результата" : "результатов"}`
         : `${filtered.length} result${filtered.length !== 1 ? "s" : ""}`)
     : isRu ? SECTION_TITLE[filter].ru : SECTION_TITLE[filter].en;
 
@@ -2570,7 +3333,7 @@ function CountriesPage({ lang, onSelect }: { lang: Lang; onSelect: (c: CountryCo
         )}
         {isSeed && (
           <span className="ctile-pending">
-            {isRu ? "Р СџРЎР‚Р С•Р Р†Р ВµРЎР‚Р С”Р В° РЎвЂљР В°РЎР‚Р С‘РЎвЂћР С•Р Р†" : "Research pending"}
+            {isRu ? "Проверка тарифов" : "Research pending"}
           </span>
         )}
       </button>
@@ -2579,7 +3342,7 @@ function CountriesPage({ lang, onSelect }: { lang: Lang; onSelect: (c: CountryCo
 
   return (
     <div className="cpanel">
-      {/* РІвЂќР‚РІвЂќР‚ Header РІвЂќР‚РІвЂќР‚ */}
+      {/* ── Header ── */}
       <div className="cpanel-head">
         <h2 className="cpanel-title">{t.countries}</h2>
 
@@ -2595,15 +3358,15 @@ function CountriesPage({ lang, onSelect }: { lang: Lang; onSelect: (c: CountryCo
             type="text"
             value={query}
             onChange={e => { setQuery(e.target.value); }}
-            placeholder={isRu ? "Р СџР С•Р С‘РЎРѓР С” РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№РІР‚В¦" : "Search countryРІР‚В¦"}
-            aria-label={isRu ? "Р СџР С•Р С‘РЎРѓР С” РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№" : "Search country"}
+            placeholder={isRu ? "Поиск страны…" : "Search country…"}
+            aria-label={isRu ? "Поиск страны" : "Search country"}
           />
           {query && (
-            <button className="csearch-clear" onClick={() => setQuery("")} aria-label="Clear search">РІСљвЂў</button>
+            <button className="csearch-clear" onClick={() => setQuery("")} aria-label="Clear search">✕</button>
           )}
         </div>
 
-        {/* Filter chips РІР‚вЂќ hidden while searching so results are always "all" */}
+        {/* Filter chips — hidden while searching so results are always "all" */}
         {!query && (
           <div className="cfilters">
             {FILTER_OPTS.map(o => (
@@ -2622,23 +3385,23 @@ function CountriesPage({ lang, onSelect }: { lang: Lang; onSelect: (c: CountryCo
         <div className="csection-label">{sectionLabel}</div>
       </div>
 
-      {/* РІвЂќР‚РІвЂќР‚ Grid РІвЂќР‚РІвЂќР‚ */}
+      {/* ── Grid ── */}
       {filtered.length > 0 ? (
         <div className="cgrid">
           {filtered.map(CountryTile)}
         </div>
       ) : (
         <div className="cno-results">
-          {isRu ? "Р РЋРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р Р…Р Вµ Р Р…Р В°Р в„–Р Т‘Р ВµР Р…РЎвЂ№" : "No countries found"}
+          {isRu ? "Страны не найдены" : "No countries found"}
         </div>
       )}
     </div>
   );
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Trip Simulator РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Trip Simulator ──────────────────────────────────────────────────────────
 // Evaluates three strategies for multi-country trips using existing plan data.
-// Does NOT invent facts РІР‚вЂќ all costs and caveats come from real plans.json data.
+// Does NOT invent facts — all costs and caveats come from real plans.json data.
 
 type SimUsage = "light" | "medium" | "heavy";
 
@@ -2658,9 +3421,9 @@ interface SimStrategy {
   label: string;
   labelRu: string;
   totalCost: number;
-  costNote: string;      // e.g. "2Р“вЂ” purchases" or "1 plan covers all"
+  costNote: string;      // e.g. "2× purchases" or "1 plan covers all"
   costNoteRu: string;
-  score: number;         // 0РІР‚вЂњ100 internal score for ranking
+  score: number;         // 0–100 internal score for ranking
   isRecommended: boolean;
   why: string;
   whyRu: string;
@@ -2681,7 +3444,7 @@ function usageToMinGbPerDay(usage: SimUsage): number {
   return 1.0; // medium
 }
 
-// Build prefs set from simulator inputs РІР‚вЂќ reuses existing scoring boosts
+// Build prefs set from simulator inputs — reuses existing scoring boosts
 function simToPrefs(inputs: SimInputs): Set<PrefId> {
   const p = new Set<PrefId>();
   if (inputs.usage === "light")   p.add("cheapest");
@@ -2767,11 +3530,11 @@ const EU_COUNTRIES = EU_ROAMING_ZONE;
 
 // WB countries where regional roaming bundles exist (One ME, m:tel, BH Telecom etc.)
 // These operators can cover multiple WB countries in one plan.
-const WB_ROAMING_CAPABLE: CountryCode[] = ["RS", "ME", "BA", "MK"]; // AL excluded РІР‚вЂќ no confirmed WB roaming
+const WB_ROAMING_CAPABLE: CountryCode[] = ["RS", "ME", "BA", "MK"]; // AL excluded — no confirmed WB roaming
 const WB_ALL: CountryCode[] = ["RS", "BA", "ME", "AL", "MK"];
 
-// Route types РІР‚вЂќ determined before scoring
-type RouteType = "single" | "pure_eu" | "pure_balkans" | "mixed_eu_balkans" | "mixed_complex";
+// Route types — determined before scoring
+type RouteType = "single" | "pure_balkans" | "pure_eu" | "mixed_eu_balkans" | "mixed_complex";
 
 function classifyRoute(countries: CountryCode[]): RouteType {
   if (countries.length <= 1) return "single";
@@ -2806,7 +3569,7 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
       return r.storeRequired;
     });
 
-    // РІвЂќР‚РІвЂќР‚ Strategy A: Local SIM per country РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+    // ── Strategy A: Local SIM per country ──────────────────────────────────────
     const localResults = countries.map(c => ({
       country: c,
       ...bestLocalForCountry(c, daysPerCountry, inputs),
@@ -2827,8 +3590,8 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
     if (days >= 21) localScore += 10;
     if (inputs.needsHotspot) localScore += 8;
 
-    // РІвЂќР‚РІвЂќР‚ Route-type gates on local score РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
-    // pure_eu: separate local SIMs per country is WRONG РІР‚вЂќ EU roaming removes the
+    // ── Route-type gates on local score ─────────────────────────────────────────
+    // pure_eu: separate local SIMs per country is WRONG — EU roaming removes the
     // need for this. Apply a hard penalty so it can never beat EU alternatives.
     if (routeType === "pure_eu" && multiCountry) {
       localScore -= 35;  // hard gate: local-per-country should not win EU multi-country
@@ -2843,66 +3606,66 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
       ? [
           "Local SIMs per country not recommended for EU routes",
           "An EU SIM with roaming is more practical than buying separately in each country",
-          ...(localAllESIM ? ["All plans support eSIM РІР‚вЂќ no physical SIM needed"] : []),
+          ...(localAllESIM ? ["All plans support eSIM — no physical SIM needed"] : []),
         ]
       : routeType === "pure_balkans" && hasWbRoamingCapable
         ? [
-            `Local Balkans SIM with regional roaming РІР‚вЂќ ${localResults.filter(r=>r.plan).length}/${countries.length} countries covered`,
+            `Local Balkans SIM with regional roaming — ${localResults.filter(r=>r.plan).length}/${countries.length} countries covered`,
             ...(inputs.needsNumber ? ["Includes real local phone number"] : []),
           ]
         : [
-            ...(multiCountry ? [`Separate SIM for each country РІР‚вЂќ ${localResults.filter(r=>r.plan).length}/${countries.length} countries covered`] : ["Single country РІР‚вЂќ straightforward local SIM"]),
+            ...(multiCountry ? [`Separate SIM for each country — ${localResults.filter(r=>r.plan).length}/${countries.length} countries covered`] : ["Single country — straightforward local SIM"]),
             ...(inputs.needsNumber ? ["Includes real local phone number"] : []),
             ...(inputs.usage === "heavy" ? ["Best value for heavy data users"] : []),
-            ...(localAllESIM ? ["All eSIM РІР‚вЂќ no physical SIM needed"] : []),
+            ...(localAllESIM ? ["All eSIM — no physical SIM needed"] : []),
           ];
 
     const localWhyRu = routeType === "pure_eu" && multiCountry
       ? [
-          "Р СљР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р Вµ SIM Р Р† Р С”Р В°Р В¶Р Т‘Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Вµ Р Р…Р Вµ РЎР‚Р ВµР С”Р С•Р СР ВµР Р…Р Т‘РЎС“РЎР‹РЎвЂљРЎРѓРЎРЏ Р Т‘Р В»РЎРЏ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР С•Р Р† Р С—Р С• Р вЂўР РЋ",
-          "SIM РЎРѓ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р С•Р С Р вЂўР РЋ Р С—РЎР‚Р В°Р С”РЎвЂљР С‘РЎвЂЎР Р…Р ВµР Вµ, РЎвЂЎР ВµР С Р С•РЎвЂљР Т‘Р ВµР В»РЎРЉР Р…Р В°РЎРЏ Р С—Р С•Р С”РЎС“Р С—Р С”Р В° Р Р† Р С”Р В°Р В¶Р Т‘Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Вµ",
+          "Местные SIM в каждой стране не рекомендуются для маршрутов по ЕС",
+          "SIM с роумингом ЕС практичнее, чем отдельная покупка в каждой стране",
         ]
       : routeType === "pure_balkans" && hasWbRoamingCapable
         ? [
-            `Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ Р В±Р В°Р В»Р С”Р В°Р Р…РЎРѓР С”Р В°РЎРЏ SIM РЎРѓ РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р В°Р В»РЎРЉР Р…РЎвЂ№Р С РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р С•Р С РІР‚вЂќ ${localResults.filter(r=>r.plan).length}/${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р…`,
-            ...(inputs.needsNumber ? ["Р вЂ™Р С”Р В»РЎР‹РЎвЂЎР В°Р ВµРЎвЂљ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚"] : []),
+            `Местная балканская SIM с региональным роумингом — ${localResults.filter(r=>r.plan).length}/${countries.length} стран`,
+            ...(inputs.needsNumber ? ["Включает реальный местный номер"] : []),
           ]
         : [
-            ...(multiCountry ? [`Р С›РЎвЂљР Т‘Р ВµР В»РЎРЉР Р…Р В°РЎРЏ SIM Р Р† Р С”Р В°Р В¶Р Т‘Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Вµ РІР‚вЂќ ${localResults.filter(r=>r.plan).length}/${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р… Р Т‘Р С•РЎРѓРЎвЂљРЎС“Р С—Р Р…РЎвЂ№`] : ["Р С›Р Т‘Р Р…Р В° РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р В° РІР‚вЂќ Р С—РЎР‚Р С•РЎРѓРЎвЂљР С•Р в„– Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– РЎвЂљР В°РЎР‚Р С‘РЎвЂћ"]),
-            ...(inputs.needsNumber ? ["Р вЂ™Р С”Р В»РЎР‹РЎвЂЎР В°Р ВµРЎвЂљ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚"] : []),
-            ...(inputs.usage === "heavy" ? ["Р вЂєРЎС“РЎвЂЎРЎв‚¬Р В°РЎРЏ РЎвЂ Р ВµР Р…Р Р…Р С•РЎРѓРЎвЂљРЎРЉ Р Т‘Р В»РЎРЏ Р В°Р С”РЎвЂљР С‘Р Р†Р Р…РЎвЂ№РЎвЂ¦ Р С—Р С•Р В»РЎРЉР В·Р С•Р Р†Р В°РЎвЂљР ВµР В»Р ВµР в„–"] : []),
-            ...(localAllESIM ? ["Р вЂ™РЎРѓР Вµ eSIM РІР‚вЂќ РЎвЂћР С‘Р В·Р С‘РЎвЂЎР ВµРЎРѓР С”Р В°РЎРЏ SIM Р Р…Р Вµ Р Р…РЎС“Р В¶Р Р…Р В°"] : []),
+            ...(multiCountry ? [`Отдельная SIM в каждой стране — ${localResults.filter(r=>r.plan).length}/${countries.length} стран доступны`] : ["Одна страна — простой местный тариф"]),
+            ...(inputs.needsNumber ? ["Включает реальный местный номер"] : []),
+            ...(inputs.usage === "heavy" ? ["Лучшая ценность для активных пользователей"] : []),
+            ...(localAllESIM ? ["Все eSIM — физическая SIM не нужна"] : []),
           ];
 
     const localTradeoffs = [
-      ...(multiCountry && routeType !== "pure_balkans" ? ["Multiple activations required РІР‚вЂќ one per country"] : []),
-      ...(multiCountry && routeType === "pure_eu" ? ["Unnecessary for EU routes РІР‚вЂќ EU roaming eliminates the need for multiple SIMs"] : []),
+      ...(multiCountry && routeType !== "pure_balkans" ? ["Multiple activations required — one per country"] : []),
+      ...(multiCountry && routeType === "pure_eu" ? ["Unnecessary for EU routes — EU roaming eliminates the need for multiple SIMs"] : []),
       ...(localStoreRequired ? ["One or more countries require store/airport visit"] : []),
       ...(localHasAppData ? ["Some plans include app-specific data that doesn't count as general internet"] : []),
     ].join(". ") || "No significant tradeoffs";
 
     const localTradeoffsRu = [
-      ...(multiCountry && routeType !== "pure_balkans" ? ["Р СњРЎС“Р В¶Р Р…Р В° Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ Р Р† Р С”Р В°Р В¶Р Т‘Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Вµ"] : []),
-      ...(multiCountry && routeType === "pure_eu" ? ["Р вЂќР В»РЎРЏ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР С•Р Р† Р С—Р С• Р вЂўР РЋ РЎРЊРЎвЂљР С• Р С‘Р В·Р В»Р С‘РЎв‚¬Р Р…Р Вµ РІР‚вЂќ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р Р†РЎРѓР Вµ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№"] : []),
-      ...(localStoreRequired ? ["Р вЂ™ Р С•Р Т‘Р Р…Р С•Р в„– Р С‘Р В»Р С‘ Р Р…Р ВµРЎРѓР С”Р С•Р В»РЎРЉР С”Р С‘РЎвЂ¦ РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р В°РЎвЂ¦ Р Р…РЎС“Р В¶Р ВµР Р… Р Р†Р С‘Р В·Р С‘РЎвЂљ Р Р† Р СР В°Р С–Р В°Р В·Р С‘Р Р… Р С‘Р В»Р С‘ Р В°РЎРЊРЎР‚Р С•Р С—Р С•РЎР‚РЎвЂљ"] : []),
-      ...(localHasAppData ? ["Р СњР ВµР С”Р С•РЎвЂљР С•РЎР‚РЎвЂ№Р Вµ РЎвЂљР В°РЎР‚Р С‘РЎвЂћРЎвЂ№ Р Р†Р С”Р В»РЎР‹РЎвЂЎР В°РЎР‹РЎвЂљ РЎвЂљРЎР‚Р В°РЎвЂћР С‘Р С” РЎвЂљР С•Р В»РЎРЉР С”Р С• Р Т‘Р В»РЎРЏ Р С—РЎР‚Р С‘Р В»Р С•Р В¶Р ВµР Р…Р С‘Р в„–"] : []),
-    ].join(". ") || "Р вЂР ВµР В· РЎРѓРЎС“РЎвЂ°Р ВµРЎРѓРЎвЂљР Р†Р ВµР Р…Р Р…РЎвЂ№РЎвЂ¦ Р С”Р С•Р СР С—РЎР‚Р С•Р СР С‘РЎРѓРЎРѓР С•Р Р†";
+      ...(multiCountry && routeType !== "pure_balkans" ? ["Нужна активация в каждой стране"] : []),
+      ...(multiCountry && routeType === "pure_eu" ? ["Для маршрутов по ЕС это излишне — роуминг ЕС покрывает все страны"] : []),
+      ...(localStoreRequired ? ["В одной или нескольких странах нужен визит в магазин или аэропорт"] : []),
+      ...(localHasAppData ? ["Некоторые тарифы включают трафик только для приложений"] : []),
+    ].join(". ") || "Без существенных компромиссов";
 
     const localRoamingNote = routeType === "pure_eu" && multiCountry
       ? "EU roaming means a single EU SIM could cover all countries on this route"
       : routeType === "pure_balkans" && hasWbRoamingCapable
-        ? "Western Balkans regional roaming available РІР‚вЂќ some operators cover multiple countries in one plan"
+        ? "Western Balkans regional roaming available — some operators cover multiple countries in one plan"
         : multiCountry
-          ? "No cross-border roaming РІР‚вЂќ need separate SIM per country"
+          ? "No cross-border roaming — need separate SIM per country"
           : "Local coverage only";
 
     const localRoamingNoteRu = routeType === "pure_eu" && multiCountry
-      ? "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ Р С—Р С•Р В·Р Р†Р С•Р В»РЎРЏР ВµРЎвЂљ Р С‘РЎРѓР С—Р С•Р В»РЎРЉР В·Р С•Р Р†Р В°РЎвЂљРЎРЉ Р С•Р Т‘Р Р…РЎС“ SIM Р Р†Р С• Р Р†РЎРѓР ВµРЎвЂ¦ РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р В°РЎвЂ¦ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°"
+      ? "Роуминг ЕС позволяет использовать одну SIM во всех странах маршрута"
       : routeType === "pure_balkans" && hasWbRoamingCapable
-        ? "Р вЂќР С•РЎРѓРЎвЂљРЎС“Р С—Р ВµР Р… РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р В°Р В»РЎРЉР Р…РЎвЂ№Р в„– РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№РЎвЂ¦ Р вЂР В°Р В»Р С”Р В°Р Р… РІР‚вЂќ Р Р…Р ВµР С”Р С•РЎвЂљР С•РЎР‚РЎвЂ№Р Вµ Р С•Р С—Р ВµРЎР‚Р В°РЎвЂљР С•РЎР‚РЎвЂ№ Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°РЎР‹РЎвЂљ Р Р…Р ВµРЎРѓР С”Р С•Р В»РЎРЉР С”Р С• РЎРѓРЎвЂљРЎР‚Р В°Р Р…"
+        ? "Доступен региональный роуминг Западных Балкан — некоторые операторы покрывают несколько стран"
         : multiCountry
-          ? "Р СњР ВµРЎвЂљ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° РІР‚вЂќ Р С•РЎвЂљР Т‘Р ВµР В»РЎРЉР Р…Р В°РЎРЏ SIM Р Р† Р С”Р В°Р В¶Р Т‘Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Вµ"
-          : "Р СћР С•Р В»РЎРЉР С”Р С• Р СР ВµРЎРѓРЎвЂљР Р…Р С•Р Вµ Р С—Р С•Р С”РЎР‚РЎвЂ№РЎвЂљР С‘Р Вµ";
+          ? "Нет роуминга — отдельная SIM в каждой стране"
+          : "Только местное покрытие";
 
     const localStrategy: SimStrategy = {
       id: "local",
@@ -2910,15 +3673,15 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
         ? "Balkans local SIM with regional roaming"
         : "Local SIM per country",
       labelRu: routeType === "pure_balkans" && hasWbRoamingCapable
-        ? "Р вЂР В°Р В»Р С”Р В°Р Р…РЎРѓР С”Р В°РЎРЏ SIM РЎРѓ РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р В°Р В»РЎРЉР Р…РЎвЂ№Р С РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р С•Р С"
-        : "Р СљР ВµРЎРѓРЎвЂљР Р…Р В°РЎРЏ SIM Р Р† Р С”Р В°Р В¶Р Т‘Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Вµ",
+        ? "Балканская SIM с региональным роумингом"
+        : "Местная SIM в каждой стране",
       totalCost: localTotalCost,
       costNote: multiCountry ? `${countries.length} plans` : "1 plan",
-      costNoteRu: multiCountry ? `${countries.length} РЎвЂљР В°РЎР‚Р С‘РЎвЂћР В°` : "1 РЎвЂљР В°РЎР‚Р С‘РЎвЂћ",
+      costNoteRu: multiCountry ? `${countries.length} тарифа` : "1 тариф",
       score: Math.round(localScore),
       isRecommended: false,
       why: localWhy.join(". ") || "Best for single-country or long-stay trips.",
-      whyRu: localWhyRu.join(". ") || "Р вЂєРЎС“РЎвЂЎРЎв‚¬Р С‘Р в„– Р Р†Р В°РЎР‚Р С‘Р В°Р Р…РЎвЂљ Р Т‘Р В»РЎРЏ Р С—Р С•Р ВµР В·Р Т‘Р С”Р С‘ Р Р† Р С•Р Т‘Р Р…РЎС“ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎС“.",
+      whyRu: localWhyRu.join(". ") || "Лучший вариант для поездки в одну страну.",
       tradeoffs: localTradeoffs,
       tradeoffsRu: localTradeoffsRu,
       setupComplexity: localStoreRequired ? "complex" : localAllESIM ? "easy" : "moderate",
@@ -2927,7 +3690,7 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
       applicable: true,
     };
 
-    // РІвЂќР‚РІвЂќР‚ Strategy B: Travel eSIM РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+    // ── Strategy B: Travel eSIM ─────────────────────────────────────────────────
     const euRegionalEsim = PLANS.find(p =>
       p.country_code === "EU" && isSnap(p) && p.benchmark_type === "eu_regional_travel_esim"
     );
@@ -2941,8 +3704,10 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
     const euRegionalCost = euRegionalEsim
       ? getPriceEur(euRegionalEsim) * Math.ceil(days / 30)
       : Infinity;
-    const useEuRegional = allEU && !!euRegionalEsim
-  && euRegionalCost <= perCountryTravelCost * 1.2;
+    const useEuRegional =
+  allEU &&
+  euRegionalEsim &&
+  euRegionalCost <= perCountryTravelCost * 1.2;
     const travelTotalCost = useEuRegional ? euRegionalCost : perCountryTravelCost;
     const travelCoveredCount = useEuRegional
       ? countries.filter(c => EU_ROAMING_ZONE.includes(c)).length
@@ -2961,7 +3726,7 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
     if (travelCoveredCount < countries.length) travelScore -= 20;
 
     // Route-type gate: travel eSIM is genuinely good for mixed EU+Balkans routes
-    if (mixedEuBalkans) travelScore += 10;
+    if (routeType === "mixed_eu_balkans") travelScore += 10;
     // EU route: travel eSIM competitive but nomad should still beat it if applicable
     if (routeType === "pure_eu" && multiCountry && useEuRegional) travelScore += 8;
 
@@ -2969,69 +3734,66 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
     const travelWhy = useEuRegional
       ? [
           "Airalo Eurolink covers all EU countries on this route in one plan",
-          "Instant activation РІР‚вЂќ no setup before travel",
-          ...(days <= 14 ? ["Short-to-medium trip РІР‚вЂќ data-only eSIM is cost-effective"] : []),
-          ...(mixedEuBalkans ? ["Covers EU portion of this mixed route"] : []),
-          ...(mixedEuBalkans ? ["Р СџР С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ РЎвЂЎР В°РЎРѓРЎвЂљРЎРЉ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В° Р Р† Р вЂўР РЋ"] : []),
+          "Instant activation — no setup before travel",
+          ...(days <= 14 ? ["Short-to-medium trip — data-only eSIM is cost-effective"] : []),
         ]
       : [
-          "Instant activation РІР‚вЂќ no setup before travel required",
-          ...(days <= 7 ? ["Short trip РІР‚вЂќ convenience outweighs cost"] : []),
-          ...(!inputs.needsNumber ? ["No local number needed РІР‚вЂќ data-only works"] : []),
+          "Instant activation — no setup before travel required",
+          ...(days <= 7 ? ["Short trip — convenience outweighs cost"] : []),
+          ...(!inputs.needsNumber ? ["No local number needed — data-only works"] : []),
           ...(inputs.eSIMOnly ? ["Works entirely on eSIM"] : []),
         ];
 
     const travelWhyRu = useEuRegional
       ? [
-          "Airalo Eurolink Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р Р†РЎРѓР Вµ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р вЂўР РЋ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В° Р Р† Р С•Р Т‘Р Р…Р С•Р С РЎвЂљР В°РЎР‚Р С‘РЎвЂћР Вµ",
-          "Р СљР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р В°РЎРЏ Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ РІР‚вЂќ Р Р…Р Вµ Р Р…РЎС“Р В¶Р Р…Р В° Р Р…Р В°РЎРѓРЎвЂљРЎР‚Р С•Р в„–Р С”Р В° Р Т‘Р С• Р С—Р С•Р ВµР В·Р Т‘Р С”Р С‘",
-          ...(mixedEuBalkans ? ["РџРѕРєСЂС‹РІР°РµС‚ С‡Р°СЃС‚СЊ РјР°СЂС€СЂСѓС‚Р° РІ Р•РЎ"] : []),
+          "Airalo Eurolink покрывает все страны ЕС маршрута в одном тарифе",
+          "Мгновенная активация — не нужна настройка до поездки",
         ]
       : [
-          "Р СљР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р В°РЎРЏ Р В°Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ РІР‚вЂќ Р Р…Р Вµ Р Р…РЎС“Р В¶Р Р…Р В° Р Р…Р В°РЎРѓРЎвЂљРЎР‚Р С•Р в„–Р С”Р В° Р Т‘Р С• Р С—Р С•Р ВµР В·Р Т‘Р С”Р С‘",
-          ...(days <= 7 ? ["Р С™Р С•РЎР‚Р С•РЎвЂљР С”Р В°РЎРЏ Р С—Р С•Р ВµР В·Р Т‘Р С”Р В° РІР‚вЂќ РЎС“Р Т‘Р С•Р В±РЎРѓРЎвЂљР Р†Р С• Р Р†Р В°Р В¶Р Р…Р ВµР Вµ РЎвЂ Р ВµР Р…РЎвЂ№"] : []),
-          ...(!inputs.needsNumber ? ["Р СљР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Р…Р С•Р СР ВµРЎР‚ Р Р…Р Вµ Р Р…РЎС“Р В¶Р ВµР Р… РІР‚вЂќ Р Т‘Р С•РЎРѓРЎвЂљР В°РЎвЂљР С•РЎвЂЎР Р…Р С• Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦"] : []),
+          "Мгновенная активация — не нужна настройка до поездки",
+          ...(days <= 7 ? ["Короткая поездка — удобство важнее цены"] : []),
+          ...(!inputs.needsNumber ? ["Местный номер не нужен — достаточно данных"] : []),
         ];
 
     const travelTradeoffs = [
-      "No real local phone number РІР‚вЂќ data only",
-      "Higher РІвЂљВ¬/GB than local SIMs",
-      "Prices are estimates РІР‚вЂќ verify before buying",
+      "No real local phone number — data only",
+      "Higher €/GB than local SIMs",
+      "Prices are estimates — verify before buying",
       ...(inputs.usage === "heavy" ? ["Data caps may be restrictive for heavy usage"] : []),
-      ...(mixedEuBalkans ? ["Balkans countries need separate SIM РІР‚вЂќ not covered by EU eSIM"] : []),
+      ...(routeType === "mixed_eu_balkans" ? ["Balkans countries need separate SIM — not covered by EU eSIM"] : []),
     ].join(". ");
 
     const travelTradeoffsRu = [
-      "Р СњР ВµРЎвЂљ РЎР‚Р ВµР В°Р В»РЎРЉР Р…Р С•Р С–Р С• Р СР ВµРЎРѓРЎвЂљР Р…Р С•Р С–Р С• Р Р…Р С•Р СР ВµРЎР‚Р В° РІР‚вЂќ РЎвЂљР С•Р В»РЎРЉР С”Р С• Р С‘Р Р…РЎвЂљР ВµРЎР‚Р Р…Р ВµРЎвЂљ",
-      "Р вЂќР С•РЎР‚Р С•Р В¶Р Вµ Р В·Р В° Р вЂњР вЂ, РЎвЂЎР ВµР С Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р Вµ SIM",
-      "Р В¦Р ВµР Р…РЎвЂ№ Р С•РЎР‚Р С‘Р ВµР Р…РЎвЂљР С‘РЎР‚Р С•Р Р†Р С•РЎвЂЎР Р…РЎвЂ№Р Вµ РІР‚вЂќ Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚РЎРЏР в„–РЎвЂљР Вµ Р С—Р ВµРЎР‚Р ВµР Т‘ Р С—Р С•Р С”РЎС“Р С—Р С”Р С•Р в„–",
-      ...(inputs.usage === "heavy" ? ["Р вЂєР С‘Р СР С‘РЎвЂљРЎвЂ№ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦ Р СР С•Р С–РЎС“РЎвЂљ Р В±РЎвЂ№РЎвЂљРЎРЉ Р С•Р С–РЎР‚Р В°Р Р…Р С‘РЎвЂЎР С‘РЎвЂљР ВµР В»РЎРЉР Р…РЎвЂ№Р СР С‘"] : []),
-      ...(mixedEuBalkans ? ["Р вЂР В°Р В»Р С”Р В°Р Р…РЎРѓР С”Р С‘Р Вµ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ РЎвЂљРЎР‚Р ВµР В±РЎС“РЎР‹РЎвЂљ Р С•РЎвЂљР Т‘Р ВµР В»РЎРЉР Р…Р С•Р в„– SIM РІР‚вЂќ EU eSIM РЎвЂљР В°Р С Р Р…Р Вµ РЎР‚Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ"] : []),
+      "Нет реального местного номера — только интернет",
+      "Дороже за ГБ, чем местные SIM",
+      "Цены ориентировочные — проверяйте перед покупкой",
+      ...(inputs.usage === "heavy" ? ["Лимиты данных могут быть ограничительными"] : []),
+      ...(routeType === "mixed_eu_balkans" ? ["Балканские страны требуют отдельной SIM — EU eSIM там не работает"] : []),
     ].join(". ");
 
     const travelStrategy: SimStrategy = {
       id: "travel",
       label: useEuRegional
         ? "Travel eSIM (EU regional)"
-        : mixedEuBalkans
+        : routeType === "mixed_eu_balkans"
           ? "Travel eSIM (EU portion)"
           : "Travel eSIM",
       labelRu: useEuRegional
-        ? "Travel eSIM (РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р вЂўР РЋ)"
-        : mixedEuBalkans
-          ? "Travel eSIM (РЎвЂЎР В°РЎРѓРЎвЂљРЎРЉ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В° Р вЂўР РЋ)"
+        ? "Travel eSIM (региональный ЕС)"
+        : routeType === "mixed_eu_balkans"
+          ? "Travel eSIM (часть маршрута ЕС)"
           : "Travel eSIM",
       totalCost: travelTotalCost,
       costNote: useEuRegional
-        ? "Airalo Eurolink Р’В· estimate"
+        ? "Airalo Eurolink · estimate"
         : travelCoveredCount < countries.length
-          ? `${travelCoveredCount}/${countries.length} countries covered Р’В· estimate`
-          : `${countries.length} plan${countries.length > 1 ? "s" : ""} Р’В· estimate`,
+          ? `${travelCoveredCount}/${countries.length} countries covered · estimate`
+          : `${countries.length} plan${countries.length > 1 ? "s" : ""} · estimate`,
       costNoteRu: useEuRegional
-        ? "Airalo Eurolink Р’В· Р С•РЎвЂ Р ВµР Р…Р С”Р В°"
+        ? "Airalo Eurolink · оценка"
         : travelCoveredCount < countries.length
-          ? `${travelCoveredCount}/${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р… Р С—Р С•Р С”РЎР‚РЎвЂ№РЎвЂљР С• Р’В· Р С•РЎвЂ Р ВµР Р…Р С”Р В°`
-          : `${countries.length} РЎвЂљР В°РЎР‚Р С‘РЎвЂћ Р’В· Р С•РЎвЂ Р ВµР Р…Р С”Р В°`,
+          ? `${travelCoveredCount}/${countries.length} стран покрыто · оценка`
+          : `${countries.length} тариф · оценка`,
       score: Math.round(travelScore),
       isRecommended: false,
       why: travelWhy.join(". "),
@@ -3041,24 +3803,24 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
       setupComplexity: "easy",
       roamingNote: useEuRegional
         ? `EU regional eSIM covers all ${countries.length} countries`
-        : mixedEuBalkans
-          ? "EU eSIM covers EU countries РІР‚вЂќ Balkans require separate SIM"
+        : routeType === "mixed_eu_balkans"
+          ? "EU eSIM covers EU countries — Balkans require separate SIM"
           : multiCountry
-            ? "Separate eSIM per country РІР‚вЂќ or use EU regional plan"
+            ? "Separate eSIM per country — or use EU regional plan"
             : "Data-only coverage",
       roamingNoteRu: useEuRegional
-        ? `Р В Р ВµР С–Р С‘Р С•Р Р…Р В°Р В»РЎРЉР Р…РЎвЂ№Р в„– EU eSIM Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р Р†РЎРѓР Вµ ${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р…`
-        : mixedEuBalkans
-          ? "EU eSIM Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р вЂўР РЋ РІР‚вЂќ Р Т‘Р В»РЎРЏ Р вЂР В°Р В»Р С”Р В°Р Р… Р Р…РЎС“Р В¶Р Р…Р В° Р С•РЎвЂљР Т‘Р ВµР В»РЎРЉР Р…Р В°РЎРЏ SIM"
+        ? `Региональный EU eSIM покрывает все ${countries.length} стран`
+        : routeType === "mixed_eu_balkans"
+          ? "EU eSIM покрывает страны ЕС — для Балкан нужна отдельная SIM"
           : multiCountry
-            ? "Р С›РЎвЂљР Т‘Р ВµР В»РЎРЉР Р…РЎвЂ№Р в„– eSIM Р Р…Р В° Р С”Р В°Р В¶Р Т‘РЎС“РЎР‹ РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎС“ РІР‚вЂќ Р С‘Р В»Р С‘ РЎР‚Р ВµР С–Р С‘Р С•Р Р…Р В°Р В»РЎРЉР Р…РЎвЂ№Р в„– РЎвЂљР В°РЎР‚Р С‘РЎвЂћ"
-            : "Р СџР С•Р С”РЎР‚РЎвЂ№РЎвЂљР С‘Р Вµ РЎвЂљР С•Р В»РЎРЉР С”Р С• Р Т‘Р В°Р Р…Р Р…РЎвЂ№Р СР С‘",
+            ? "Отдельный eSIM на каждую страну — или региональный тариф"
+            : "Покрытие только данными",
       applicable: travelApplicable,
       inapplicableReason: !travelApplicable ? "No travel eSIM data available for this route" : undefined,
-      inapplicableReasonRu: !travelApplicable ? "Р СњР ВµРЎвЂљ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦ Р С—Р С• travel eSIM Р Т‘Р В»РЎРЏ РЎРЊРЎвЂљР С•Р С–Р С• Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°" : undefined,
+      inapplicableReasonRu: !travelApplicable ? "Нет данных по travel eSIM для этого маршрута" : undefined,
     };
 
-    // РІвЂќР‚РІвЂќР‚ Strategy C: EU Nomad (Orange Flex Poland) РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+    // ── Strategy C: EU Nomad (Orange Flex Poland) ───────────────────────────────
     const nomadPlans  = PLANS.filter(isEuNomad);
     const nomadPlan   = nomadPlans[0];
     const nomadEur    = nomadPlan ? getPriceEur(nomadPlan) : 0;
@@ -3085,7 +3847,7 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
     if (days >= 30) nomadScore += 6;
     else if (days >= 21) nomadScore += 3;
 
-    // РІвЂќР‚РІвЂќР‚ Route-type gates on nomad score РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+    // ── Route-type gates on nomad score ─────────────────────────────────────────
     // pure_eu: this is EXACTLY what Orange Flex is designed for. Big boost.
     if (routeType === "pure_eu" && multiCountry && nomadFullyCovered) {
       nomadScore += 25; // primary recommendation for multi-country EU routes
@@ -3114,13 +3876,13 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
 
     const nomadWhy = nomadFullyCovered ? [
       routeType === "pure_eu" && multiCountry
-        ? `One SIM for your entire EU route РІР‚вЂќ all ${countries.length} countries covered`
+        ? `One SIM for your entire EU route — all ${countries.length} countries covered`
         : multiCountry
           ? `One SIM covers all ${countries.length} countries on this route`
           : `Works in ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name).join(", ")}`,
-      `РІвЂљВ¬${nomadEur}/month with ${nomadRoamGB} GB EU roaming`,
+      `€${nomadEur}/month with ${nomadRoamGB} GB EU roaming`,
       "Real Polish phone number included",
-      "App-based activation РІР‚вЂќ no store visit, no local address required",
+      "App-based activation — no store visit, no local address required",
       "Foreign passport accepted, no EU residency required",
     ] : [
       `Only covers ${nomadApplicableCountries.length}/${countries.length} countries on this route`,
@@ -3130,84 +3892,84 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
 
     const nomadWhyRu = nomadFullyCovered ? [
       routeType === "pure_eu" && multiCountry
-        ? `Р С›Р Т‘Р Р…Р В° SIM Р Т‘Р В»РЎРЏ Р Р†РЎРѓР ВµР С–Р С• Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В° Р С—Р С• Р вЂўР РЋ РІР‚вЂќ Р Р†РЎРѓР Вµ ${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р… Р С—Р С•Р С”РЎР‚РЎвЂ№РЎвЂљРЎвЂ№`
+        ? `Одна SIM для всего маршрута по ЕС — все ${countries.length} стран покрыты`
         : multiCountry
-          ? `Р С›Р Т‘Р Р…Р В° SIM Р Т‘Р В»РЎРЏ Р Р†РЎРѓР ВµРЎвЂ¦ ${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р… Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°`
-          : `Р В Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ Р Р† ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name_ru ?? c).join(", ")}`,
-      `РІвЂљВ¬${nomadEur}/Р СР ВµРЎРѓРЎРЏРЎвЂ  РЎРѓ ${nomadRoamGB} Р вЂњР вЂ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° Р вЂўР РЋ`,
-      "Р вЂ™Р С”Р В»РЎР‹РЎвЂЎР В°Р ВµРЎвЂљ РЎР‚Р ВµР В°Р В»РЎРЉР Р…РЎвЂ№Р в„– Р С—Р С•Р В»РЎРЉРЎРѓР С”Р С‘Р в„– Р Р…Р С•Р СР ВµРЎР‚",
-      "Р С’Р С”РЎвЂљР С‘Р Р†Р В°РЎвЂ Р С‘РЎРЏ РЎвЂЎР ВµРЎР‚Р ВµР В· Р С—РЎР‚Р С‘Р В»Р С•Р В¶Р ВµР Р…Р С‘Р Вµ РІР‚вЂќ Р В±Р ВµР В· Р СР В°Р С–Р В°Р В·Р С‘Р Р…Р В°, Р В±Р ВµР В· Р СР ВµРЎРѓРЎвЂљР Р…Р С•Р С–Р С• Р В°Р Т‘РЎР‚Р ВµРЎРѓР В°",
-      "Р ВР Р…Р С•РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Р…РЎвЂ№Р в„– Р С—Р В°РЎРѓР С—Р С•РЎР‚РЎвЂљ Р С—РЎР‚Р С‘Р Р…Р С‘Р СР В°Р ВµРЎвЂљРЎРѓРЎРЏ, РЎР‚Р ВµР В·Р С‘Р Т‘Р ВµР Р…РЎвЂљРЎРѓРЎвЂљР Р†Р С• Р вЂўР РЋ Р Р…Р Вµ РЎвЂљРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљРЎРѓРЎРЏ",
+          ? `Одна SIM для всех ${countries.length} стран маршрута`
+          : `Работает в ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name_ru ?? c).join(", ")}`,
+      `€${nomadEur}/месяц с ${nomadRoamGB} ГБ роуминга ЕС`,
+      "Включает реальный польский номер",
+      "Активация через приложение — без магазина, без местного адреса",
+      "Иностранный паспорт принимается, резидентство ЕС не требуется",
     ] : [
-      `Р СџР С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ РЎвЂљР С•Р В»РЎРЉР С”Р С• ${nomadApplicableCountries.length}/${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р… Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°`,
-      `${uncoveredNamesRu.join(", ")} Р СњР вЂў Р Р†РЎвЂ¦Р С•Р Т‘Р С‘РЎвЂљ Р Р† Р В·Р С•Р Р…РЎС“ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° Р вЂўР РЋ`,
-      "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Orange Flex Р Р…Р Вµ РЎР‚Р В°РЎРѓР С—РЎР‚Р С•РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎРЏР ВµРЎвЂљРЎРѓРЎРЏ Р Р…Р В° РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№ Р Р†Р Р…Р Вµ Р вЂўР РЋ",
+      `Покрывает только ${nomadApplicableCountries.length}/${countries.length} стран маршрута`,
+      `${uncoveredNamesRu.join(", ")} НЕ входит в зону роуминга ЕС`,
+      "Роуминг Orange Flex не распространяется на страны вне ЕС",
     ];
 
     const nomadTradeoffs = [
-      "Polish number РІР‚вЂќ not a local number for each country visited",
-      `EU roaming capped at ${nomadRoamGB} GB/month РІР‚вЂќ not unlimited`,
+      "Polish number — not a local number for each country visited",
+      `EU roaming capped at ${nomadRoamGB} GB/month — not unlimited`,
       ...(inputs.usage === "heavy" ? ["May not have enough data for heavy usage"] : []),
-      ...(nomadUncoveredCountries.length > 0 ? [`EU roaming only РІР‚вЂќ ${uncoveredNames.join(", ")} require separate SIM or travel eSIM`] : []),
+      ...(nomadUncoveredCountries.length > 0 ? [`EU roaming only — ${uncoveredNames.join(", ")} require separate SIM or travel eSIM`] : []),
     ].join(". ");
     const nomadTradeoffsRu = [
-      "Р СџР С•Р В»РЎРЉРЎРѓР С”Р С‘Р в„– Р Р…Р С•Р СР ВµРЎР‚ РІР‚вЂќ Р Р…Р Вµ Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р в„– Р Т‘Р В»РЎРЏ Р С”Р В°Р В¶Р Т‘Р С•Р в„– Р С—Р С•РЎРѓР ВµРЎвЂ°РЎвЂР Р…Р Р…Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№",
-      `Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ Р С•Р С–РЎР‚Р В°Р Р…Р С‘РЎвЂЎР ВµР Р… ${nomadRoamGB} Р вЂњР вЂ/Р СР ВµРЎРѓРЎРЏРЎвЂ  РІР‚вЂќ Р Р…Р Вµ Р В±Р ВµР В·Р В»Р С‘Р СР С‘РЎвЂљ`,
-      ...(inputs.usage === "heavy" ? ["Р СљР С•Р В¶Р ВµРЎвЂљ Р Р…Р Вµ РЎвЂ¦Р Р†Р В°РЎвЂљР С‘РЎвЂљРЎРЉ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦"] : []),
-      ...(nomadUncoveredCountries.length > 0 ? [`Р СћР С•Р В»РЎРЉР С”Р С• РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ РІР‚вЂќ ${uncoveredNamesRu.join(", ")} РЎвЂљРЎР‚Р ВµР В±РЎС“РЎР‹РЎвЂљ Р С•РЎвЂљР Т‘Р ВµР В»РЎРЉР Р…Р С•Р в„– SIM`] : []),
+      "Польский номер — не местный для каждой посещённой страны",
+      `Роуминг ЕС ограничен ${nomadRoamGB} ГБ/месяц — не безлимит`,
+      ...(inputs.usage === "heavy" ? ["Может не хватить данных"] : []),
+      ...(nomadUncoveredCountries.length > 0 ? [`Только роуминг ЕС — ${uncoveredNamesRu.join(", ")} требуют отдельной SIM`] : []),
     ].join(". ");
 
     const nomadInapplicableReason = allBalkan
       ? "Orange Flex EU roaming does not extend to Western Balkans. Use local Balkan SIMs or travel eSIMs."
       : nomadPartiallyCovered
-        ? `Mixed route РІР‚вЂќ Orange Flex covers ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name).join(", ")} only. ${uncoveredNames.join(", ")} ${uncoveredNames.length === 1 ? "is" : "are"} outside EU roaming zone.`
+        ? `Mixed route — Orange Flex covers ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name).join(", ")} only. ${uncoveredNames.join(", ")} ${uncoveredNames.length === 1 ? "is" : "are"} outside EU roaming zone.`
         : days < 7
           ? "Too short a trip for a monthly plan"
           : "Route not covered by EU roaming zone";
     const nomadInapplicableReasonRu = allBalkan
-      ? "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Orange Flex EU Р Р…Р Вµ РЎР‚Р В°РЎРѓР С—РЎР‚Р С•РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎРЏР ВµРЎвЂљРЎРѓРЎРЏ Р Р…Р В° Р вЂ”Р В°Р С—Р В°Р Т‘Р Р…РЎвЂ№Р Вµ Р вЂР В°Р В»Р С”Р В°Р Р…РЎвЂ№. Р ВРЎРѓР С—Р С•Р В»РЎРЉР В·РЎС“Р в„–РЎвЂљР Вµ Р СР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р Вµ SIM Р С‘Р В»Р С‘ travel eSIM."
+      ? "Роуминг Orange Flex EU не распространяется на Западные Балканы. Используйте местные SIM или travel eSIM."
       : nomadPartiallyCovered
-        ? `Р РЋР СР ВµРЎв‚¬Р В°Р Р…Р Р…РЎвЂ№Р в„– Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљ РІР‚вЂќ Orange Flex Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ РЎвЂљР С•Р В»РЎРЉР С”Р С• ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name_ru ?? c).join(", ")}. ${uncoveredNamesRu.join(", ")} Р В·Р В° Р С—РЎР‚Р ВµР Т‘Р ВµР В»Р В°Р СР С‘ Р В·Р С•Р Р…РЎвЂ№ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° Р вЂўР РЋ.`
+        ? `Смешанный маршрут — Orange Flex покрывает только ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name_ru ?? c).join(", ")}. ${uncoveredNamesRu.join(", ")} за пределами зоны роуминга ЕС.`
         : days < 7
-          ? "Р СџР С•Р ВµР В·Р Т‘Р С”Р В° РЎРѓР В»Р С‘РЎв‚¬Р С”Р С•Р С Р С”Р С•РЎР‚Р С•РЎвЂљР С”Р В°РЎРЏ Р Т‘Р В»РЎРЏ Р ВµР В¶Р ВµР СР ВµРЎРѓРЎРЏРЎвЂЎР Р…Р С•Р С–Р С• РЎвЂљР В°РЎР‚Р С‘РЎвЂћР В°"
-          : "Р СљР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљ Р Р…Р Вµ Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљРЎРѓРЎРЏ Р В·Р С•Р Р…Р С•Р в„– РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° Р вЂўР РЋ";
+          ? "Поездка слишком короткая для ежемесячного тарифа"
+          : "Маршрут не покрывается зоной роуминга ЕС";
 
     const nomadStrategy: SimStrategy = {
       id: "nomad",
       label: nomadFullyCovered && routeType === "pure_eu" && multiCountry
-        ? "EU Nomad setup РІР‚вЂќ one SIM for your EU route"
+        ? "EU Nomad setup — one SIM for your EU route"
         : nomadFullyCovered
           ? "EU Nomad setup (Orange Flex Poland)"
-          : "EU Nomad РІР‚вЂќ partial route only",
+          : "EU Nomad — partial route only",
       labelRu: nomadFullyCovered && routeType === "pure_eu" && multiCountry
-        ? "EU Nomad РІР‚вЂќ Р С•Р Т‘Р Р…Р В° SIM Р Т‘Р В»РЎРЏ Р Р†РЎРѓР ВµР С–Р С• Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°"
+        ? "EU Nomad — одна SIM для всего маршрута"
         : nomadFullyCovered
           ? "EU Nomad (Orange Flex Poland)"
-          : "EU Nomad РІР‚вЂќ РЎвЂЎР В°РЎРѓРЎвЂљР С‘РЎвЂЎР Р…Р С•Р Вµ Р С—Р С•Р С”РЎР‚РЎвЂ№РЎвЂљР С‘Р Вµ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°",
+          : "EU Nomad — частичное покрытие маршрута",
       totalCost: nomadTotalCost,
-      costNote: `${nomadMonths} month${nomadMonths > 1 ? "s" : ""} Р’В· РІвЂљВ¬${nomadEur}/mo`,
-      costNoteRu: `${nomadMonths} Р СР ВµРЎРѓ. Р’В· РІвЂљВ¬${nomadEur}/Р СР ВµРЎРѓ.`,
+      costNote: `${nomadMonths} month${nomadMonths > 1 ? "s" : ""} · €${nomadEur}/mo`,
+      costNoteRu: `${nomadMonths} мес. · €${nomadEur}/мес.`,
       score: nomadApplicable ? Math.round(nomadScore) : -999,
       isRecommended: false,
       why: nomadWhy.join(". "),
       whyRu: nomadWhyRu.join(". "),
       tradeoffs: nomadTradeoffs || "Suitable for this route.",
-      tradeoffsRu: nomadTradeoffsRu || "Р СџР С•Р Т‘РЎвЂ¦Р С•Р Т‘Р С‘РЎвЂљ Р Т‘Р В»РЎРЏ РЎРЊРЎвЂљР С•Р С–Р С• Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°.",
+      tradeoffsRu: nomadTradeoffsRu || "Подходит для этого маршрута.",
       setupComplexity: "easy",
       roamingNote: nomadFullyCovered
         ? routeType === "pure_eu" && multiCountry
-          ? `This route is fully inside the EU roaming area РІР‚вЂќ one SIM covers all ${countries.length} countries`
+          ? `This route is fully inside the EU roaming area — one SIM covers all ${countries.length} countries`
           : `EU roaming across all ${countries.length} countries on this route`
         : nomadPartiallyCovered
-          ? `EU roaming in ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name).join(", ")} only РІР‚вЂќ NOT in ${uncoveredNames.join(", ")}`
+          ? `EU roaming in ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name).join(", ")} only — NOT in ${uncoveredNames.join(", ")}`
           : "EU roaming does not cover this route",
       roamingNoteRu: nomadFullyCovered
         ? routeType === "pure_eu" && multiCountry
-          ? `Р вЂ™Р ВµРЎРѓРЎРЉ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљ Р Р† Р В·Р С•Р Р…Р Вµ РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–Р В° Р вЂўР РЋ РІР‚вЂќ Р С•Р Т‘Р Р…Р В° SIM Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р Р†РЎРѓР Вµ ${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р…`
-          : `Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ Р С—Р С• Р Р†РЎРѓР ВµР С ${countries.length} РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р В°Р С Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°`
+          ? `Весь маршрут в зоне роуминга ЕС — одна SIM покрывает все ${countries.length} стран`
+          : `Роуминг ЕС по всем ${countries.length} странам маршрута`
         : nomadPartiallyCovered
-          ? `Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ РЎвЂљР С•Р В»РЎРЉР С”Р С• Р Р† ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name_ru ?? c).join(", ")} РІР‚вЂќ Р СњР вЂў Р Р† ${uncoveredNamesRu.join(", ")}`
-          : "Р В Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ Р Р…Р Вµ Р С—Р С•Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµРЎвЂљ РЎРЊРЎвЂљР С•РЎвЂљ Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљ",
+          ? `Роуминг ЕС только в ${nomadApplicableCountries.map(c => COUNTRIES[c]?.name_ru ?? c).join(", ")} — НЕ в ${uncoveredNamesRu.join(", ")}`
+          : "Роуминг ЕС не покрывает этот маршрут",
       applicable: nomadApplicable,
       inapplicableReason: !nomadApplicable ? nomadInapplicableReason : undefined,
       inapplicableReasonRu: !nomadApplicable ? nomadInapplicableReasonRu : undefined,
@@ -3230,7 +3992,78 @@ function useTripSim(inputs: SimInputs): SimStrategy[] {
   }, [inputs]);
 }
 
-// РІвЂќР‚РІвЂќР‚РІвЂќР‚ Sim Page РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+// ─── Sim Page ─────────────────────────────────────────────────────────────────
+// ─── Trip Intent Engine types ─────────────────────────────────────────────────
+type TIEStep = 1 | 2 | 3 | 4 | 5 | 6; // 6 = results
+
+type DurBucket = "1-3" | "4-7" | "8-14" | "15-30" | "30+";
+type UseLevel  = "light" | "medium" | "heavy" | "work";
+type NumNeed   = "none" | "sms" | "calls";
+type OptimPref = "cheap" | "easy" | "one_sim" | "coverage" | "data";
+
+interface TIEState {
+  countries: CountryCode[];
+  dur: DurBucket | null;
+  use: UseLevel | null;
+  num: NumNeed | null;
+  optim: OptimPref | null;
+}
+
+// Map DurBucket to concrete day count for useTripSim
+function durToDays(dur: DurBucket): number {
+  return dur === "1-3" ? 2 : dur === "4-7" ? 5 : dur === "8-14" ? 10 : dur === "15-30" ? 21 : 45;
+}
+
+// Map UseLevel to SimUsage + hotspot flag
+function useToSimUsage(use: UseLevel): { usage: SimUsage; needsHotspot: boolean } {
+  if (use === "light")  return { usage: "light",  needsHotspot: false };
+  if (use === "heavy")  return { usage: "heavy",  needsHotspot: false };
+  if (use === "work")   return { usage: "heavy",  needsHotspot: true  };
+  return { usage: "medium", needsHotspot: false };
+}
+
+// Derive SimInputs from TIE wizard state
+function tieToSimInputs(s: TIEState): SimInputs | null {
+  if (!s.dur || !s.use || !s.num || !s.optim || s.countries.length === 0) return null;
+  const { usage, needsHotspot } = useToSimUsage(s.use);
+  return {
+    countries: s.countries,
+    days: durToDays(s.dur),
+    usage,
+    needsHotspot,
+    eSIMOnly: s.optim === "easy",
+    needsNumber: s.num === "calls",
+  };
+}
+
+// Plain-English explanations of what connectivity means per strategy
+function strategyNarrative(
+  s: SimStrategy, inputs: TIEState, isRu: boolean,
+  optimPref: OptimPref
+): { headline: string; cost: string; activations: string; tradeoff: string } {
+  const days = inputs.dur ? durToDays(inputs.dur) : 14;
+  const countries = inputs.countries.length;
+  const eur = `€${s.totalCost}`;
+
+  const headline = isRu ? s.labelRu : s.label;
+  const cost = `${eur} ${isRu ? "на поездку" : "for trip"}`;
+
+  let activations: string;
+  if (s.setupComplexity === "easy") {
+    activations = isRu ? "Активировать один раз — и забыть" : "Activate once, no setup during trip";
+  } else if (countries > 1) {
+    activations = isRu
+      ? `${countries} активаци${countries < 5 ? "и" : "й"} — в каждой стране отдельно`
+      : `${countries} activations — one per country`;
+  } else {
+    activations = isRu ? "Одна активация" : "One activation";
+  }
+
+  const tradeoff = isRu ? s.tradeoffsRu : s.tradeoffs;
+  return { headline, cost, activations, tradeoff };
+}
+
+// ─── Trip Intent Engine wizard ─────────────────────────────────────────────────
 function SimPage({ lang, onBack, onGoSingle }: {
   lang: Lang;
   onBack: () => void;
@@ -3240,149 +4073,439 @@ function SimPage({ lang, onBack, onGoSingle }: {
   const isRu = lang === "ru";
   const ALL_COUNTRIES = Object.entries(COUNTRIES) as [CountryCode, CountryMeta][];
 
-  const [simCountries, setSimCountries] = useState<CountryCode[]>([]);
-  const [simDays,      setSimDays]      = useState(14);
-  const [simUsage,     setSimUsage]     = useState<SimUsage>("medium");
-  const [hotspot,      setHotspot]      = useState(false);
-  const [eSIMOnly,     setESIMOnly]     = useState(false);
-  const [needNumber,   setNeedNumber]   = useState(false);
-  const [ran,          setRan]          = useState(false);
+  // Wizard state
+  const [step, setStep] = useState<TIEStep>(1);
+  const [tie,  setTie]  = useState<TIEState>({
+    countries: [], dur: null, use: null, num: null, optim: null,
+  });
 
-  const inputs: SimInputs = useMemo(() => ({
-    countries: simCountries,
-    days: simDays,
-    usage: simUsage,
-    needsHotspot: hotspot,
-    eSIMOnly,
-    needsNumber: needNumber,
-  }), [simCountries, simDays, simUsage, hotspot, eSIMOnly, needNumber]);
+  // Build SimInputs and run strategies when on results step
+  const simInputs = useMemo(() => tieToSimInputs(tie), [tie]);
+  const strategies = useTripSim(simInputs ?? {
+    countries: tie.countries, days: 14, usage: "medium",
+    needsHotspot: false, eSIMOnly: false, needsNumber: false,
+  });
 
-  const strategies = useTripSim(inputs);
+  function goNext() { setStep(s => Math.min(s + 1, 6) as TIEStep); }
+  function goPrev() { setStep(s => Math.max(s - 1, 1) as TIEStep); }
 
-  function toggleCountry(code: CountryCode) {
-    setSimCountries(prev =>
-      prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
-    );
-    setRan(false);
+  function set<K extends keyof TIEState>(key: K, val: TIEState[K]) {
+    setTie(prev => ({ ...prev, [key]: val }));
   }
 
-  const complexityLabel = (c: SimStrategy["setupComplexity"]) =>
-    c === "easy"     ? (isRu ? "Р вЂєР ВµР С–Р С”Р С•"     : "Easy") :
-    c === "moderate" ? (isRu ? "Р Р€Р СР ВµРЎР‚Р ВµР Р…Р Р…Р С•"  : "Moderate") :
-                       (isRu ? "Р РЋР В»Р С•Р В¶Р Р…Р С•"    : "Complex");
+  const progress = Math.round(((step - 1) / 5) * 100);
+  const canAdvance: Record<TIEStep, boolean> = {
+    1: tie.countries.length > 0,
+    2: tie.dur !== null,
+    3: tie.use !== null,
+    4: tie.num !== null,
+    5: tie.optim !== null,
+    6: true,
+  };
 
-  const strategyColor = (s: SimStrategy) =>
-    s.id === "local"  ? "#2563eb" :
-    s.id === "nomad"  ? "#4f46e5" :
-                        "#78350f";
-
-  const strategyBg = (s: SimStrategy) =>
-    s.id === "local"  ? "#eff6ff" :
-    s.id === "nomad"  ? "#eef2ff" :
-                        "#fffbeb";
-
-  const strategyBorder = (s: SimStrategy) =>
-    s.id === "local"  ? "#93c5fd" :
-    s.id === "nomad"  ? "#818cf8" :
-                        "#fcd34d";
-
-  return (
-    <div className="sim-wrap">
-      <button className="btn-ghost" onClick={onBack} style={{ marginBottom: "1.25rem" }}>
-        <Ic d={IC.back} size={13} /> {t.back}
+  // ── Reusable option card ─────────────────────────────────────────────────────
+  function OptionCard({ selected, onClick, icon, label, sub, accent }: {
+    selected: boolean; onClick: () => void;
+    icon?: string; label: string; sub?: string; accent?: string;
+  }) {
+    return (
+      <button className={`tie-option${selected ? " tie-option-sel" : ""}`} onClick={onClick}>
+        {icon && <span className="tie-option-icon">{icon}</span>}
+        <span className="tie-option-body">
+          <span className="tie-option-label">{label}</span>
+          {sub && <span className="tie-option-sub">{sub}</span>}
+        </span>
+        {selected && <span className="tie-option-check">✓</span>}
       </button>
+    );
+  }
 
-      <div className="sim-header">
-        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.2 }}>
-          {t.sim_title}
+  // ── Step header ──────────────────────────────────────────────────────────────
+  function StepHeader({ title, sub }: { title: string; sub?: string }) {
+    return (
+      <div className="tie-step-header">
+        <div className="tie-step-num">
+          {isRu ? "Шаг" : "Step"} {step < 6 ? step : 5} / 5
         </div>
-        <div style={{ fontSize: 13, color: "#4b5563", marginTop: 4 }}>{t.sim_sub}</div>
+        <h2 className="tie-step-title">{title}</h2>
+        {sub && <p className="tie-step-sub">{sub}</p>}
       </div>
+    );
+  }
 
-      <div className="sim-body">
-        <CountryPicker
-          allCountries={ALL_COUNTRIES as unknown as [string, import("./components/TripSimulator").CountryMeta][]}
-          selected={simCountries}
-          lang={lang}
-          onToggle={(code) => toggleCountry(code as CountryCode)}
-        />
-
-        <TripConfigPanel
-          selected={simCountries}
-          countriesMeta={COUNTRIES as unknown as Record<string, any>}
-          days={simDays}
-          usage={simUsage}
-          hotspot={hotspot}
-          eSIMOnly={eSIMOnly}
-          needNumber={needNumber}
-          lang={lang}
-          t={{
-            sim_title:            t.sim_title,
-            sim_sub:              t.sim_sub,
-            sim_countries:        t.sim_countries,
-            sim_duration:         t.sim_duration,
-            sim_usage:            t.sim_usage,
-            sim_hotspot:          t.sim_hotspot,
-            sim_esim_only:        t.sim_esim_only,
-            sim_need_number:      t.sim_need_number,
-            sim_yes:              t.sim_yes,
-            sim_no:               t.sim_no,
-            sim_run:              t.sim_run,
-            sim_recommended:      t.sim_recommended,
-            sim_caveat_snapshot:  t.sim_caveat_snapshot,
-            back:                 t.back,
-          }}
-          onRemoveCountry={(code) => toggleCountry(code as CountryCode)}
-          onDaysChange={d  => { setSimDays(d);    setRan(false); }}
-          onUsageChange={u  => { setSimUsage(u);   setRan(false); }}
-          onHotspotChange={v => { setHotspot(v);   setRan(false); }}
-          onESIMOnlyChange={v => { setESIMOnly(v); setRan(false); }}
-          onNeedNumberChange={v => { setNeedNumber(v); setRan(false); }}
-          onRun={() => setRan(true)}
-        />
+  // ── Nav bar ─────────────────────────────────────────────────────────────────
+  function Nav({ onNext, nextLabel, canNext = true }: {
+    onNext?: () => void; nextLabel?: string; canNext?: boolean;
+  }) {
+    return (
+      <div className="tie-nav">
+        {step > 1 ? (
+          <button className="btn-ghost" onClick={goPrev}>
+            ← {t.tie_back}
+          </button>
+        ) : (
+          <button className="btn-ghost" onClick={onBack}>
+            ← {t.back}
+          </button>
+        )}
+        {onNext && (
+          <button
+            className="tie-next-btn"
+            disabled={!canNext}
+            onClick={onNext}
+          >
+            {nextLabel ?? t.tie_next} →
+          </button>
+        )}
       </div>
+    );
+  }
 
-      {ran && simCountries.length > 0 && (
-        <SimulatorResults
-          strategies={strategies}
-          simCountries={simCountries}
-          simDays={simDays}
-          simUsage={simUsage}
-          eSIMOnly={eSIMOnly}
-          needNumber={needNumber}
-          lang={lang}
-          t={{
-            sim_title:            t.sim_title,
-            sim_sub:              t.sim_sub,
-            sim_countries:        t.sim_countries,
-            sim_duration:         t.sim_duration,
-            sim_usage:            t.sim_usage,
-            sim_hotspot:          t.sim_hotspot,
-            sim_esim_only:        t.sim_esim_only,
-            sim_need_number:      t.sim_need_number,
-            sim_yes:              t.sim_yes,
-            sim_no:               t.sim_no,
-            sim_run:              t.sim_run,
-            sim_recommended:      t.sim_recommended,
-            sim_caveat_snapshot:  t.sim_caveat_snapshot,
-            back:                 t.back,
-          }}
-          countryFlags={Object.fromEntries(
-            Object.entries(COUNTRIES).map(([code, c]) => [code, (c as { flag: string }).flag])
-          )}
-          countryNames={Object.fromEntries(
-            Object.entries(COUNTRIES).map(([code, c]) => [
-              code,
-              lang === "ru" ? (c as { name_ru: string }).name_ru : (c as { name: string }).name,
-            ])
-          )}
-          onGoSingle={(code, days) => onGoSingle(code as CountryCode, days)}
-        />
-      )}
+  // ── Route summary pill row ────────────────────────────────────────────────────
+  function RouteSummary() {
+    if (tie.countries.length === 0) return null;
+    return (
+      <div className="tie-route-summary">
+        {tie.countries.map((cc, i) => (
+          <span key={cc} className="tie-route-pill">
+            {i > 0 && <span className="tie-route-arrow">→</span>}
+            {COUNTRIES[cc]?.flag} {isRu ? COUNTRIES[cc]?.name_ru : COUNTRIES[cc]?.name}
+          </span>
+        ))}
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // STEP 1 — Route
+  // ════════════════════════════════════════════════════════════════════════════
+  if (step === 1) return (
+    <div className="tie-wrap">
+      <div className="tie-progress-bar"><div className="tie-progress-fill" style={{ width: `${Math.max(4, progress)}%` }} /></div>
+
+      <StepHeader title={t.tie_step_route} sub={t.tie_step_route_sub} />
+
+      <CountryPicker
+  allCountries={ALL_COUNTRIES as unknown as [string, import("./components/TripSimulator/types").CountryMeta][]}
+        selected={tie.countries}
+        lang={lang}
+        onToggle={code => {
+  const cc = code as CountryCode;
+  setTie(prev => ({
+    ...prev,
+    countries: prev.countries.includes(cc)
+      ? prev.countries.filter(c => c !== cc)
+      : [...prev.countries, cc],
+  }));
+}}
+      />
+
+      <Nav
+        onNext={goNext}
+        nextLabel={tie.countries.length > 0
+          ? `${t.tie_next} (${tie.countries.length} ${isRu ? "стран" : tie.countries.length === 1 ? "country" : "countries"})`
+          : undefined}
+        canNext={canAdvance[1]}
+      />
     </div>
   );
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // STEP 2 — Duration
+  // ════════════════════════════════════════════════════════════════════════════
+  if (step === 2) {
+    const DURS: { id: DurBucket; label: string; sub: string }[] = [
+      { id: "1-3",   label: t.dur_1_3,   sub: t.dur_1_3_sub   },
+      { id: "4-7",   label: t.dur_4_7,   sub: t.dur_4_7_sub   },
+      { id: "8-14",  label: t.dur_8_14,  sub: t.dur_8_14_sub  },
+      { id: "15-30", label: t.dur_15_30, sub: t.dur_15_30_sub },
+      { id: "30+",   label: t.dur_30p,   sub: t.dur_30p_sub   },
+    ];
+    return (
+      <div className="tie-wrap">
+        <div className="tie-progress-bar"><div className="tie-progress-fill" style={{ width: `${progress}%` }} /></div>
+        <RouteSummary />
+        <StepHeader title={t.tie_step_duration} />
+        <div className="tie-options tie-options-2col">
+          {DURS.map(d => (
+            <OptionCard key={d.id} selected={tie.dur === d.id}
+              onClick={() => { set("dur", d.id); }}
+              label={d.label} sub={d.sub} />
+          ))}
+        </div>
+        <Nav onNext={goNext} canNext={canAdvance[2]} />
+      </div>
+    );
   }
-  const DURS = [
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // STEP 3 — Usage
+  // ════════════════════════════════════════════════════════════════════════════
+  if (step === 3) {
+    const USES: { id: UseLevel; icon: string; label: string; sub: string }[] = [
+      { id: "light",  icon: "🗺️", label: t.use_light,  sub: t.use_light_sub  },
+      { id: "medium", icon: "📱", label: t.use_medium, sub: t.use_medium_sub },
+      { id: "heavy",  icon: "📺", label: t.use_heavy,  sub: t.use_heavy_sub  },
+      { id: "work",   icon: "💻", label: t.use_work,   sub: t.use_work_sub   },
+    ];
+    return (
+      <div className="tie-wrap">
+        <div className="tie-progress-bar"><div className="tie-progress-fill" style={{ width: `${progress}%` }} /></div>
+        <RouteSummary />
+        <StepHeader title={t.tie_step_usage} />
+        <div className="tie-options">
+          {USES.map(u => (
+            <OptionCard key={u.id} selected={tie.use === u.id}
+              onClick={() => { set("use", u.id); }}
+              icon={u.icon} label={u.label} sub={u.sub} />
+          ))}
+        </div>
+        <Nav onNext={goNext} canNext={canAdvance[3]} />
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // STEP 4 — Local number
+  // ════════════════════════════════════════════════════════════════════════════
+  if (step === 4) {
+    const NUMS: { id: NumNeed; icon: string; label: string; sub: string }[] = [
+      { id: "none",  icon: "📡", label: t.num_none,  sub: t.num_none_sub  },
+      { id: "sms",   icon: "💬", label: t.num_sms,   sub: t.num_sms_sub   },
+      { id: "calls", icon: "📞", label: t.num_calls, sub: t.num_calls_sub },
+    ];
+    return (
+      <div className="tie-wrap">
+        <div className="tie-progress-bar"><div className="tie-progress-fill" style={{ width: `${progress}%` }} /></div>
+        <RouteSummary />
+        <StepHeader title={t.tie_step_number} />
+        <div className="tie-options">
+          {NUMS.map(n => (
+            <OptionCard key={n.id} selected={tie.num === n.id}
+              onClick={() => { set("num", n.id); }}
+              icon={n.icon} label={n.label} sub={n.sub} />
+          ))}
+        </div>
+        <Nav onNext={goNext} canNext={canAdvance[4]} />
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // STEP 5 — Optimisation preference
+  // ════════════════════════════════════════════════════════════════════════════
+  if (step === 5) {
+    const OPTIMS: { id: OptimPref; icon: string; label: string; sub: string }[] = [
+      { id: "cheap",    icon: "💰", label: t.optim_cheap,    sub: t.optim_cheap_sub    },
+      { id: "easy",     icon: "⚡", label: t.optim_easy,     sub: t.optim_easy_sub     },
+      { id: "one_sim",  icon: "🎯", label: t.optim_one_sim,  sub: t.optim_one_sim_sub  },
+      { id: "coverage", icon: "📶", label: t.optim_coverage, sub: t.optim_coverage_sub },
+      { id: "data",     icon: "🗄️", label: t.optim_data,     sub: t.optim_data_sub     },
+    ];
+    return (
+      <div className="tie-wrap">
+        <div className="tie-progress-bar"><div className="tie-progress-fill" style={{ width: `${progress}%` }} /></div>
+        <RouteSummary />
+        <StepHeader title={t.tie_step_optim} />
+        <div className="tie-options tie-options-2col">
+          {OPTIMS.map(o => (
+            <OptionCard key={o.id} selected={tie.optim === o.id}
+              onClick={() => { set("optim", o.id); }}
+              icon={o.icon} label={o.label} sub={o.sub} />
+          ))}
+        </div>
+        <Nav
+          onNext={() => setStep(6)}
+          nextLabel={t.tie_see_results}
+          canNext={canAdvance[5]}
+        />
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // STEP 6 — Results (traveler-first output)
+  // ════════════════════════════════════════════════════════════════════════════
+
+  const applicable = strategies.filter(s => s.applicable);
+  const recommended = applicable.find(s => s.isRecommended) ?? applicable[0] ?? null;
+
+  // Convenience vs savings split:
+  //   convenience = recommended winner
+  //   savings = the applicable strategy that is NOT recommended but has lower cost,
+  //             if it saves at least €2
+  const convenienceStrategy = recommended;
+  const savingsStrategy = applicable.find(s =>
+    s !== recommended && s.totalCost < (recommended?.totalCost ?? Infinity) - 2
+  ) ?? null;
+  const alternatives = applicable.filter(s => s !== recommended && s !== savingsStrategy);
+
+  // Route summary words
+  const routeWord = tie.countries.length > 1
+    ? (isRu ? `${tie.countries.length} стран` : `${tie.countries.length} countries`)
+    : (isRu ? COUNTRIES[tie.countries[0]]?.name_ru : COUNTRIES[tie.countries[0]]?.name) ?? "";
+  const durWord = tie.dur ? (isRu
+    ? { "1-3":"1–3 дня","4-7":"4–7 дней","8-14":"8–14 дней","15-30":"15–30 дней","30+":"30+ дней" }[tie.dur]
+    : { "1-3":"1–3 days","4-7":"4–7 days","8-14":"8–14 days","15-30":"15–30 days","30+":"30+ days" }[tie.dur]
+  ) : "";
+  const useWord = tie.use ? (isRu
+    ? {light:"лёгкое",medium:"обычное",heavy:"активное",work:"удалённая работа"}[tie.use]
+    : {light:"light",medium:"normal",heavy:"heavy",work:"work/hotspot"}[tie.use]
+  ) : "";
+
+  // Strategy display helper
+  function StrategyCard({ s, badge, badgeColor }: {
+    s: SimStrategy; badge: string; badgeColor: string;
+  }) {
+    const nar = strategyNarrative(s, tie, isRu, tie.optim ?? "easy");
+    const countryNames = tie.countries.map(cc =>
+      isRu ? COUNTRIES[cc]?.name_ru : COUNTRIES[cc]?.name
+    ).filter(Boolean);
+
+    return (
+      <div className={`tie-strat-card${s.isRecommended ? " tie-strat-card-rec" : ""}`}>
+        <div className="tie-strat-badge" style={{ background: badgeColor }}>{badge}</div>
+        <div className="tie-strat-head">
+          <div className="tie-strat-title">{nar.headline}</div>
+          <div className="tie-strat-cost">{nar.cost}</div>
+        </div>
+
+        {/* Plain-English "what this means" */}
+        <p className="tie-strat-why">{isRu ? s.whyRu : s.why}</p>
+
+        {/* Activation complexity pill */}
+        <div className="tie-strat-meta-row">
+          <span className={`tie-meta-pill tie-meta-${s.setupComplexity}`}>
+            {s.setupComplexity === "easy"
+              ? (isRu ? "⚡ Активация до отъезда" : "⚡ Activate before you leave")
+              : s.setupComplexity === "moderate"
+              ? (isRu ? "🛬 Активация по прилёту" : "🛬 Activate on arrival")
+              : (isRu ? "🏪 Требуется визит в магазин" : "🏪 Store visit required")}
+          </span>
+          {s.setupComplexity === "easy" && (
+            <span className="tie-meta-pill tie-meta-easy">
+              {isRu ? "✓ Без замен SIM" : "✓ No SIM swapping"}
+            </span>
+          )}
+        </div>
+
+        {/* Coverage note — only if non-trivial */}
+        {s.roamingNote && (
+          <div className="tie-strat-coverage">
+            <span className="tie-strat-coverage-icon">📶</span>
+            <span>{isRu ? s.roamingNoteRu : s.roamingNote}</span>
+          </div>
+        )}
+
+        {/* Tradeoffs — plain English, not "tradeoffs" header */}
+        {(isRu ? s.tradeoffsRu : s.tradeoffs) && (
+          <div className="tie-strat-tradeoff">
+            <span className="tie-strat-tradeoff-icon">⚠</span>
+            <span>{isRu ? s.tradeoffsRu : s.tradeoffs}</span>
+          </div>
+        )}
+
+        {/* Single-country deep dive */}
+        {s.id === "local" && tie.countries.length === 1 && (
+          <button className="tie-strat-cta"
+            onClick={() => onGoSingle(tie.countries[0], durToDays(tie.dur ?? "8-14"))}>
+            {isRu
+              ? `Все тарифы в ${COUNTRIES[tie.countries[0]]?.name_ru} →`
+              : `See all plans in ${COUNTRIES[tie.countries[0]]?.name} →`}
+          </button>
+        )}
+
+        {/* EU nomad external link */}
+        {s.id === "nomad" && s.applicable && (
+          <a href="https://flex.orange.pl" target="_blank" rel="noopener noreferrer"
+            className="tie-strat-cta">
+            Orange Flex — officialwebsite →
+          </a>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="tie-wrap">
+      <div className="tie-progress-bar"><div className="tie-progress-fill" style={{ width: "100%" }} /></div>
+
+      {/* Results header */}
+      <div className="tie-results-header">
+        <h2 className="tie-step-title">{t.tie_results_title}</h2>
+        <p className="tie-results-context">
+          {routeWord} · {durWord} · {useWord}
+        </p>
+        <button className="tie-edit-btn" onClick={() => setStep(1)}>
+          ✎ {t.tie_edit}
+        </button>
+      </div>
+
+      {/* Route visual */}
+      <RouteSummary />
+
+      {/* No results fallback */}
+      {applicable.length === 0 && (
+        <div className="tie-no-results">
+          <p>{isRu ? "Данных по этому маршруту пока нет. Попробуйте другие страны." : "No data for this route yet. Try different countries."}</p>
+          <button className="btn-ghost" onClick={() => setStep(1)}>{t.tie_edit}</button>
+        </div>
+      )}
+
+      {/* Primary recommendation */}
+      {convenienceStrategy && (
+        <StrategyCard
+          s={convenienceStrategy}
+          badge={t.tie_convenience}
+          badgeColor="#2563eb"
+        />
+      )}
+
+      {/* Savings strategy — only show if it saves money */}
+      {savingsStrategy && convenienceStrategy && (
+        <div className="tie-savings-banner">
+          <span>
+            {isRu ? "💡 Дешевле с продлениями:" : "💡 Cheaper with renewals:"}
+            {" "}<strong>{isRu ? savingsStrategy.labelRu : savingsStrategy.label}</strong>
+            {" "}— €{savingsStrategy.totalCost}
+            {" "}<span className="tie-savings-diff">
+              ({isRu ? "экономия" : "save"} €{(convenienceStrategy.totalCost - savingsStrategy.totalCost).toFixed(2)})
+            </span>
+          </span>
+        </div>
+      )}
+      {savingsStrategy && (
+        <StrategyCard
+          s={savingsStrategy}
+          badge={t.tie_savings}
+          badgeColor="#15803d"
+        />
+      )}
+
+      {/* Alternatives */}
+      {alternatives.length > 0 && (
+        <>
+          <div className="tie-alt-label">{t.tie_alternative}</div>
+          {alternatives.map(s => (
+            <StrategyCard key={s.id} s={s} badge={isRu ? s.labelRu : s.label} badgeColor="#6b7280" />
+          ))}
+        </>
+      )}
+
+      {/* Travel eSIM caveat */}
+      {applicable.some(s => s.id === "travel") && (
+        <div className="tie-caveat">⚠ {t.sim_caveat_snapshot}</div>
+      )}
+
+      {/* Back to start */}
+      <button className="btn-ghost" onClick={onBack} style={{ marginTop: "1.5rem" }}>
+        ← {t.back}
+      </button>
+    </div>
+  );
+}
+
+const DURS = [
   { d: 7,  key: "days_7"  as const },
   { d: 14, key: "days_14" as const },
   { d: 21, key: "days_21" as const },
@@ -3419,14 +4542,14 @@ export default function Home() {
 
   return (
     <>
-      <span className="sr-only">SimRoam РІР‚вЂќ travel connectivity intelligence</span>
+      <span className="sr-only">SimRoam — travel connectivity intelligence</span>
       <nav className="nav">
         <div className="nav-logo"><div className="nav-dot" />SimRoam<span className="nav-sub">{t.tagline}</span></div>
         <div className="nav-right">
           <button className={`btn-lang${lang === "en" ? " active" : ""}`} onClick={() => setLang("en")}>EN</button>
           <button className={`btn-lang${lang === "ru" ? " active" : ""}`} onClick={() => setLang("ru")}>RU</button>
           <button className={`btn-ghost${page === "sim" ? " active" : ""}`} onClick={() => setPage("sim")}>
-            <Ic d={IC.plane} size={13} /> {lang === "ru" ? "Р СљРЎС“Р В»РЎРЉРЎвЂљР С‘РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–" : "Route Planner"}
+            <Ic d={IC.plane} size={13} /> {lang === "ru" ? "Мультироуминг" : "Route Planner"}
           </button>
           <button className="btn-ghost" onClick={() => setPage("countries")}><Ic d={IC.globe} size={13} /> {t.countries}</button>
         </div>
@@ -3435,24 +4558,24 @@ export default function Home() {
       {page === "home" && (
         <div className="home-wrap">
 
-          {/* РІвЂќР‚РІвЂќР‚ Hero РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */}
+          {/* ── Hero ───────────────────────────────────────────────────────── */}
           <div className="home-hero">
             <h1 className="home-hero-h1">
               {lang === "ru"
-                ? "Р вЂєРЎС“РЎвЂЎРЎв‚¬Р В°РЎРЏ SIM Р Т‘Р В»РЎРЏ Р Р†Р В°РЎв‚¬Р ВµР в„– Р С—Р С•Р ВµР В·Р Т‘Р С”Р С‘"
+                ? "Лучшая SIM для вашей поездки"
                 : "Find the best SIM for your trip"}
             </h1>
             <p className="home-hero-sub">
               {lang === "ru"
-                ? "Р СљР ВµРЎРѓРЎвЂљР Р…РЎвЂ№Р Вµ SIM, РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С– Р вЂўР РЋ, РЎвЂљРЎС“РЎР‚Р С‘РЎРѓРЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р С‘Р Вµ eSIM РІР‚вЂќ РЎРѓРЎР‚Р В°Р Р†Р Р…Р С‘Р Р†Р В°Р ВµР С Р С‘ РЎР‚Р ВµР С”Р С•Р СР ВµР Р…Р Т‘РЎС“Р ВµР С."
+                ? "Местные SIM, роуминг ЕС, туристические eSIM — сравниваем и рекомендуем."
                 : "Compare local prepaid SIMs, EU roaming plans and travel eSIMs."}
             </p>
 
-            {/* Search РІР‚вЂќ navigates to CountriesPage */}
+            {/* Search — navigates to CountriesPage */}
             <button
               className="home-search-btn"
               onClick={() => setPage("countries")}
-              aria-label={lang === "ru" ? "Р СџР С•Р С‘РЎРѓР С” РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№" : "Search country"}
+              aria-label={lang === "ru" ? "Поиск страны" : "Search country"}
             >
               <svg width={15} height={15} viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth={2}
@@ -3461,12 +4584,12 @@ export default function Home() {
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
               <span className="home-search-placeholder">
-                {lang === "ru" ? "Р СџР С•Р С‘РЎРѓР С” РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎвЂ№РІР‚В¦" : "Search countryРІР‚В¦"}
+                {lang === "ru" ? "Поиск страны…" : "Search country…"}
               </span>
             </button>
           </div>
 
-          {/* РІвЂќР‚РІвЂќР‚ Country picker (inline on homepage) РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */}
+          {/* ── Country picker (inline on homepage) ────────────────────────── */}
           <HomePicker
             lang={lang}
             selected={country}
@@ -3475,7 +4598,7 @@ export default function Home() {
             onBrowseAll={() => setPage("countries")}
           />
 
-          {/* РІвЂќР‚РІвЂќР‚ Trip config row РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */}
+          {/* ── Trip config row ─────────────────────────────────────────────── */}
           <div className="home-config">
             <div className="home-config-row">
               <span className="field-label">{t.trip_length}</span>
@@ -3510,20 +4633,20 @@ export default function Home() {
             </button>
           </div>
 
-          {/* РІвЂќР‚РІвЂќР‚ Route planner promo РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */}
+          {/* ── Route planner promo ────────────────────────────────────────── */}
           <div className="home-sim-card" onClick={() => setPage("sim")}>
             <div>
               <div className="home-sim-title">
                 <Ic d={IC.plane} size={13} />
-                {"  "}{lang === "ru" ? "Р СљРЎС“Р В»РЎРЉРЎвЂљР С‘РЎР‚Р С•РЎС“Р СР С‘Р Р…Р С–" : "Route Planner"}
+                {"  "}{lang === "ru" ? "Мультироуминг" : "Route Planner"}
               </div>
               <div className="home-sim-sub">
                 {lang === "ru"
-                  ? "Р вЂњР ВµРЎР‚Р СР В°Р Р…Р С‘РЎРЏ РІвЂ вЂ™ Р С’Р Р†РЎРѓРЎвЂљРЎР‚Р С‘РЎРЏ РІвЂ вЂ™ Р ВРЎвЂљР В°Р В»Р С‘РЎРЏ? Р СњР В°Р в„–Р Т‘РЎвЂР С Р В»РЎС“РЎвЂЎРЎв‚¬РЎС“РЎР‹ SIM Р Т‘Р В»РЎРЏ Р Р†РЎРѓР ВµР С–Р С• Р СР В°РЎР‚РЎв‚¬РЎР‚РЎС“РЎвЂљР В°."
-                  : "Germany РІвЂ вЂ™ Austria РІвЂ вЂ™ Italy? Find the best SIM for your whole route."}
+                  ? "Германия → Австрия → Италия? Найдём лучшую SIM для всего маршрута."
+                  : "Germany → Austria → Italy? Find the best SIM for your whole route."}
               </div>
             </div>
-            <span className="home-sim-arrow">РІвЂ вЂ™</span>
+            <span className="home-sim-arrow">→</span>
           </div>
 
         </div>
@@ -3538,10 +4661,10 @@ export default function Home() {
         <div className="home-wrap">
           <div className="home-hero">
             <h1 className="home-hero-h1">
-              {lang === "ru" ? "Р вЂєРЎС“РЎвЂЎРЎв‚¬Р В°РЎРЏ SIM Р Т‘Р В»РЎРЏ Р Р†Р В°РЎв‚¬Р ВµР в„– Р С—Р С•Р ВµР В·Р Т‘Р С”Р С‘" : "Find the best SIM for your trip"}
+              {lang === "ru" ? "Лучшая SIM для вашей поездки" : "Find the best SIM for your trip"}
             </h1>
             <p className="home-hero-sub">
-              {lang === "ru" ? "Р вЂ™РЎвЂ№Р В±Р ВµРЎР‚Р С‘РЎвЂљР Вµ Р Р…Р В°Р С—РЎР‚Р В°Р Р†Р В»Р ВµР Р…Р С‘Р Вµ, РЎвЂЎРЎвЂљР С•Р В±РЎвЂ№ Р С—РЎР‚Р С•Р Т‘Р С•Р В»Р В¶Р С‘РЎвЂљРЎРЉ." : "Select a destination to continue."}
+              {lang === "ru" ? "Выберите направление, чтобы продолжить." : "Select a destination to continue."}
             </p>
           </div>
           <HomePicker
@@ -3563,7 +4686,7 @@ export default function Home() {
       {modalPlan && (
         <Modal plan={modalPlan} days={days} lang={lang} onClose={() => setModalPlan(null)} />
       )}
-      {/* Global footer РІР‚вЂќ report data issue */}
+      {/* Global footer — report data issue */}
       <div style={{ textAlign: "center", padding: "1.5rem 1.25rem", borderTop: "1px solid #e8eaef", marginTop: "2rem" }}>
         <a
           href={buildReportMailto({
@@ -3577,7 +4700,7 @@ export default function Home() {
           <svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
           </svg>
-          {lang === "ru" ? "Р РЋР С•Р С•Р В±РЎвЂ°Р С‘РЎвЂљРЎРЉ Р С•Р В± Р С•РЎв‚¬Р С‘Р В±Р С”Р Вµ Р Р† Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦" : "Report a data issue"} Р’В· hello@jeckovich.uk
+          {lang === "ru" ? "Сообщить об ошибке в данных" : "Report a data issue"} · hello@jeckovich.uk
         </a>
       </div>
     </>

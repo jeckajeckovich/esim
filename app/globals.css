@@ -14,7 +14,7 @@ body {
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 
-/* ── Nav ──────────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Nav РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .nav {
   background: #ffffff; border-bottom: 1px solid #e8eaef;
   padding: 0.875rem 1.5rem; display: flex; align-items: center; gap: 1rem;
@@ -25,7 +25,7 @@ body {
 .nav-sub { font-size: 12px; color: #9ca3af; font-weight: 400; }
 .nav-right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
 
-/* ── Buttons ─────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Buttons РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .btn-ghost {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px;
   border: 1px solid #e0e3ea; border-radius: 8px; background: #ffffff; color: #4b5563;
@@ -51,7 +51,7 @@ body {
 .btn-primary:hover:not(:disabled) { opacity: 0.88; }
 .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
 
-/* Official source — blue (local operators only) */
+/* Official source РІР‚вЂќ blue (local operators only) */
 .btn-source {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
   border: 1px solid #dbeafe; border-radius: 6px; background: #eff6ff; color: #1d4ed8;
@@ -59,7 +59,7 @@ body {
 }
 .btn-source:hover { background: #dbeafe; border-color: #93c5fd; }
 
-/* View snapshot — amber (aggregator snapshots without affiliate link) */
+/* View snapshot РІР‚вЂќ amber (aggregator snapshots without affiliate link) */
 .btn-source-snap {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
   border: 1px solid #fcd34d; border-radius: 6px; background: #fffbeb; color: #b45309;
@@ -67,7 +67,7 @@ body {
 }
 .btn-source-snap:hover { background: #fef3c7; border-color: #f59e0b; }
 
-/* Buy travel eSIM — amber filled (when affiliate_url exists) */
+/* Buy travel eSIM РІР‚вЂќ amber filled (when affiliate_url exists) */
 .btn-buy-esim {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
   border: 1px solid #f59e0b; border-radius: 6px; background: #fef3c7; color: #92400e;
@@ -75,16 +75,16 @@ body {
 }
 .btn-buy-esim:hover { background: #fde68a; border-color: #d97706; }
 
-/* ── Page layout ──────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Page layout РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .page-wrap { max-width: 620px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
 .results-wrap { max-width: 680px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
 
-/* ── Labels ──────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Labels РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; display: block; }
 .top-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; }
 .sec-title { font-size: 13px; font-weight: 600; color: #0f1117; margin: 1.25rem 0 8px; }
 
-/* Section divider — separates local plans from snapshot benchmarks in All Plans tab */
+/* Section divider РІР‚вЂќ separates local plans from snapshot benchmarks in All Plans tab */
 .sec-divider {
   display: flex; align-items: center; gap: 10px;
   margin: 1.25rem 0 10px; font-size: 11px; font-weight: 700;
@@ -94,7 +94,7 @@ body {
   content: ""; flex: 1; height: 1px; background: #fcd34d;
 }
 
-/* ── Homepage layout ─────────────────────────────────────────────────────────
+/* РІвЂќР‚РІвЂќР‚ Homepage layout РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
    home-wrap: wider than page-wrap (620) so country grid has room at 4 columns.
    All homepage-specific classes are prefixed "home-" or "h" to avoid collision. */
 
@@ -155,7 +155,7 @@ body {
   flex: 1;
 }
 
-/* ── Country picker (inline on homepage) ─────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Country picker (inline on homepage) РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .hpicker {
   margin-bottom: 2rem;
 }
@@ -206,7 +206,7 @@ body {
   font-weight: 600;
 }
 
-/* Country grid — popular: 4 col; other: 4 col compact */
+/* Country grid РІР‚вЂќ popular: 4 col; other: 4 col compact */
 .hgrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -248,6 +248,33 @@ body {
 .hcard.hcard-sel {
   border-color: #2563eb;
   background: #eff6ff;
+}
+/* Seed / no-plan cards: muted; hover shifts to amber to signal "not yet available" */
+.hcard.hcard-seed {
+  opacity: 0.72;
+}
+.hcard.hcard-seed:hover {
+  border-color: #fcd34d;
+  box-shadow: none;
+  opacity: 0.88;
+}
+
+/* Wrapper that lets the inline pending message sit directly below its card */
+.hcard-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inline message shown when a seed/no-plan card is tapped */
+.hcard-pending-msg {
+  font-size: 10px;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-top: none;
+  border-radius: 0 0 7px 7px;
+  padding: 6px 9px 7px;
+  line-height: 1.5;
 }
 
 /* Popular variant: slightly larger, stronger contrast */
@@ -341,7 +368,8 @@ body {
   flex-direction: column;
   gap: 0;
 }
-/* ── Trip Simulator layout ───────────────────────────────────────────────────
+
+/* РІвЂќР‚РІвЂќР‚ Trip Simulator layout РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
    sim-wrap: wider container for the two-column layout.
    sim-body / sim-layout: side-by-side left (country grid) + right (config card). */
 
@@ -354,7 +382,7 @@ body {
   margin-bottom: 1.75rem;
 }
 
-/* Two-column layout — sim-body and sim-layout are the same */
+/* Two-column layout РІР‚вЂќ sim-body and sim-layout are the same */
 .sim-body,
 .sim-layout {
   display: grid;
@@ -369,7 +397,7 @@ body {
   }
 }
 
-/* ─ Left panel: country grid ─ */
+/* РІвЂќР‚ Left panel: country grid РІвЂќР‚ */
 .sim-left {
   min-width: 0;
 }
@@ -391,7 +419,7 @@ body {
   .country-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Country card — sim-cc and country-card are the same */
+/* Country card РІР‚вЂќ sim-cc and country-card are the same */
 .sim-cc,
 .country-card {
   position: relative;
@@ -470,7 +498,7 @@ body {
 .sim-cc.sim-cc-sel .sim-cc-name,
 .country-card.selected .sim-cc-name { color: #1d4ed8; }
 
-/* Country badge — sim-cc-badge and country-badge are the same */
+/* Country badge РІР‚вЂќ sim-cc-badge and country-badge are the same */
 .sim-cc-badge,
 .country-badge {
   font-size: 8px;
@@ -507,7 +535,7 @@ body {
   padding: 6px 0;
 }
 
-/* ─ Right panel: trip config ─ */
+/* РІвЂќР‚ Right panel: trip config РІвЂќР‚ */
 .sim-right {
   position: sticky;
   top: 1rem;
@@ -533,7 +561,7 @@ body {
   margin: 0.875rem 0;
 }
 
-/* trip-section — wraps a labeled config section inside trip-panel */
+/* trip-section РІР‚вЂќ wraps a labeled config section inside trip-panel */
 .trip-section {
   margin-bottom: 1rem;
 }
@@ -615,7 +643,366 @@ body {
   color: #92400e;
   line-height: 1.5;
 }
-/* Route planner promo card */
+
+/* РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’
+   TRIP INTENT ENGINE РІР‚вЂќ wizard + results
+   Traveler-first flow: 5-step wizard РІвЂ вЂ™ plain-English results
+   РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’ */
+
+/* Outer wrapper */
+.tie-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+}
+
+/* Progress bar */
+.tie-progress-bar {
+  height: 3px;
+  background: #e8eaef;
+  border-radius: 2px;
+  margin: 1rem 0 1.5rem;
+  overflow: hidden;
+}
+.tie-progress-fill {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Step header */
+.tie-step-header {
+  margin-bottom: 1.5rem;
+}
+.tie-step-num {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+.tie-step-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #0f1117;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+.tie-step-sub {
+  font-size: 13px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Option card list */
+.tie-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 1.75rem;
+}
+.tie-options-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+@media (max-width: 400px) {
+  .tie-options-2col { grid-template-columns: 1fr; }
+}
+
+/* Individual option card */
+.tie-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1.5px solid #e0e3ea;
+  border-radius: 11px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.12s, background 0.1s, box-shadow 0.12s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.tie-option:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+}
+.tie-option-sel {
+  border-color: #2563eb;
+  background: #eff6ff;
+  border-width: 2px;
+}
+.tie-option-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.tie-option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.tie-option-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f1117;
+  line-height: 1.3;
+}
+.tie-option-sel .tie-option-label { color: #1d4ed8; }
+.tie-option-sub {
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+.tie-option-check {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+/* Nav bar */
+.tie-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 4px;
+}
+.tie-next-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 20px;
+  background: #0f1117;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.12s;
+  white-space: nowrap;
+}
+.tie-next-btn:hover:not(:disabled) { opacity: 0.85; }
+.tie-next-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Route summary pills */
+.tie-route-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 1rem;
+  min-height: 28px;
+}
+.tie-route-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  background: #f2f4f8;
+  border-radius: 20px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.tie-route-arrow {
+  color: #9ca3af;
+  font-size: 11px;
+  margin: 0 2px;
+}
+
+/* РІвЂќР‚РІвЂќР‚ Results page РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+.tie-results-header {
+  margin-bottom: 0.75rem;
+}
+.tie-results-context {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 4px 0 8px;
+  line-height: 1.4;
+}
+.tie-edit-btn {
+  font-size: 12px;
+  color: #6b7280;
+  background: none;
+  border: 1px solid #e0e3ea;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.1s, border-color 0.1s;
+}
+.tie-edit-btn:hover { color: #0f1117; border-color: #b0b8c8; }
+
+/* Strategy card */
+.tie-strat-card {
+  border: 1px solid #e0e3ea;
+  border-radius: 13px;
+  background: #ffffff;
+  padding: 1.125rem 1.25rem;
+  margin-bottom: 12px;
+  position: relative;
+}
+.tie-strat-card-rec {
+  border-color: #93c5fd;
+  border-width: 2px;
+  background: #f8fbff;
+}
+.tie-strat-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 3px 8px;
+  margin-bottom: 8px;
+}
+.tie-strat-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.tie-strat-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f1117;
+  line-height: 1.25;
+}
+.tie-strat-cost {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2563eb;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.tie-strat-why {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.65;
+  margin: 0 0 10px;
+}
+
+/* Activation meta pills */
+.tie-strat-meta-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.tie-meta-pill {
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.tie-meta-easy     { background: #f0fdf4; color: #15803d; }
+.tie-meta-moderate { background: #fef9c3; color: #a16207; }
+.tie-meta-complex  { background: #fff1f2; color: #be123c; }
+
+/* Coverage note */
+.tie-strat-coverage {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 11px;
+  color: #374151;
+  line-height: 1.5;
+  margin-bottom: 7px;
+}
+.tie-strat-coverage-icon { flex-shrink: 0; }
+
+/* Tradeoff note */
+.tie-strat-tradeoff {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 11px;
+  color: #92400e;
+  line-height: 1.5;
+  background: #fffbeb;
+  border-radius: 7px;
+  padding: 6px 9px;
+  margin-bottom: 8px;
+}
+.tie-strat-tradeoff-icon { flex-shrink: 0; }
+
+/* CTA inside strategy card */
+.tie-strat-cta {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #93c5fd;
+  border-radius: 7px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  transition: background 0.1s;
+}
+.tie-strat-cta:hover { background: #dbeafe; }
+
+/* Savings banner */
+.tie-savings-banner {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #15803d;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.tie-savings-diff { font-weight: 700; }
+
+/* Alternative label */
+.tie-alt-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9ca3af;
+  margin: 4px 0 8px;
+}
+
+/* Caveat */
+.tie-caveat {
+  font-size: 11px;
+  color: #9ca3af;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* No results */
+.tie-no-results {
+  text-align: center;
+  padding: 2rem 0;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
 .home-sim-card {
   display: flex;
   align-items: center;
@@ -645,7 +1032,7 @@ body {
   flex-shrink: 0;
 }
 
-/* ── Duration pills ──────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Duration pills РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .dur-row { display: flex; gap: 6px; flex-wrap: wrap; }
 .dur-btn {
   padding: 8px 14px; border: 1px solid #e0e3ea; border-radius: 20px;
@@ -655,7 +1042,7 @@ body {
 .dur-btn:hover { border-color: #b0b8c8; background: #f6f7f9; }
 .dur-btn.selected { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 600; }
 
-/* ── Preference tiles ────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Preference tiles РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .pref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .pref-tile {
   display: flex; align-items: center; gap: 8px; padding: 9px 11px;
@@ -666,11 +1053,11 @@ body {
 .pref-tile:hover { border-color: #b0b8c8; color: #0f1117; }
 .pref-tile.selected { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
 
-/* ── Chips ───────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Chips РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1.25rem; }
 .chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border: 1px solid #e0e3ea; border-radius: 20px; background: #ffffff; font-size: 11px; color: #4b5563; font-weight: 500; }
 
-/* ── Tabs ────────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Tabs РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .tab-bar { display: flex; border-bottom: 1px solid #e8eaef; overflow-x: auto; scrollbar-width: none; }
 .tab-bar::-webkit-scrollbar { display: none; }
 .tab-btn {
@@ -681,22 +1068,22 @@ body {
 .tab-btn:hover { color: #4b5563; }
 .tab-btn.active { color: #0f1117; border-bottom-color: #0f1117; }
 
-/* ── Cards ───────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Cards РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; padding: 1.125rem 1.25rem; }
 .card-featured { background: #ffffff; border: 1.5px solid #2563eb; border-radius: 12px; padding: 1.125rem 1.25rem; }
 .card-clickable { cursor: pointer; transition: border-color 0.12s; }
 .card-clickable:hover { border-color: #b0b8c8; }
 .card-green { background: #f0fdf4; border-color: #86efac; }
-/* Amber card — used when travel eSIM is the recommended option */
+/* Amber card РІР‚вЂќ used when travel eSIM is the recommended option */
 .card-amber { background: #fffbeb; border-color: #fcd34d; }
 
-/* ── Stat grid ───────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Stat grid РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
 .stat-box { background: #f2f4f8; border-radius: 8px; padding: 8px 10px; }
 .stat-val { font-size: 16px; font-weight: 700; color: #0f1117; letter-spacing: -0.02em; }
 .stat-lbl { font-size: 10px; color: #9ca3af; margin-top: 2px; }
 
-/* ── Badges ──────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Badges РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .badge {
   display: inline-flex; align-items: center; gap: 3px;
   font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid;
@@ -710,36 +1097,36 @@ body {
 .badge-purple   { background: #f5f3ff; border-color: #c4b5fd; color: #6d28d9; }
 .badge-green    { background: #f0fdf4; border-color: #86efac; color: #15803d; }
 .badge-travel   { background: #fef3c7; border-color: #fcd34d; color: #78350f; }
-/* Price snapshot badge — italic amber for plans where price may change */
+/* Price snapshot badge РІР‚вЂќ italic amber for plans where price may change */
 .badge-snapshot { background: #fef3c7; border-color: #f59e0b; color: #92400e; font-style: italic; }
 
 .badge-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
 
-/* ── Verified / snapshot inline row badges ───────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Verified / snapshot inline row badges РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .verified-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 
-/* Green checkmark — local operator plans with verified: true */
+/* Green checkmark РІР‚вЂќ local operator plans with verified: true */
 .verified-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500;
   background: #f0fdf4; border: 1px solid #86efac; color: #15803d;
 }
 
-/* Amber italic — aggregator snapshot / travel eSIM benchmark */
+/* Amber italic РІР‚вЂќ aggregator snapshot / travel eSIM benchmark */
 .snapshot-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 500;
   background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; font-style: italic;
 }
 
-/* ── Friction bar ────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Friction bar РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .friction-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .friction-label { font-size: 11px; color: #9ca3af; min-width: 88px; }
 .friction-track { flex: 1; height: 4px; background: #e8eaef; border-radius: 2px; overflow: hidden; }
 .friction-fill { height: 100%; border-radius: 2px; }
 .friction-val { font-size: 11px; min-width: 32px; text-align: right; font-weight: 600; }
 
-/* ── Alerts ──────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Alerts РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .alert { display: flex; align-items: flex-start; gap: 8px; padding: 9px 11px; border-radius: 8px; border: 1px solid; font-size: 12px; line-height: 1.55; }
 .alert + .alert { margin-top: 5px; }
 .alert-warn   { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
@@ -747,7 +1134,7 @@ body {
 .alert-ok     { background: #f0fdf4; border-color: #86efac; color: #15803d; }
 .alert-purple { background: #f5f3ff; border-color: #c4b5fd; color: #6d28d9; }
 
-/* ── Reality check block ─────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Reality check block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .reality-block {
   background: #fffbf0; border: 1px solid #fcd34d; border-left: 3px solid #f59e0b;
   border-radius: 0 8px 8px 0; padding: 10px 13px; margin: 10px 0;
@@ -758,7 +1145,266 @@ body {
 }
 .reality-text { font-size: 12px; color: #374151; line-height: 1.6; }
 
-/* ── Optimizer / insight block ───────────────────────────────────────────── */
+/* РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’
+   SCENARIO RECOMMENDATIONS PANEL (.srp-*)
+   "Which option fits your trip?" РІР‚вЂќ tabbed scenario selector with Why sections
+   РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’ */
+
+.srp-wrap {
+  margin: 12px 0;
+  border: 1px solid #e0e3ea;
+  border-radius: 13px;
+  background: #ffffff;
+  overflow: hidden;
+}
+.srp-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9ca3af;
+  padding: 10px 14px 0;
+}
+
+/* Scenario tab strip */
+.srp-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 4px;
+  padding: 8px 10px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.srp-tabs::-webkit-scrollbar { display: none; }
+
+.srp-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  border: 1px solid #e0e3ea;
+  background: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  color: #4b5563;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.1s;
+}
+.srp-tab:hover { border-color: #b0b8c8; }
+.srp-tab-active {
+  background: #0f1117;
+  color: #ffffff;
+  border-color: #0f1117;
+  font-weight: 600;
+}
+.srp-tab-icon { font-size: 13px; }
+.srp-tab-label { font-size: 11px; }
+
+/* Strategy card */
+.srp-card {
+  padding: 12px 14px;
+  border-top: 1px solid #f2f4f8;
+}
+
+/* Card header */
+.srp-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.srp-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f1117;
+  line-height: 1.3;
+}
+.srp-card-meta {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+.srp-card-renewals { color: #9ca3af; font-size: 11px; }
+.srp-card-renewals-ok { color: #15803d; }
+
+/* WB continuity badge */
+.srp-wb-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Why section */
+.srp-why-section {
+  margin-bottom: 10px;
+}
+.srp-why-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #2563eb;
+  margin-bottom: 5px;
+}
+.srp-why-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.srp-why-item {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.55;
+  padding-left: 14px;
+  position: relative;
+}
+.srp-why-item::before {
+  content: "РІвЂ вЂ™";
+  position: absolute;
+  left: 0;
+  color: #9ca3af;
+  font-size: 10px;
+  top: 1px;
+}
+
+/* Data metric row */
+.srp-data-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.srp-data-cell {
+  display: flex;
+  flex-direction: column;
+  background: #f6f7f9;
+  border-radius: 7px;
+  padding: 6px 9px;
+  min-width: 64px;
+  flex: 1;
+}
+.srp-data-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  margin-bottom: 2px;
+}
+.srp-data-val {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f1117;
+}
+.srp-data-wb { color: #2563eb; }
+.srp-setup-easy    { color: #15803d; }
+.srp-setup-moderate{ color: #a16207; }
+.srp-setup-complex { color: #be123c; }
+
+/* Fair-use warning */
+.srp-fairuse-warn {
+  font-size: 11px;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 7px;
+  padding: 8px 10px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+/* Tradeoff line */
+.srp-tradeoff {
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+/* CTA inside card */
+.srp-cta {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  background: none;
+  border: none;
+}
+.srp-cta:hover { opacity: 0.7; }
+
+/* Stacking comparison card */
+.srp-stack-card {
+  border-top: 1px solid #e8eaef;
+  padding: 12px 14px;
+  background: #f9fafb;
+}
+.srp-stack-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f1117;
+  margin-bottom: 5px;
+}
+.srp-stack-body {
+  font-size: 11px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+.srp-stack-compare {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.srp-stack-opt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 100px;
+  background: #ffffff;
+  border: 1px solid #e0e3ea;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.srp-stack-opt-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9ca3af;
+}
+.srp-stack-opt-plan { font-size: 11px; font-weight: 600; color: #0f1117; }
+.srp-stack-opt-cost { font-size: 15px; font-weight: 700; color: #0f1117; }
+.srp-stack-cheaper  { color: #15803d; }
+.srp-stack-opt-note { font-size: 10px; color: #9ca3af; }
+.srp-stack-vs {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+.srp-stack-savings {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #15803d;
+}
+
+/* РІвЂќР‚РІвЂќР‚ Optimizer / insight block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .optimizer-block {
   background: #f6f7f9; border-left: 2.5px solid #2563eb;
   padding: 10px 13px; margin: 10px 0; border-radius: 0 6px 6px 0;
@@ -769,7 +1415,7 @@ body {
 }
 .optimizer-text { font-size: 12px; color: #374151; line-height: 1.6; }
 
-/* ── App-only data note block ────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ App-only data note block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 /* Left-bordered amber block surfacing the general vs app-specific data split  */
 .app-data-block {
   display: flex; align-items: flex-start; gap: 7px;
@@ -779,9 +1425,9 @@ body {
 }
 .app-data-block strong { color: #78350f; font-weight: 700; }
 
-/* ── Data confidence note — replaces "Aggregator snapshot" disclaimer ────────
+/* РІвЂќР‚РІвЂќР‚ Data confidence note РІР‚вЂќ replaces "Aggregator snapshot" disclaimer РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
    Used when price may vary (price_snapshot, provider_listed) or data needs
-   review (needs_review). Kept subtle — one line, not a warning box.        */
+   review (needs_review). Kept subtle РІР‚вЂќ one line, not a warning box.        */
 .confidence-note {
   display: flex; align-items: flex-start; gap: 7px;
   background: #fef3c7; border: 1px solid #f59e0b; border-radius: 7px;
@@ -793,7 +1439,7 @@ body {
   background: #f9fafb; border-color: #d1d5db; color: #6b7280;
 }
 
-/* ── Alt card ────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Alt card РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .alt-card {
   background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px;
   padding: 1rem 1.125rem; cursor: pointer; display: flex; align-items: flex-start;
@@ -801,11 +1447,11 @@ body {
 }
 .alt-card:hover { border-color: #b0b8c8; }
 
-/* Aggregator snapshot card — amber tint to visually separate from local plans */
+/* Aggregator snapshot card РІР‚вЂќ amber tint to visually separate from local plans */
 .snapshot-card { border-color: #fcd34d; background: #fffbf0; }
 .snapshot-card:hover { border-color: #f59e0b; }
 
-/* ── vs Travel eSIM comparison block ─────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ vs Travel eSIM comparison block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .vs-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; padding: 1.125rem 1.25rem; margin-bottom: 10px; }
 /* Green border = local SIM recommended */
 .vs-card-local { border-color: #86efac; background: #f9fefb; }
@@ -825,14 +1471,14 @@ body {
 .vs-feat.ok   { color: #15803d; }
 .vs-feat.no   { color: #9ca3af; }
 
-/* ── Why this recommendation — key factor list ───────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Why this recommendation РІР‚вЂќ key factor list РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .why-factors { display: flex; flex-direction: column; gap: 3px; margin: 8px 0 4px; }
 .why-factor { display: flex; align-items: flex-start; gap: 6px; font-size: 11px; line-height: 1.45; padding: 1px 0; }
 .why-factor-travel { color: #92400e; }
 .why-factor-local  { color: #15803d; }
 .vs-feat.warn { color: #b45309; }  /* app-specific data note on local side */
 
-/* ── Top-up & extension options ──────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Top-up & extension options РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .topup-badge {
   display: inline-flex; align-items: center; gap: 5px;
   background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 7px;
@@ -843,7 +1489,7 @@ body {
 .ext-row { display: flex; justify-content: space-between; font-size: 12px; color: #374151; padding: 3px 0; }
 .ext-row + .ext-row { border-top: 1px solid #ddd6fe; }
 
-/* ── Roaming matrix ──────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Roaming matrix РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .roaming-matrix { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
 .matrix-header { background: #f2f4f8; padding: 10px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #4b5563; }
 .matrix-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -858,7 +1504,7 @@ body {
 .matrix-tooltip { padding: 8px 14px; font-size: 11px; color: #1d4ed8; background: #eff6ff; border-top: 1px solid #93c5fd; }
 .matrix-note { padding: 8px 14px; font-size: 11px; color: #9ca3af; background: #f8f9fb; border-top: 1px solid #e8eaef; }
 
-/* ── Country / operator cards ────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Country / operator cards РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1rem; }
 .insight-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 8px; padding: 10px; }
 .insight-label { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #9ca3af; margin-bottom: 3px; }
@@ -868,7 +1514,7 @@ body {
 .score-track { flex: 1; height: 3px; background: #e8eaef; border-radius: 2px; overflow: hidden; }
 .score-fill { height: 100%; border-radius: 2px; }
 
-/* ── Countries panel ─────────────────────────────────────────────────────────
+/* РІвЂќР‚РІвЂќР‚ Countries panel РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
    Self-contained block: cpanel wraps all country-selector chrome.
    Keeps max-width wider than the standard page-wrap (620px) so 4 columns
    have enough room without feeling cramped.                                  */
@@ -879,7 +1525,7 @@ body {
   padding-bottom: 3rem;
 }
 
-/* ─ Header chrome ─ */
+/* РІвЂќР‚ Header chrome РІвЂќР‚ */
 .cpanel-head {
   padding: 1.5rem 1.25rem 0.75rem;
 }
@@ -891,7 +1537,7 @@ body {
   margin: 0 0 14px;
 }
 
-/* ─ Search ─ */
+/* РІвЂќР‚ Search РІвЂќР‚ */
 .csearch {
   position: relative;
   margin-bottom: 10px;
@@ -936,7 +1582,7 @@ body {
 }
 .csearch-clear:hover { color: #374151; }
 
-/* ─ Filter chips ─ */
+/* РІвЂќР‚ Filter chips РІвЂќР‚ */
 .cfilters {
   display: flex;
   gap: 5px;
@@ -967,7 +1613,7 @@ body {
   font-weight: 600;
 }
 
-/* ─ Section label ─ */
+/* РІвЂќР‚ Section label РІвЂќР‚ */
 .csection-label {
   font-size: 10px;
   font-weight: 700;
@@ -977,7 +1623,7 @@ body {
   margin-bottom: 2px;
 }
 
-/* ─ No results ─ */
+/* РІвЂќР‚ No results РІвЂќР‚ */
 .cno-results {
   padding: 2.5rem 1.25rem;
   text-align: center;
@@ -985,7 +1631,7 @@ body {
   font-size: 13px;
 }
 
-/* ─ Country grid ─ */
+/* РІвЂќР‚ Country grid РІвЂќР‚ */
 .cgrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1002,7 +1648,7 @@ body {
   .cgrid { grid-template-columns: 1fr; }
 }
 
-/* ─ Country tile ─ */
+/* РІвЂќР‚ Country tile РІвЂќР‚ */
 .ctile {
   display: flex;
   flex-direction: column;
@@ -1049,7 +1695,7 @@ body {
   flex: 1;
 }
 
-/* Tiny dual score bars — one per metric */
+/* Tiny dual score bars РІР‚вЂќ one per metric */
 .ctile-scores {
   display: flex;
   flex-direction: column;
@@ -1101,7 +1747,7 @@ body {
 
 .op-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 10px; padding: 1rem; margin-bottom: 6px; }
 
-/* ── Modal ───────────────────────────────────────────────────────────────── */
+/* РІвЂќР‚РІвЂќР‚ Modal РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
 .modal-overlay { position: fixed; inset: 0; z-index: 999; display: flex; align-items: flex-end; }
 .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
 .modal-sheet {
@@ -1123,8 +1769,8 @@ body {
 }
 .modal-close:hover { color: #0f1117; }
 
-/* ── EU Nomad card ────────────────────────────────────────────────────────── */
-/* Indigo accent — visually distinct from local (green) and travel eSIM (amber) */
+/* РІвЂќР‚РІвЂќР‚ EU Nomad card РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* Indigo accent РІР‚вЂќ visually distinct from local (green) and travel eSIM (amber) */
 .eu-nomad-card {
   background: #eef2ff; border: 1.5px solid #818cf8; border-radius: 12px;
   padding: 1.125rem 1.25rem; margin-top: 10px; cursor: pointer;
@@ -1153,28 +1799,3 @@ body {
 .eu-nomad-caveats { font-size: 11px; color: #6366f1; line-height: 1.5; }
 
 .badge-eu-nomad { background: #eef2ff; border-color: #818cf8; color: #4f46e5; font-weight: 700; }
-.hcard.hcard-seed {
-  opacity: 0.72;
-}
-
-.hcard.hcard-seed:hover {
-  border-color: #fcd34d;
-  box-shadow: none;
-  opacity: 0.88;
-}
-
-.hcard-wrap {
-  display: flex;
-  flex-direction: column;
-}
-
-.hcard-pending-msg {
-  font-size: 10px;
-  color: #92400e;
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  border-top: none;
-  border-radius: 0 0 7px 7px;
-  padding: 6px 9px 7px;
-  line-height: 1.5;
-}

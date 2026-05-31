@@ -1,13 +1,13 @@
 // app/components/TripSimulator/types.ts
-// ─────────────────────────────────────
+// в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 // Shared types for TripSimulator components.
-// These mirror the types in page.tsx — kept in sync manually.
+// These mirror the types in page.tsx вЂ” kept in sync manually.
 // When page.tsx types evolve, update this file too.
 
 export type Lang     = "en" | "ru";
 export type SimUsage = "light" | "medium" | "heavy";
 
-// Minimal CountryCode — extend when countries.json grows
+// Minimal CountryCode вЂ” extend when countries.json grows
 export type CountryCode = string;
 
 export type CountryMeta = {
