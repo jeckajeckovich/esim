@@ -1,0 +1,117 @@
+country:
+  code: MK
+  name: North Macedonia
+
+currency:
+  code: MKD
+  symbol: den
+
+operators:
+
+  - id: a1_mk
+    name: A1 Macedonia
+
+    esim_available: true
+    online_purchase: true
+
+    packages:
+
+      - id: monthly_1gb
+
+        title: Monthly Bundle 1GB
+
+        price_mkd: 99
+        validity_days: 30
+
+        internet:
+
+          national_gb: 1
+
+      - id: monthly_3gb
+
+        title: Monthly Bundle 3GB
+
+        price_mkd: 199
+        validity_days: 30
+
+        internet:
+
+          national_gb: 3
+
+      - id: monthly_22gb
+
+        title: Monthly Bundle 22GB
+
+        price_mkd: 399
+        validity_days: 30
+
+        internet:
+
+          national_gb: 20
+
+          western_balkans_gb: 2
+
+        roaming:
+
+          western_balkans:
+            included: true
+
+            countries:
+
+              - Serbia
+              - Bosnia and Herzegovina
+              - Montenegro
+              - Albania
+              - Kosovo
+
+      - id: monthly_66gb
+
+        title: Monthly Bundle 66GB
+
+        price_mkd: 599
+        validity_days: 30
+
+        internet:
+
+          national_gb: 60
+
+          roaming_gb: 6
+
+        roaming:
+
+          countries_count: 9
+
+      - id: prepaid_50gb
+
+        title: Prepaid 50GB
+
+        price_mkd: 399
+        validity_days: 30
+
+        internet:
+
+          national_gb: 50
+
+        activation:
+
+          my_a1_app_only: true
+
+    starter_sim:
+
+      price_mkd: 399
+
+      included:
+
+        national_gb: 20
+
+        western_balkans_gb: 2
+
+        balance_mkd: 49
+
+        unlimited_calls_a1_days: 7
+
+    notes:
+
+      - A1 explicitly includes Western Balkans roaming in selected prepaid bundles.
+      - eSIM officially supported.
+      - Online ordering available.

@@ -1,47 +1,380 @@
-meta:
-  operator_id: orange_flex_pl
-  country_code: PL
-  source_url: https://flex.orange.pl/en/flex-for-you
-  source_name: Orange Flex official
-  last_verified: "2026-Q2"
-  verified_by: manual
-  data_confidence: verified_manual
-  notes: >
-    Orange Flex is app-only. Foreign passports accepted. No EU residency required.
-    EU nomad strategy — Polish number usable across EU via roaming.
-    Spec-provided data: 35 PLN (~€8) / 75 GB domestic / 12.03 GB EU roaming.
-    EU roaming source: https://flex.orange.pl/en/services/roaming
-    PLN→EUR rate used: 4.25 PLN = 1 EUR (approximate, verify before publishing)
-  caveats:
-    - "PLN price is confirmed (35 PLN). EUR conversion approximate."
-    - "12.03 GB EU roaming is spec-confirmed, not fetched live."
-    - "75 GB domestic confirmed per spec. Verify current tier."
+country:
+  code: PL
+  name: Poland
+  currency: PLN
 
-plans:
-  - raw_title: "Orange Flex Basic"
-    raw_price_pln: 35.00
-    raw_price_eur: 8.24
-    raw_data_domestic_gb: 75
-    raw_data_eu_roaming_gb: 12.03
-    raw_data: "75 GB (domestic) / 12.03 GB EU roaming"
-    raw_eu_roaming_gb: 12.03
-    raw_duration_days: 30
-    raw_eu_roaming: true
-    raw_esim: true
-    raw_app_only: true
-    raw_online_purchase: true
-    raw_activation_before_arrival: true
-    raw_store_visit: false
-    raw_kyc: false
-    raw_passport_required: true
-    raw_foreign_passport_ok: true
-    raw_eu_residency_required: false
-    raw_local_number: true
-    raw_number_country: "PL"
-    raw_renewable: true
-    raw_auto_renew: true
-    raw_highlight: "EU Nomad Pick"
-    raw_category: "regional_eu"
-    raw_nomad_type: "eu_nomad"
-    raw_confidence_note: "Price and roaming GB confirmed per spec. EUR conversion approximate."
-    data_confidence: verified_manual
+last_verified: 2026-06
+
+operators:
+
+  - id: orange_flex
+    name: Orange Flex
+    operator_type: app_only
+    esim_supported: true
+    online_purchase: true
+
+    plans:
+
+      - id: flex75
+        name: Flex 75
+        price_pln: 35
+        validity_days: 30
+        data_pl_gb: 75
+        data_eu_gb: 12.03
+        calls_sms_mms: unlimited
+
+      - id: flex150
+        name: Flex 150
+        price_pln: 50
+        validity_days: 30
+        data_pl_gb: 150
+        data_eu_gb: 17.18
+        calls_sms_mms: unlimited
+
+      - id: flex_unlmtd
+        name: UNLMTD
+        price_pln: 80
+        validity_days: 30
+        data_pl: unlimited
+        fair_use_gb: 250
+        data_eu_gb: 27.49
+        calls_sms_mms: unlimited
+
+    notes:
+      - Full eSIM support
+      - Managed entirely through mobile application
+      - Unlimited calls/SMS/MMS included
+
+    source:
+      - https://flex.orange.pl
+
+  - id: tmobile
+    name: T-Mobile Polska
+    operator_type: prepaid
+    esim_supported: true
+    online_purchase: true
+
+    starter:
+
+      starter_price_pln: 5
+
+      first_month_offer:
+        available: true
+        first_month_price_pln: 0
+        minimum_topup_pln: 10
+
+    plans:
+
+      - id: go_s
+        name: GO! S
+
+        price_pln: 30
+        validity_days: 30
+
+        data_pl_gb: 30
+        data_eu_gb: 10.31
+
+        calls_sms_mms: unlimited
+
+        bonus_consent_gb: 200
+
+        activation:
+
+          ussd: "*600*1*2#"
+          sms: "AKTS -> 8066"
+
+      - id: go_m
+        name: GO! M
+
+        price_pln: 35
+        validity_days: 30
+
+        data_pl_gb: 50
+        data_eu_gb: 12.03
+
+        calls_sms_mms: unlimited
+
+        yearly_bonus_gb: 9999
+
+        bonus_start_gb: 200
+        bonus_consent_gb: 200
+
+        activation:
+
+          ussd: "*600*1*3#"
+          sms: "AKTM -> 8066"
+
+      - id: go_l
+        name: GO! L
+
+        price_pln: 45
+        validity_days: 30
+
+        data_pl_gb: 150
+        data_eu_gb: 15.47
+
+        calls_sms_mms: unlimited
+
+        yearly_bonus_gb: 9999
+
+        bonus_start_gb: 200
+        bonus_consent_gb: 200
+
+        youtube_premium_months: 2
+
+        activation:
+
+          ussd: "*600*1*5#"
+          sms: "AKTL -> 8066"
+
+      - id: go_xl
+        name: GO! XL
+
+        price_pln: 50
+        validity_days: 30
+
+        data_pl_gb: 300
+        data_eu_gb: 17.19
+
+        calls_sms_mms: unlimited
+
+        yearly_bonus_gb: 9999
+
+        bonus_start_gb: 200
+        bonus_consent_gb: 200
+
+        youtube_premium_months: 3
+
+        activation:
+
+          ussd: "*600*1*6#"
+          sms: "AKTXL -> 8066"
+
+    notes:
+      - Unlimited calls/SMS/MMS on all GO plans
+      - Up to 9999 GB annual promotional bonus
+      - Additional 200 GB bonus for marketing consent
+      - eSIM available
+
+    source:
+      - https://www.t-mobile.pl/c/na-karte
+
+  - id: plus
+    name: Plus Polska
+    operator_type: prepaid
+    esim_supported: true
+
+    starter_offers:
+
+      - id: everything35
+
+        name: Wszystko 35
+
+        starter_price_pln: 5
+
+        initial_package:
+
+          data_gb: 6
+          validity_days: 15
+          balance_pln: 5
+
+        after_activation:
+
+          monthly_price_pln: 35
+
+          data_gb: 50
+
+          yearly_bonus_gb: 9900
+
+          monthly_bonus_gb: 825
+
+          calls_sms_mms: unlimited
+
+      - id: ukraine
+
+        name: Ukraine Package
+
+        starter_price_pln: 5
+
+        initial_package:
+
+          data_gb: 6
+          validity_days: 15
+          balance_pln: 5
+
+        after_activation:
+
+          monthly_price_pln: 35
+
+          data_gb: 50
+
+          yearly_bonus_gb: 9900
+
+          minutes_to_ukraine: 1000
+
+          supported_networks:
+
+            - Kyivstar
+            - Vodafone UA
+            - Lifecell
+
+      - id: konto_wazne_rok
+
+        name: Konto Ważne Rok
+
+        starter_price_pln: 5
+
+        initial_package:
+
+          data_gb: 6
+          validity_days: 15
+          balance_pln: 5
+
+        features:
+
+          account_validity_days: 365
+
+          marketing_bonus_gb: 400
+
+      - id: miesiac_za_darmo
+
+        name: Miesiąc za Darmo
+
+        starter_price_pln: 5
+
+        included:
+
+          data_gb: 50
+          validity_days: 30
+
+          calls_sms_mms: unlimited
+
+          yearly_bonus_gb: 9900
+
+    plans:
+
+      - id: chill
+
+        name: Chill
+
+        price_pln: 30
+        validity_days: 30
+
+        data_pl_gb: 30
+        data_eu_gb: 10.31
+
+        calls_sms_mms: unlimited
+
+      - id: max
+
+        name: Max
+
+        price_pln: 35
+        validity_days: 30
+
+        data_pl_gb: 50
+        data_eu_gb: 12.02
+
+        yearly_bonus_gb: 9900
+
+        calls_sms_mms: unlimited
+
+      - id: pro
+
+        name: Pro
+
+        price_pln: 45
+        validity_days: 30
+
+        data_pl_gb: 100
+        data_eu_gb: 15.46
+
+        yearly_bonus_gb: 14400
+
+        calls_sms_mms: unlimited
+
+      - id: ultra
+
+        name: Ultra
+
+        price_pln: 50
+        validity_days: 30
+
+        data_pl_gb: 200
+        data_eu_gb: 17.18
+
+        calls_sms_mms: unlimited
+
+      - id: unlimited_6m
+
+        name: Unlimited 6 Months
+
+        price_pln: 50
+
+        first_6_months:
+          data: unlimited
+
+        next_6_months:
+          data_gb: 1500
+
+        bonus:
+          - Disney+
+
+    add_on_packages:
+
+      - id: add5
+        price_pln: 5
+        data_gb: 5
+        validity_days: 5
+
+      - id: add10
+        price_pln: 10
+        data_gb: 10
+        validity_days: 10
+
+      - id: add30
+        price_pln: 30
+        data_gb: 30
+        validity_days: 30
+
+    notes:
+      - Strong long-term value due to 9900 GB and 14400 GB promotions
+      - Tourist starter available from 5 PLN
+      - eSIM supported
+
+    source:
+      - https://www.plus.pl
+
+recommendations:
+
+  cheapest:
+    operator: plus
+    plan: max
+    price_pln: 35
+
+  best_value:
+    operator: tmobile
+    plan: go_xl
+
+  best_esim:
+    operator: orange_flex
+    plan: flex150
+
+  highest_data:
+    operator: tmobile
+    plan: go_xl
+    data_pl_gb: 300
+
+  long_term_resident:
+    operator: plus
+    plan: max
+    yearly_bonus_gb: 9900
+
+simroam_notes:
+
+  - All three operators are suitable for tourists.
+  - All three operators are suitable for residence permit holders.
+  - eSIM available from Orange Flex and T-Mobile.
+  - Plus offers strongest long-term promotional traffic.
+  - T-Mobile currently offers highest monthly data allowance.
+  - Orange Flex is easiest for foreign tourists due to app-first onboarding.

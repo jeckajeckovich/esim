@@ -14,7 +14,7 @@ body {
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 
-/* РІвЂќР‚РІвЂќР‚ Nav РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Nav ──────────────────────────────────────────────────────────────────── */
 .nav {
   background: #ffffff; border-bottom: 1px solid #e8eaef;
   padding: 0.875rem 1.5rem; display: flex; align-items: center; gap: 1rem;
@@ -25,7 +25,7 @@ body {
 .nav-sub { font-size: 12px; color: #9ca3af; font-weight: 400; }
 .nav-right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
 
-/* РІвЂќР‚РІвЂќР‚ Buttons РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
 .btn-ghost {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px;
   border: 1px solid #e0e3ea; border-radius: 8px; background: #ffffff; color: #4b5563;
@@ -51,7 +51,7 @@ body {
 .btn-primary:hover:not(:disabled) { opacity: 0.88; }
 .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
 
-/* Official source РІР‚вЂќ blue (local operators only) */
+/* Official source — blue (local operators only) */
 .btn-source {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
   border: 1px solid #dbeafe; border-radius: 6px; background: #eff6ff; color: #1d4ed8;
@@ -59,7 +59,7 @@ body {
 }
 .btn-source:hover { background: #dbeafe; border-color: #93c5fd; }
 
-/* View snapshot РІР‚вЂќ amber (aggregator snapshots without affiliate link) */
+/* View snapshot — amber (aggregator snapshots without affiliate link) */
 .btn-source-snap {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
   border: 1px solid #fcd34d; border-radius: 6px; background: #fffbeb; color: #b45309;
@@ -67,7 +67,7 @@ body {
 }
 .btn-source-snap:hover { background: #fef3c7; border-color: #f59e0b; }
 
-/* Buy travel eSIM РІР‚вЂќ amber filled (when affiliate_url exists) */
+/* Buy travel eSIM — amber filled (when affiliate_url exists) */
 .btn-buy-esim {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
   border: 1px solid #f59e0b; border-radius: 6px; background: #fef3c7; color: #92400e;
@@ -75,16 +75,16 @@ body {
 }
 .btn-buy-esim:hover { background: #fde68a; border-color: #d97706; }
 
-/* РІвЂќР‚РІвЂќР‚ Page layout РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Page layout ──────────────────────────────────────────────────────────── */
 .page-wrap { max-width: 620px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
 .results-wrap { max-width: 680px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
 
-/* РІвЂќР‚РІвЂќР‚ Labels РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Labels ──────────────────────────────────────────────────────────────── */
 .field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; display: block; }
 .top-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; }
 .sec-title { font-size: 13px; font-weight: 600; color: #0f1117; margin: 1.25rem 0 8px; }
 
-/* Section divider РІР‚вЂќ separates local plans from snapshot benchmarks in All Plans tab */
+/* Section divider — separates local plans from snapshot benchmarks in All Plans tab */
 .sec-divider {
   display: flex; align-items: center; gap: 10px;
   margin: 1.25rem 0 10px; font-size: 11px; font-weight: 700;
@@ -94,7 +94,7 @@ body {
   content: ""; flex: 1; height: 1px; background: #fcd34d;
 }
 
-/* РІвЂќР‚РІвЂќР‚ Homepage layout РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+/* ── Homepage layout ─────────────────────────────────────────────────────────
    home-wrap: wider than page-wrap (620) so country grid has room at 4 columns.
    All homepage-specific classes are prefixed "home-" or "h" to avoid collision. */
 
@@ -155,7 +155,7 @@ body {
   flex: 1;
 }
 
-/* РІвЂќР‚РІвЂќР‚ Country picker (inline on homepage) РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Country picker (inline on homepage) ─────────────────────────────────── */
 .hpicker {
   margin-bottom: 2rem;
 }
@@ -206,7 +206,7 @@ body {
   font-weight: 600;
 }
 
-/* Country grid РІР‚вЂќ popular: 4 col; other: 4 col compact */
+/* Country grid — popular: 4 col; other: 4 col compact */
 .hgrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -264,6 +264,61 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+/* ── WB country coverage pills ──────────────────────────────────────────────
+   Tourist-facing badges on plan cards showing which countries are covered    */
+.wb-country-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 12px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
+
+/* ── Mobile overflow fixes ───────────────────────────────────────────────────
+   Prevent filter buttons and tabs from being clipped on narrow screens        */
+
+/* On very narrow screens, htabs scrolls horizontally */
+@media (max-width: 380px) {
+  .htabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .htabs::-webkit-scrollbar { display: none; }
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chip-row::-webkit-scrollbar { display: none; }
+
+/* Scenario recommendation tabs — always scrollable on mobile */
+.srp-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 4px;
+  padding: 8px 10px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* prevent wrapping — scroll instead */
+  flex-wrap: nowrap;
+}
+.srp-tabs::-webkit-scrollbar { display: none; }
 
 /* Inline message shown when a seed/no-plan card is tapped */
 .hcard-pending-msg {
@@ -369,7 +424,7 @@ body {
   gap: 0;
 }
 
-/* РІвЂќР‚РІвЂќР‚ Trip Simulator layout РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+/* ── Trip Simulator layout ───────────────────────────────────────────────────
    sim-wrap: wider container for the two-column layout.
    sim-body / sim-layout: side-by-side left (country grid) + right (config card). */
 
@@ -382,7 +437,7 @@ body {
   margin-bottom: 1.75rem;
 }
 
-/* Two-column layout РІР‚вЂќ sim-body and sim-layout are the same */
+/* Two-column layout — sim-body and sim-layout are the same */
 .sim-body,
 .sim-layout {
   display: grid;
@@ -397,7 +452,7 @@ body {
   }
 }
 
-/* РІвЂќР‚ Left panel: country grid РІвЂќР‚ */
+/* ─ Left panel: country grid ─ */
 .sim-left {
   min-width: 0;
 }
@@ -419,7 +474,7 @@ body {
   .country-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Country card РІР‚вЂќ sim-cc and country-card are the same */
+/* Country card — sim-cc and country-card are the same */
 .sim-cc,
 .country-card {
   position: relative;
@@ -498,7 +553,7 @@ body {
 .sim-cc.sim-cc-sel .sim-cc-name,
 .country-card.selected .sim-cc-name { color: #1d4ed8; }
 
-/* Country badge РІР‚вЂќ sim-cc-badge and country-badge are the same */
+/* Country badge — sim-cc-badge and country-badge are the same */
 .sim-cc-badge,
 .country-badge {
   font-size: 8px;
@@ -535,7 +590,7 @@ body {
   padding: 6px 0;
 }
 
-/* РІвЂќР‚ Right panel: trip config РІвЂќР‚ */
+/* ─ Right panel: trip config ─ */
 .sim-right {
   position: sticky;
   top: 1rem;
@@ -561,7 +616,7 @@ body {
   margin: 0.875rem 0;
 }
 
-/* trip-section РІР‚вЂќ wraps a labeled config section inside trip-panel */
+/* trip-section — wraps a labeled config section inside trip-panel */
 .trip-section {
   margin-bottom: 1rem;
 }
@@ -644,10 +699,10 @@ body {
   line-height: 1.5;
 }
 
-/* РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’
-   TRIP INTENT ENGINE РІР‚вЂќ wizard + results
-   Traveler-first flow: 5-step wizard РІвЂ вЂ™ plain-English results
-   РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’ */
+/* ══════════════════════════════════════════════════════════════════════════════
+   TRIP INTENT ENGINE — wizard + results
+   Traveler-first flow: 5-step wizard → plain-English results
+   ══════════════════════════════════════════════════════════════════════════════ */
 
 /* Outer wrapper */
 .tie-wrap {
@@ -824,7 +879,7 @@ body {
   margin: 0 2px;
 }
 
-/* РІвЂќР‚РІвЂќР‚ Results page РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Results page ─────────────────────────────────────────────────────────── */
 .tie-results-header {
   margin-bottom: 0.75rem;
 }
@@ -1002,20 +1057,17 @@ body {
   color: #9ca3af;
   font-size: 13px;
 }
-
-.home-sim-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: #f6f7f9;
+ .home-sim-card {
   border: 1px solid #e0e3ea;
   border-radius: 12px;
   padding: 1rem 1.25rem;
   cursor: pointer;
   transition: border-color 0.12s;
 }
-.home-sim-card:hover { border-color: #b0b8c8; }
+
+.home-sim-card:hover {
+  border-color: #b0b8c8;
+}
 .home-sim-title {
   font-size: 13px;
   font-weight: 700;
@@ -1032,7 +1084,7 @@ body {
   flex-shrink: 0;
 }
 
-/* РІвЂќР‚РІвЂќР‚ Duration pills РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Duration pills ──────────────────────────────────────────────────────── */
 .dur-row { display: flex; gap: 6px; flex-wrap: wrap; }
 .dur-btn {
   padding: 8px 14px; border: 1px solid #e0e3ea; border-radius: 20px;
@@ -1042,7 +1094,7 @@ body {
 .dur-btn:hover { border-color: #b0b8c8; background: #f6f7f9; }
 .dur-btn.selected { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 600; }
 
-/* РІвЂќР‚РІвЂќР‚ Preference tiles РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Preference tiles ────────────────────────────────────────────────────── */
 .pref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .pref-tile {
   display: flex; align-items: center; gap: 8px; padding: 9px 11px;
@@ -1053,11 +1105,11 @@ body {
 .pref-tile:hover { border-color: #b0b8c8; color: #0f1117; }
 .pref-tile.selected { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
 
-/* РІвЂќР‚РІвЂќР‚ Chips РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
-.chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1.25rem; }
+/* ── Chips ───────────────────────────────────────────────────────────────── */
+/* chip-row is defined earlier with overflow-x: auto for mobile */
 .chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border: 1px solid #e0e3ea; border-radius: 20px; background: #ffffff; font-size: 11px; color: #4b5563; font-weight: 500; }
 
-/* РІвЂќР‚РІвЂќР‚ Tabs РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
 .tab-bar { display: flex; border-bottom: 1px solid #e8eaef; overflow-x: auto; scrollbar-width: none; }
 .tab-bar::-webkit-scrollbar { display: none; }
 .tab-btn {
@@ -1068,22 +1120,22 @@ body {
 .tab-btn:hover { color: #4b5563; }
 .tab-btn.active { color: #0f1117; border-bottom-color: #0f1117; }
 
-/* РІвЂќР‚РІвЂќР‚ Cards РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Cards ───────────────────────────────────────────────────────────────── */
 .card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; padding: 1.125rem 1.25rem; }
 .card-featured { background: #ffffff; border: 1.5px solid #2563eb; border-radius: 12px; padding: 1.125rem 1.25rem; }
 .card-clickable { cursor: pointer; transition: border-color 0.12s; }
 .card-clickable:hover { border-color: #b0b8c8; }
 .card-green { background: #f0fdf4; border-color: #86efac; }
-/* Amber card РІР‚вЂќ used when travel eSIM is the recommended option */
+/* Amber card — used when travel eSIM is the recommended option */
 .card-amber { background: #fffbeb; border-color: #fcd34d; }
 
-/* РІвЂќР‚РІвЂќР‚ Stat grid РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Stat grid ───────────────────────────────────────────────────────────── */
 .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
 .stat-box { background: #f2f4f8; border-radius: 8px; padding: 8px 10px; }
 .stat-val { font-size: 16px; font-weight: 700; color: #0f1117; letter-spacing: -0.02em; }
 .stat-lbl { font-size: 10px; color: #9ca3af; margin-top: 2px; }
 
-/* РІвЂќР‚РІвЂќР‚ Badges РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Badges ──────────────────────────────────────────────────────────────── */
 .badge {
   display: inline-flex; align-items: center; gap: 3px;
   font-size: 11px; padding: 2px 8px; border-radius: 20px; border: 1px solid;
@@ -1097,36 +1149,36 @@ body {
 .badge-purple   { background: #f5f3ff; border-color: #c4b5fd; color: #6d28d9; }
 .badge-green    { background: #f0fdf4; border-color: #86efac; color: #15803d; }
 .badge-travel   { background: #fef3c7; border-color: #fcd34d; color: #78350f; }
-/* Price snapshot badge РІР‚вЂќ italic amber for plans where price may change */
+/* Price snapshot badge — italic amber for plans where price may change */
 .badge-snapshot { background: #fef3c7; border-color: #f59e0b; color: #92400e; font-style: italic; }
 
 .badge-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
 
-/* РІвЂќР‚РІвЂќР‚ Verified / snapshot inline row badges РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Verified / snapshot inline row badges ───────────────────────────────── */
 .verified-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 
-/* Green checkmark РІР‚вЂќ local operator plans with verified: true */
+/* Green checkmark — local operator plans with verified: true */
 .verified-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500;
   background: #f0fdf4; border: 1px solid #86efac; color: #15803d;
 }
 
-/* Amber italic РІР‚вЂќ aggregator snapshot / travel eSIM benchmark */
+/* Amber italic — aggregator snapshot / travel eSIM benchmark */
 .snapshot-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 500;
   background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; font-style: italic;
 }
 
-/* РІвЂќР‚РІвЂќР‚ Friction bar РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Friction bar ────────────────────────────────────────────────────────── */
 .friction-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .friction-label { font-size: 11px; color: #9ca3af; min-width: 88px; }
 .friction-track { flex: 1; height: 4px; background: #e8eaef; border-radius: 2px; overflow: hidden; }
 .friction-fill { height: 100%; border-radius: 2px; }
 .friction-val { font-size: 11px; min-width: 32px; text-align: right; font-weight: 600; }
 
-/* РІвЂќР‚РІвЂќР‚ Alerts РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Alerts ──────────────────────────────────────────────────────────────── */
 .alert { display: flex; align-items: flex-start; gap: 8px; padding: 9px 11px; border-radius: 8px; border: 1px solid; font-size: 12px; line-height: 1.55; }
 .alert + .alert { margin-top: 5px; }
 .alert-warn   { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
@@ -1134,7 +1186,7 @@ body {
 .alert-ok     { background: #f0fdf4; border-color: #86efac; color: #15803d; }
 .alert-purple { background: #f5f3ff; border-color: #c4b5fd; color: #6d28d9; }
 
-/* РІвЂќР‚РІвЂќР‚ Reality check block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Reality check block ─────────────────────────────────────────────────── */
 .reality-block {
   background: #fffbf0; border: 1px solid #fcd34d; border-left: 3px solid #f59e0b;
   border-radius: 0 8px 8px 0; padding: 10px 13px; margin: 10px 0;
@@ -1145,10 +1197,10 @@ body {
 }
 .reality-text { font-size: 12px; color: #374151; line-height: 1.6; }
 
-/* РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’
+/* ══════════════════════════════════════════════════════════════════════════════
    SCENARIO RECOMMENDATIONS PANEL (.srp-*)
-   "Which option fits your trip?" РІР‚вЂќ tabbed scenario selector with Why sections
-   РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’РІвЂўС’ */
+   "Which option fits your trip?" — tabbed scenario selector with Why sections
+   ══════════════════════════════════════════════════════════════════════════════ */
 
 .srp-wrap {
   margin: 12px 0;
@@ -1167,16 +1219,6 @@ body {
 }
 
 /* Scenario tab strip */
-.srp-tabs {
-  display: flex;
-  overflow-x: auto;
-  gap: 4px;
-  padding: 8px 10px;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-.srp-tabs::-webkit-scrollbar { display: none; }
-
 .srp-tab {
   display: flex;
   align-items: center;
@@ -1270,7 +1312,7 @@ body {
   position: relative;
 }
 .srp-why-item::before {
-  content: "РІвЂ вЂ™";
+  content: "→";
   position: absolute;
   left: 0;
   color: #9ca3af;
@@ -1342,6 +1384,12 @@ body {
   color: #2563eb;
   background: none;
   border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  margin-top: 2px;
+  text-decoration: none;
+  transition: opacity 0.1s;
 }
 .srp-cta:hover { opacity: 0.7; }
 
@@ -1404,7 +1452,7 @@ body {
   color: #15803d;
 }
 
-/* РІвЂќР‚РІвЂќР‚ Optimizer / insight block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Optimizer / insight block ───────────────────────────────────────────── */
 .optimizer-block {
   background: #f6f7f9; border-left: 2.5px solid #2563eb;
   padding: 10px 13px; margin: 10px 0; border-radius: 0 6px 6px 0;
@@ -1415,7 +1463,7 @@ body {
 }
 .optimizer-text { font-size: 12px; color: #374151; line-height: 1.6; }
 
-/* РІвЂќР‚РІвЂќР‚ App-only data note block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── App-only data note block ────────────────────────────────────────────── */
 /* Left-bordered amber block surfacing the general vs app-specific data split  */
 .app-data-block {
   display: flex; align-items: flex-start; gap: 7px;
@@ -1425,9 +1473,9 @@ body {
 }
 .app-data-block strong { color: #78350f; font-weight: 700; }
 
-/* РІвЂќР‚РІвЂќР‚ Data confidence note РІР‚вЂќ replaces "Aggregator snapshot" disclaimer РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+/* ── Data confidence note — replaces "Aggregator snapshot" disclaimer ────────
    Used when price may vary (price_snapshot, provider_listed) or data needs
-   review (needs_review). Kept subtle РІР‚вЂќ one line, not a warning box.        */
+   review (needs_review). Kept subtle — one line, not a warning box.        */
 .confidence-note {
   display: flex; align-items: flex-start; gap: 7px;
   background: #fef3c7; border: 1px solid #f59e0b; border-radius: 7px;
@@ -1439,7 +1487,7 @@ body {
   background: #f9fafb; border-color: #d1d5db; color: #6b7280;
 }
 
-/* РІвЂќР‚РІвЂќР‚ Alt card РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Alt card ────────────────────────────────────────────────────────────── */
 .alt-card {
   background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px;
   padding: 1rem 1.125rem; cursor: pointer; display: flex; align-items: flex-start;
@@ -1447,11 +1495,11 @@ body {
 }
 .alt-card:hover { border-color: #b0b8c8; }
 
-/* Aggregator snapshot card РІР‚вЂќ amber tint to visually separate from local plans */
+/* Aggregator snapshot card — amber tint to visually separate from local plans */
 .snapshot-card { border-color: #fcd34d; background: #fffbf0; }
 .snapshot-card:hover { border-color: #f59e0b; }
 
-/* РІвЂќР‚РІвЂќР‚ vs Travel eSIM comparison block РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── vs Travel eSIM comparison block ─────────────────────────────────────── */
 .vs-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; padding: 1.125rem 1.25rem; margin-bottom: 10px; }
 /* Green border = local SIM recommended */
 .vs-card-local { border-color: #86efac; background: #f9fefb; }
@@ -1471,14 +1519,14 @@ body {
 .vs-feat.ok   { color: #15803d; }
 .vs-feat.no   { color: #9ca3af; }
 
-/* РІвЂќР‚РІвЂќР‚ Why this recommendation РІР‚вЂќ key factor list РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Why this recommendation — key factor list ───────────────────────────── */
 .why-factors { display: flex; flex-direction: column; gap: 3px; margin: 8px 0 4px; }
 .why-factor { display: flex; align-items: flex-start; gap: 6px; font-size: 11px; line-height: 1.45; padding: 1px 0; }
 .why-factor-travel { color: #92400e; }
 .why-factor-local  { color: #15803d; }
 .vs-feat.warn { color: #b45309; }  /* app-specific data note on local side */
 
-/* РІвЂќР‚РІвЂќР‚ Top-up & extension options РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Top-up & extension options ──────────────────────────────────────────── */
 .topup-badge {
   display: inline-flex; align-items: center; gap: 5px;
   background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 7px;
@@ -1489,7 +1537,7 @@ body {
 .ext-row { display: flex; justify-content: space-between; font-size: 12px; color: #374151; padding: 3px 0; }
 .ext-row + .ext-row { border-top: 1px solid #ddd6fe; }
 
-/* РІвЂќР‚РІвЂќР‚ Roaming matrix РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Roaming matrix ──────────────────────────────────────────────────────── */
 .roaming-matrix { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
 .matrix-header { background: #f2f4f8; padding: 10px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #4b5563; }
 .matrix-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -1504,7 +1552,7 @@ body {
 .matrix-tooltip { padding: 8px 14px; font-size: 11px; color: #1d4ed8; background: #eff6ff; border-top: 1px solid #93c5fd; }
 .matrix-note { padding: 8px 14px; font-size: 11px; color: #9ca3af; background: #f8f9fb; border-top: 1px solid #e8eaef; }
 
-/* РІвЂќР‚РІвЂќР‚ Country / operator cards РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Country / operator cards ────────────────────────────────────────────── */
 .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1rem; }
 .insight-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 8px; padding: 10px; }
 .insight-label { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #9ca3af; margin-bottom: 3px; }
@@ -1514,7 +1562,7 @@ body {
 .score-track { flex: 1; height: 3px; background: #e8eaef; border-radius: 2px; overflow: hidden; }
 .score-fill { height: 100%; border-radius: 2px; }
 
-/* РІвЂќР‚РІвЂќР‚ Countries panel РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚
+/* ── Countries panel ─────────────────────────────────────────────────────────
    Self-contained block: cpanel wraps all country-selector chrome.
    Keeps max-width wider than the standard page-wrap (620px) so 4 columns
    have enough room without feeling cramped.                                  */
@@ -1525,7 +1573,7 @@ body {
   padding-bottom: 3rem;
 }
 
-/* РІвЂќР‚ Header chrome РІвЂќР‚ */
+/* ─ Header chrome ─ */
 .cpanel-head {
   padding: 1.5rem 1.25rem 0.75rem;
 }
@@ -1537,7 +1585,7 @@ body {
   margin: 0 0 14px;
 }
 
-/* РІвЂќР‚ Search РІвЂќР‚ */
+/* ─ Search ─ */
 .csearch {
   position: relative;
   margin-bottom: 10px;
@@ -1582,7 +1630,7 @@ body {
 }
 .csearch-clear:hover { color: #374151; }
 
-/* РІвЂќР‚ Filter chips РІвЂќР‚ */
+/* ─ Filter chips ─ */
 .cfilters {
   display: flex;
   gap: 5px;
@@ -1613,7 +1661,7 @@ body {
   font-weight: 600;
 }
 
-/* РІвЂќР‚ Section label РІвЂќР‚ */
+/* ─ Section label ─ */
 .csection-label {
   font-size: 10px;
   font-weight: 700;
@@ -1623,7 +1671,7 @@ body {
   margin-bottom: 2px;
 }
 
-/* РІвЂќР‚ No results РІвЂќР‚ */
+/* ─ No results ─ */
 .cno-results {
   padding: 2.5rem 1.25rem;
   text-align: center;
@@ -1631,7 +1679,7 @@ body {
   font-size: 13px;
 }
 
-/* РІвЂќР‚ Country grid РІвЂќР‚ */
+/* ─ Country grid ─ */
 .cgrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1648,7 +1696,7 @@ body {
   .cgrid { grid-template-columns: 1fr; }
 }
 
-/* РІвЂќР‚ Country tile РІвЂќР‚ */
+/* ─ Country tile ─ */
 .ctile {
   display: flex;
   flex-direction: column;
@@ -1695,7 +1743,7 @@ body {
   flex: 1;
 }
 
-/* Tiny dual score bars РІР‚вЂќ one per metric */
+/* Tiny dual score bars — one per metric */
 .ctile-scores {
   display: flex;
   flex-direction: column;
@@ -1747,7 +1795,7 @@ body {
 
 .op-card { background: #ffffff; border: 1px solid #e0e3ea; border-radius: 10px; padding: 1rem; margin-bottom: 6px; }
 
-/* РІвЂќР‚РІвЂќР‚ Modal РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
+/* ── Modal ───────────────────────────────────────────────────────────────── */
 .modal-overlay { position: fixed; inset: 0; z-index: 999; display: flex; align-items: flex-end; }
 .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
 .modal-sheet {
@@ -1769,8 +1817,8 @@ body {
 }
 .modal-close:hover { color: #0f1117; }
 
-/* РІвЂќР‚РІвЂќР‚ EU Nomad card РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚РІвЂќР‚ */
-/* Indigo accent РІР‚вЂќ visually distinct from local (green) and travel eSIM (amber) */
+/* ── EU Nomad card ────────────────────────────────────────────────────────── */
+/* Indigo accent — visually distinct from local (green) and travel eSIM (amber) */
 .eu-nomad-card {
   background: #eef2ff; border: 1.5px solid #818cf8; border-radius: 12px;
   padding: 1.125rem 1.25rem; margin-top: 10px; cursor: pointer;
@@ -1799,3 +1847,83 @@ body {
 .eu-nomad-caveats { font-size: 11px; color: #6366f1; line-height: 1.5; }
 
 .badge-eu-nomad { background: #eef2ff; border-color: #818cf8; color: #4f46e5; font-weight: 700; }
+
+/* ── Balkans route champion block ────────────────────────────────────────── */
+.balkan-champion {
+  margin-top: 10px;
+  border: 2px solid #f59e0b;
+  border-radius: 12px;
+  background: #fffbeb;
+  overflow: hidden;
+}
+.balkan-champion-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #92400e;
+  background: #fde68a;
+  padding: 5px 12px;
+}
+.balkan-champion-body {
+  padding: 10px 12px 8px;
+}
+.balkan-champion-plan {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.balkan-champion-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f1117;
+}
+.balkan-champion-price {
+  font-size: 17px;
+  font-weight: 800;
+  color: #92400e;
+  flex-shrink: 0;
+}
+.balkan-champion-dur {
+  font-size: 11px;
+  font-weight: 500;
+  color: #a16207;
+}
+.balkan-champion-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.balkan-champion-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.5;
+}
+.balkan-champion-icon {
+  flex-shrink: 0;
+  font-size: 13px;
+}
+.balkan-champion-why {
+  color: #4b5563;
+  font-style: italic;
+}
+.balkan-champion-cta {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.12s;
+}
+.balkan-champion-cta:hover { background: #d97706; }
